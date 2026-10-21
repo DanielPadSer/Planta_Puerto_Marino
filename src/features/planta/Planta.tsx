@@ -22,11 +22,11 @@ export function Planta() {
 
   return (
     <div className="relative h-screen min-h-[720px] overflow-hidden bg-background">
-      <div className="absolute inset-0">
-        <img src={maqueta.url} alt="Maqueta isométrica de la planta Puerto Marino" className="size-full object-cover" />
+      <div className="absolute left-1/2 top-1/2 aspect-[16/9] w-[max(100vw,calc(100vh*16/9))] -translate-x-1/2 -translate-y-1/2">
+        <img src={maqueta.url} alt="Maqueta isométrica de la planta Puerto Marino" className="size-full" />
         {ZONAS.map((z) => (
           <Link key={z.id} to="/planta/$zona" params={{ zona: z.id }}
-            className={cn("absolute flex -translate-x-1/2 flex-col items-center transition", atenuada(z.id) && "opacity-30")}
+            className={cn("absolute flex -translate-x-1/2 -translate-y-[14px] flex-col items-center transition", atenuada(z.id) && "opacity-30")}
             style={{ left: `${z.x}%`, top: `${z.y}%` }}>
             <span className="relative flex items-center gap-2 whitespace-nowrap rounded-full border bg-surface py-1 pl-1 pr-3 text-xs font-semibold shadow-[var(--shadow-soft)] hover:scale-105">
               <span className="grid size-6 place-items-center rounded-full text-primary-foreground" style={{ background: z.color }}><MapIcon size={12} /></span>
