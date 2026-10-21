@@ -19,7 +19,7 @@ export function Acceso() {
   const [sel, setSel] = useState<EstacionId>("marinado");
   const [tab, setTab] = useState<keyof typeof PESTANAS>("pasa");
   const navigate = useNavigate();
-  const est = ESTACIONES.find((e) => e.id === sel) ?? ESTACIONES[0];
+  const est = ESTACIONES.find((e) => e.id === sel) ?? ESTACIONES[0]!;
 
   const continuar = () => {
     if (modo === "panel") navigate({ to: "/panel/login" });
