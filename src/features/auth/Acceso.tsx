@@ -92,7 +92,7 @@ export function Acceso() {
         <p className="flex items-center gap-2 font-mono text-[11px] font-semibold"><ShieldCheck size={16} /> QUÉ PASA AL ENTRAR</p>
         <div className="mt-2 flex gap-1">
           {([["pasa", "Qué pasa"], ["registra", "Qué se registra"], ["software", "Qué hace el software"]] as const).map(([k, l]) => (
-            <button key={k} onClick={() => setTab(k)} className={cn("rounded-full px-2 py-1 font-mono text-[10px]", tab === k ? "bg-primary-soft text-primary" : "bg-muted text-muted-foreground")}>{l}</button>
+            <button key={k} onClick={() => setTab(k)} className={cn("whitespace-nowrap rounded-full px-2 py-1 font-mono text-[10px]", tab === k ? "bg-primary-soft text-primary" : "bg-muted text-muted-foreground")}>{l}</button>
           ))}
         </div>
         <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{PESTANAS[tab]}</p>
