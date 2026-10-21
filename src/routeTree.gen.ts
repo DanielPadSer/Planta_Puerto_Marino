@@ -10,33 +10,102 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PanelBandejaRouteImport } from './routes/panel.bandeja'
+import { Route as PanelLoginRouteImport } from './routes/panel.login'
+import { Route as PinEstacionRouteImport } from './routes/pin.$estacion'
+import { Route as PlantaIndexRouteImport } from './routes/planta.index'
+import { Route as PlantaZonaRouteImport } from './routes/planta.$zona'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PanelBandejaRoute = PanelBandejaRouteImport.update({
+  id: '/panel/bandeja',
+  path: '/panel/bandeja',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PanelLoginRoute = PanelLoginRouteImport.update({
+  id: '/panel/login',
+  path: '/panel/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PinEstacionRoute = PinEstacionRouteImport.update({
+  id: '/pin/$estacion',
+  path: '/pin/$estacion',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlantaIndexRoute = PlantaIndexRouteImport.update({
+  id: '/planta/',
+  path: '/planta/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlantaZonaRoute = PlantaZonaRouteImport.update({
+  id: '/planta/$zona',
+  path: '/planta/$zona',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/panel/bandeja': typeof PanelBandejaRoute
+  '/panel/login': typeof PanelLoginRoute
+  '/pin/$estacion': typeof PinEstacionRoute
+  '/planta/$zona': typeof PlantaZonaRoute
+  '/planta/': typeof PlantaIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/panel/bandeja': typeof PanelBandejaRoute
+  '/panel/login': typeof PanelLoginRoute
+  '/pin/$estacion': typeof PinEstacionRoute
+  '/planta/$zona': typeof PlantaZonaRoute
+  '/planta': typeof PlantaIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/panel/bandeja': typeof PanelBandejaRoute
+  '/panel/login': typeof PanelLoginRoute
+  '/pin/$estacion': typeof PinEstacionRoute
+  '/planta/$zona': typeof PlantaZonaRoute
+  '/planta/': typeof PlantaIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/panel/bandeja'
+    | '/panel/login'
+    | '/pin/$estacion'
+    | '/planta/$zona'
+    | '/planta/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/panel/bandeja'
+    | '/panel/login'
+    | '/pin/$estacion'
+    | '/planta/$zona'
+    | '/planta'
+  id:
+    | '__root__'
+    | '/'
+    | '/panel/bandeja'
+    | '/panel/login'
+    | '/pin/$estacion'
+    | '/planta/$zona'
+    | '/planta/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PanelBandejaRoute: typeof PanelBandejaRoute
+  PanelLoginRoute: typeof PanelLoginRoute
+  PinEstacionRoute: typeof PinEstacionRoute
+  PlantaZonaRoute: typeof PlantaZonaRoute
+  PlantaIndexRoute: typeof PlantaIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +117,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/panel/bandeja': {
+      id: '/panel/bandeja'
+      path: '/panel/bandeja'
+      fullPath: '/panel/bandeja'
+      preLoaderRoute: typeof PanelBandejaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/panel/login': {
+      id: '/panel/login'
+      path: '/panel/login'
+      fullPath: '/panel/login'
+      preLoaderRoute: typeof PanelLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pin/$estacion': {
+      id: '/pin/$estacion'
+      path: '/pin/$estacion'
+      fullPath: '/pin/$estacion'
+      preLoaderRoute: typeof PinEstacionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/planta/': {
+      id: '/planta/'
+      path: '/planta'
+      fullPath: '/planta/'
+      preLoaderRoute: typeof PlantaIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/planta/$zona': {
+      id: '/planta/$zona'
+      path: '/planta/$zona'
+      fullPath: '/planta/$zona'
+      preLoaderRoute: typeof PlantaZonaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PanelBandejaRoute: PanelBandejaRoute,
+  PanelLoginRoute: PanelLoginRoute,
+  PinEstacionRoute: PinEstacionRoute,
+  PlantaZonaRoute: PlantaZonaRoute,
+  PlantaIndexRoute: PlantaIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
