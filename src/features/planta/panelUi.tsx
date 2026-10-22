@@ -57,3 +57,12 @@ export function BotonPrincipal({ children, onClick, disabled, color }: { childre
     </button>
   );
 }
+
+export function PanelCuerpo({ children, accion }: { children: ReactNode; accion: ReactNode }) {
+  return (
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-4">{children}</div>
+      <div className="border-t bg-surface p-4">{accion}</div>
+    </div>
+  );
+}

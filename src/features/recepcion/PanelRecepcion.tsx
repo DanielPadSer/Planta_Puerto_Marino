@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Check, CheckCircle2, Pencil, Printer, Undo2 } from "lucide-react";
 import { dentroTolerancia, diferenciaPct, kg, pesoContenedores, pesoNeto, redondear, TOLERANCIA_PCT } from "@/domain/reglas";
 import { Chip } from "@/ui/marca";
-import { BotonPrincipal, Ejemplo, Seccion, Segmentado, Stepper } from "@/features/planta/panelUi";
+import { BotonPrincipal, Ejemplo, PanelCuerpo, Seccion, Segmentado, Stepper } from "@/features/planta/panelUi";
 import { cn } from "@/lib/utils";
 import { useScale } from "./useScale";
 
@@ -23,8 +23,12 @@ export function PanelRecepcion({ color }: { color: string }) {
   const dif = diferenciaPct(FACTURA_KG, neto);
   const ok = dentroTolerancia(dif);
 
-  return {
-    contenido: (
+  return (
+    <PanelCuerpo accion={
+      <BotonPrincipal color={color} disabled={tandas.length === 0 || neto <= 0 || creado} onClick={() => setCreado(true)}>
+        <Printer size={20} /> {creado ? "Lote LT-0245 creado" : "Crear lote LT-0245 e imprimir etiqueta"}
+      </BotonPrincipal>
+    }>
       <div className="space-y-3">
         <Seccion n={1} titulo="Entrega" extra={<Chip tono="ok">2,8 °C <Check size={10} /></Chip>}>
           <p className="text-sm font-semibold">Proveedor A · FV-30241 · Filete de mojarra</p>
@@ -78,11 +82,6 @@ export function PanelRecepcion({ color }: { color: string }) {
         <Ejemplo />
         {creado && <p className="flex items-center gap-2 rounded-xl bg-ok/10 p-3 text-sm font-medium text-ok"><CheckCircle2 size={20} /> Lote LT-0245 creado · etiqueta enviada a la impresora.</p>}
       </div>
-    ),
-    accion: (
-      <BotonPrincipal color={color} disabled={tandas.length === 0 || neto <= 0 || creado} onClick={() => setCreado(true)}>
-        <Printer size={20} /> {creado ? "Lote LT-0245 creado" : "Crear lote LT-0245 e imprimir etiqueta"}
-      </BotonPrincipal>
-    ),
-  };
+    </PanelCuerpo>
+  );
 }
