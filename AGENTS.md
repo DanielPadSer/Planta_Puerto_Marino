@@ -11,6 +11,7 @@
 
 ## Puerto Marino
 - Routing stays on TanStack Router (platform requirement); route files in src/routes are thin wrappers that render screens from src/features/*.
+- Do not add a QueryClient or query provider; simulated data and interactive screens use local state, while mandatory TanStack Start routing remains intact.
 - Pure business rules live in src/domain, typed mock data in src/mocks; no backend — all data simulated.
 - Offline storage via Dexie in src/offline/db.ts, guarded for SSR (getDb returns null without indexedDB).
 - Plant map labels use % coordinates over a 16:9 cover container so they stay aligned with the mockup image.
