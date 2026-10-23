@@ -35,7 +35,7 @@ function Ilustracion() {
       {/* rayos de luz */}
       {[120, 260, 400].map((x, i) => (
         <motion.polygon key={x} points={`${x},0 ${x + 60},0 ${x + 160},600 ${x - 40},600`} fill="var(--surface)"
-          initial={{ opacity: 0.04 }} animate={quieto ? undefined : { opacity: [0.03, 0.09, 0.03] }}
+          initial={{ opacity: 0.04 }} animate={quieto ? false : { opacity: [0.03, 0.09, 0.03] }}
           transition={{ duration: 6, repeat: Infinity, delay: i * 1.5 }} />
       ))}
       {/* pez principal */}
@@ -51,7 +51,7 @@ function Ilustracion() {
         </g>
       </motion.g>
       {/* camarón */}
-      <motion.g animate={quieto ? undefined : { rotate: [-6, 6, -6] }} style={{ originX: "440px", originY: "430px" }}
+      <motion.g animate={quieto ? false : { rotate: [-6, 6, -6] }} style={{ originX: "440px", originY: "430px" }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
         <path d="M400 400 C470 380 500 450 450 480 C430 490 410 470 420 455" fill="none" stroke="var(--destructive)" strokeWidth="18" strokeLinecap="round" />
         <path d="M400 400 L360 370 M404 396 L370 360" stroke="var(--destructive)" strokeWidth="3" strokeLinecap="round" />
@@ -59,13 +59,13 @@ function Ilustracion() {
       {/* algas */}
       {[60, 95, 520].map((x, i) => (
         <motion.path key={x} d={`M${x} 600 C${x - 20} 540 ${x + 20} 500 ${x} 440`} fill="none" stroke="var(--ok)" strokeWidth="10" strokeLinecap="round"
-          animate={quieto ? undefined : { d: [`M${x} 600 C${x - 20} 540 ${x + 20} 500 ${x} 440`, `M${x} 600 C${x + 20} 540 ${x - 20} 500 ${x + 10} 445`, `M${x} 600 C${x - 20} 540 ${x + 20} 500 ${x} 440`] }}
+          animate={quieto ? false : { d: [`M${x} 600 C${x - 20} 540 ${x + 20} 500 ${x} 440`, `M${x} 600 C${x + 20} 540 ${x - 20} 500 ${x + 10} 445`, `M${x} 600 C${x - 20} 540 ${x + 20} 500 ${x} 440`] }}
           transition={{ duration: 4 + i, repeat: Infinity, ease: "easeInOut" }} />
       ))}
       {/* burbujas */}
       {BURBUJAS.map((b, i) => (
         <motion.circle key={i} cx={b.x * 6} cy={b.y * 6} r={b.r} fill="none" stroke="var(--surface)" strokeWidth="2" opacity=".5"
-          animate={quieto ? undefined : { cy: [b.y * 6, b.y * 6 - 260], opacity: [0, 0.6, 0] }}
+          animate={quieto ? false : { cy: [b.y * 6, b.y * 6 - 260], opacity: [0, 0.6, 0] }}
           transition={{ duration: 6, repeat: Infinity, delay: b.d, ease: "easeOut" }} />
       ))}
     </svg>
