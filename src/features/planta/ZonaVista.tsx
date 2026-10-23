@@ -75,28 +75,20 @@ export function ZonaVista({ zona }: { zona: Zona }) {
 
   return (
     <div className="relative h-screen min-h-[720px] overflow-hidden bg-background">
-      {/* Escena con zoom */}
-      <div className="absolute left-1/2 top-1/2 aspect-[16/9] w-[max(100vw,calc(100vh*16/9))] -translate-x-1/2 -translate-y-1/2">
-        <div className="absolute inset-0 will-change-transform" style={{ transform, transformOrigin: `${d.focal.x}% ${d.focal.y}%`, transition: transicion }}>
-          <img src={maqueta.url} alt={`Maqueta: ${zona.nombre}`} className="size-full" />
-          {d.hotspots.map((h) => (
-            <div key={h.texto} className={cn("absolute transition-opacity duration-300", listo ? "opacity-100" : "opacity-0")} style={{ left: `${h.x}%`, top: `${h.y}%`, transform: `translate(-50%,-50%) scale(${1 / d.escala})` }}>
-              <span className="flex items-center gap-2 whitespace-nowrap rounded-full border bg-surface px-3 py-1.5 font-mono text-[11px] font-semibold shadow-[var(--shadow-soft)]">
-                <span className={cn("size-2 rounded-full", h.tono === "ok" ? "bg-ok" : h.tono === "warn" ? "bg-warn" : h.tono === "danger" ? "bg-danger" : "bg-primary")} />{h.texto}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Escena: planta con la estación marcada o detalle de la estación */}
+      <Tablero key={zona.id} ref={tablero} controles={false}>
+        <img src={PLANTA_GENERAL} alt="" aria-hidden draggable={false} className="pointer-events-none absolute inset-0 size-full" />
+        {MARCADA[zona.id] && <img src={MARCADA[zona.id]} alt={`Planta con ${zona.nombre} marcada`} draggable={false}
+          className={cn("pointer-events-none absolute inset-0 size-full transition-opacity", zoom ? "opacity-100" : "opacity-0")} style={{ transitionDuration: `${dur}ms` }} />}
+        {DETALLE_IMG[zona.id] && <img src={DETALLE_IMG[zona.id]} alt={`Detalle de ${zona.nombre}`} draggable={false}
+          className={cn("pointer-events-none absolute inset-0 size-full transition-opacity", vista === "detalle" ? "opacity-100" : "opacity-0")} style={{ transitionDuration: `${dur}ms` }} />}
+      </Tablero>
 
-      {/* Callout */}
-      <div className={cn("glass absolute w-[300px] rounded-[var(--radius-card)] p-3 transition-all duration-500", listo ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0")}
-        style={{ left: `calc(${DESTINO.x}% - 150px)`, top: `calc(${DESTINO.y}% - 190px)` }}>
-        <div className="flex items-center gap-3">
-          <span className="grid size-12 place-items-center rounded-2xl" style={{ background: zona.color }}><Circulo codigo={zona.codigo} color={zona.color} size={36} /></span>
-          <div className="min-w-0"><p className="font-semibold"><span className="font-mono" style={{ color: zona.color }}>{zona.codigo}</span> {zona.nombre}</p><p className="text-xs text-muted-foreground">{d.subtitulo}</p></div>
-        </div>
-        <p className="mt-2 truncate font-mono text-[10px] text-muted-foreground">{d.meta}</p>
+      {/* Selector de vista */}
+      <div className="glass absolute left-1/2 top-20 flex -translate-x-[calc(50%+200px)] rounded-full p-1">
+        {([["marcada", "Planta marcada"], ["detalle", "Detalle de estación"]] as const).map(([k, l]) => (
+          <button key={k} onClick={() => setVista(k)} className={cn("tap rounded-full px-4 text-sm font-medium", vista === k ? "text-primary-foreground" : "text-muted-foreground")} style={vista === k ? { background: zona.color } : undefined}>{l}</button>
+        ))}
       </div>
 
       {/* Barra superior */}
