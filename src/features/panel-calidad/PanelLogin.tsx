@@ -28,7 +28,7 @@ function Ilustracion() {
       <defs>
         <linearGradient id="pl-mar" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="var(--primary)" />
-          <stop offset="1" stopColor="var(--text)" />
+          <stop offset="1" stopColor="var(--foreground)" />
         </linearGradient>
       </defs>
       <rect width="600" height="600" fill="url(#pl-mar)" />
@@ -45,7 +45,7 @@ function Ilustracion() {
           <path d="M0 40 C40 -10 150 -10 190 40 C150 90 40 90 0 40Z" fill="var(--primary-soft)" />
           <path d="M190 40 L250 0 L240 40 L250 80Z" fill="var(--warn)" />
           <path d="M70 8 C90 -20 120 -20 140 4" fill="none" stroke="var(--warn)" strokeWidth="10" strokeLinecap="round" />
-          <circle cx="45" cy="34" r="9" fill="var(--text)" />
+          <circle cx="45" cy="34" r="9" fill="var(--foreground)" />
           <circle cx="48" cy="31" r="3" fill="var(--surface)" />
           <path d="M95 22 Q110 40 95 58 M120 22 Q135 40 120 58" fill="none" stroke="var(--primary)" strokeWidth="4" strokeLinecap="round" opacity=".5" />
         </g>
@@ -53,8 +53,8 @@ function Ilustracion() {
       {/* camarón */}
       <motion.g animate={quieto ? undefined : { rotate: [-6, 6, -6] }} style={{ originX: "440px", originY: "430px" }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
-        <path d="M400 400 C470 380 500 450 450 480 C430 490 410 470 420 455" fill="none" stroke="var(--danger)" strokeWidth="18" strokeLinecap="round" />
-        <path d="M400 400 L360 370 M404 396 L370 360" stroke="var(--danger)" strokeWidth="3" strokeLinecap="round" />
+        <path d="M400 400 C470 380 500 450 450 480 C430 490 410 470 420 455" fill="none" stroke="var(--destructive)" strokeWidth="18" strokeLinecap="round" />
+        <path d="M400 400 L360 370 M404 396 L370 360" stroke="var(--destructive)" strokeWidth="3" strokeLinecap="round" />
       </motion.g>
       {/* algas */}
       {[60, 95, 520].map((x, i) => (

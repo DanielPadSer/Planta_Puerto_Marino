@@ -319,7 +319,7 @@
 @media(prefers-reduced-motion:reduce) { .quality-sidebar { transition:none; } }
 
 /* Login ilustrado del panel */
-.pl-root { min-height:100vh; display:grid; place-items:center; padding:32px 20px; background:radial-gradient(circle at 15% 20%, var(--primary-soft), transparent 45%), var(--floor); }
+.pl-root { min-height:100vh; display:grid; place-items:center; padding:32px 20px; background:radial-gradient(circle at 15% 20%, var(--primary-soft), transparent 45%), var(--background); }
 .pl-root svg { flex-shrink:0; }
 .pl-card { width:min(1040px,100%); min-height:600px; display:grid; grid-template-columns:1.15fr 1fr; background:var(--surface); border-radius:var(--radius-panel); overflow:hidden; box-shadow:var(--shadow-soft); }
 .pl-arte { position:relative; overflow:hidden; min-height:320px; }
