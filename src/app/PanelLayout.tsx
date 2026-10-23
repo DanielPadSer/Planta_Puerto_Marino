@@ -1,17 +1,214 @@
-import { useEffect, useState, type ReactNode } from 'react';
-import { Link, useNavigate } from '@tanstack/react-router';
-import { Bell, Layers3, Inbox, FileSliders, ShieldCheck, Refrigerator, Monitor, Users, ListTree, Network, ChartNoAxesColumn, History, ChevronDown, LogOut, PanelLeftClose, PanelLeftOpen, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { usePanelSesion, useCalidad } from '@/features/panel-calidad/store';
-import { useConexion } from '@/features/panel-calidad/ui';
-import { cn } from '@/lib/utils';
+import { useEffect, useState, type ReactNode } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import {
+  Bell,
+  Layers3,
+  Inbox,
+  FileSliders,
+  ShieldCheck,
+  Refrigerator,
+  Monitor,
+  Users,
+  ListTree,
+  Network,
+  ChartNoAxesColumn,
+  History,
+  ChevronDown,
+  LogOut,
+  PanelLeftClose,
+  PanelLeftOpen,
+  ChevronRight,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { usePanelSesion, useCalidad } from "@/features/panel-calidad/store";
+import { useConexion } from "@/features/panel-calidad/ui";
+import { cn } from "@/lib/utils";
 export const panelNav = [
- {name:'Bandeja',path:'/panel/bandeja',icon:Inbox}, {name:'Reglas por producto',path:'/panel/reglas',icon:FileSliders}, {name:'Limpieza y equipos',path:'/panel/limpieza',icon:ShieldCheck}, {name:'Cuartos fríos',path:'/panel/cuartos-frios',icon:Refrigerator}, {name:'Dispositivos y equipos',path:'/panel/dispositivos',icon:Monitor}, {name:'Personal y BPM',path:'/panel/personal',icon:Users}, {name:'Catálogos',path:'/panel/catalogos',icon:ListTree}, {name:'Trazabilidad',path:'/panel/trazabilidad',icon:Network}, {name:'Reportes',path:'/panel/reportes',icon:ChartNoAxesColumn}, {name:'Historial de cambios',path:'/panel/historial',icon:History},
+  { name: "Bandeja", path: "/panel/bandeja", icon: Inbox },
+  { name: "Reglas por producto", path: "/panel/reglas", icon: FileSliders },
+  { name: "Limpieza y equipos", path: "/panel/limpieza", icon: ShieldCheck },
+  { name: "Cuartos fríos", path: "/panel/cuartos-frios", icon: Refrigerator },
+  { name: "Dispositivos y equipos", path: "/panel/dispositivos", icon: Monitor },
+  { name: "Personal y BPM", path: "/panel/personal", icon: Users },
+  { name: "Catálogos", path: "/panel/catalogos", icon: ListTree },
+  { name: "Trazabilidad", path: "/panel/trazabilidad", icon: Network },
+  { name: "Reportes", path: "/panel/reportes", icon: ChartNoAxesColumn },
+  { name: "Historial de cambios", path: "/panel/historial", icon: History },
 ] as const;
-export function PanelLayout({title,subtitle,active,children,action}:{title:string;subtitle:string;active:string;children:ReactNode;action?:ReactNode}) {
- const {activa,salir}=usePanelSesion();const navigate=useNavigate();const online=useConexion();const [collapsed,setCollapsed]=useState(false);const [catalogos,setCatalogos]=useState(active.includes('catalogos'));const [notifications,setNotifications]=useState(false);
- const count=useCalidad(s=>s.lotes.filter(l=>l.estado==='Cuarentena').length)+6;
- useEffect(()=>{if(!activa)navigate({to:'/panel/login',replace:true});},[activa,navigate]);
- if(!activa)return <div className="min-h-screen bg-background"/>;
- return <div className={cn('quality-panel',collapsed&&'sidebar-mini')}><aside className="quality-sidebar"><Link to="/panel/bandeja" className="quality-brand"><span className="brand-symbol"><Layers3 size={20}/></span>{!collapsed&&<span><strong>Puerto Marino</strong><small>PANEL DE CALIDAD</small></span>}</Link><nav className="quality-nav">{panelNav.map(item=><div key={item.path}><Button asChild variant="ghost" className={cn('quality-nav-item',active===item.path&&'nav-active')} title={item.name}><Link to={item.path}><item.icon size={20}/>{!collapsed&&<><span>{item.name}</span>{item.path==='/panel/bandeja'&&<b className="nav-badge">{count}</b>}</>}</Link></Button>{item.path==='/panel/catalogos'&&!collapsed&&<><Button variant="ghost" aria-label="Expandir catálogos" className="catalog-expand" onClick={()=>setCatalogos(!catalogos)}><ChevronDown size={20}/></Button>{catalogos&&<div className="catalog-subnav">{['Contenedores y tara','Categorías sanitarias','Proveedores','Equipos','Alérgenos','Ingredientes','Productos'].map(c=><Link key={c} to={c==='Alérgenos'?'/panel/catalogos/alergenos':'/panel/catalogos'} search={c==='Alérgenos'?{}:{catalogo:c}} className={cn('catalog-link',active==='/panel/catalogos/alergenos'&&c==='Alérgenos'&&'text-primary')}>{c}</Link>)}</div>}</>}</div>)}</nav><div className="quality-user"><span className="user-avatar">IA</span>{!collapsed&&<div><strong>Ingeniera de alimentos</strong><small>Planta Puerto Marino</small></div>}<Button variant="ghost" size="icon" aria-label="Cerrar sesión" title="Cerrar sesión" onClick={()=>{salir();navigate({to:'/panel/login'});}}><LogOut size={20}/></Button></div></aside><div className="quality-main"><header className="quality-topbar"><div className="min-w-0"><div className="quality-breadcrumb"><Button variant="ghost" size="icon" aria-label={collapsed?'Mostrar menú':'Contraer menú'} onClick={()=>setCollapsed(!collapsed)}>{collapsed?<PanelLeftOpen size={20}/>:<PanelLeftClose size={20}/>}</Button><span>Panel de calidad</span><ChevronRight size={20}/><span>{title}</span></div><h1>{title}</h1><p>{subtitle}</p></div><div className="topbar-actions"><span className={cn('online-pill',online?'text-ok':'text-warn')}><span className={cn('size-2 rounded-full',online?'bg-ok':'bg-warn')}/>{online?'En línea · Sincronizado':'Sin conexión · 0 pendientes'}</span><div className="relative"><Button variant="outline" size="icon" className="notification-button" aria-label="Avisos" onClick={()=>setNotifications(!notifications)}><Bell size={20}/><span className="notification-dot"/></Button>{notifications&&<div className="notification-popover"><strong>Avisos de calidad</strong><p>2 calibraciones próximas a vencer</p><p>2 documentos BPM por vencer</p><Button asChild variant="link"><Link to="/panel/bandeja">Ver bandeja <ChevronRight size={20}/></Link></Button></div>}</div>{action}</div></header><main className="quality-content">{children}</main></div></div>;
+export function PanelLayout({
+  title,
+  subtitle,
+  active,
+  children,
+  action,
+}: {
+  title: string;
+  subtitle: string;
+  active: string;
+  children: ReactNode;
+  action?: ReactNode;
+}) {
+  const { activa, salir } = usePanelSesion();
+  const navigate = useNavigate();
+  const online = useConexion();
+  const [collapsed, setCollapsed] = useState(false);
+  const [catalogos, setCatalogos] = useState(active.includes("catalogos"));
+  const [notifications, setNotifications] = useState(false);
+  const count = useCalidad((s) => s.lotes.filter((l) => l.estado === "Cuarentena").length) + 6;
+  useEffect(() => {
+    if (!activa) navigate({ to: "/panel/login", replace: true });
+  }, [activa, navigate]);
+  if (!activa) return <div className="min-h-screen bg-background" />;
+  return (
+    <div className={cn("quality-panel", collapsed && "sidebar-mini")}>
+      <aside className="quality-sidebar">
+        <Link to="/panel/bandeja" className="quality-brand">
+          <span className="brand-symbol">
+            <Layers3 size={20} />
+          </span>
+          {!collapsed && (
+            <span>
+              <strong>Puerto Marino</strong>
+              <small>PANEL DE CALIDAD</small>
+            </span>
+          )}
+        </Link>
+        <nav className="quality-nav">
+          {panelNav.map((item) => (
+            <div key={item.path}>
+              <Button
+                asChild
+                variant="ghost"
+                className={cn("quality-nav-item", active === item.path && "nav-active")}
+                title={item.name}
+              >
+                <Link to={item.path}>
+                  <item.icon size={20} />
+                  {!collapsed && (
+                    <>
+                      <span>{item.name}</span>
+                      {item.path === "/panel/bandeja" && <b className="nav-badge">{count}</b>}
+                    </>
+                  )}
+                </Link>
+              </Button>
+              {item.path === "/panel/catalogos" && !collapsed && (
+                <>
+                  <Button
+                    variant="ghost"
+                    aria-label="Expandir catálogos"
+                    className="catalog-expand"
+                    onClick={() => setCatalogos(!catalogos)}
+                  >
+                    <ChevronDown size={20} />
+                  </Button>
+                  {catalogos && (
+                    <div className="catalog-subnav">
+                      {[
+                        "Contenedores y tara",
+                        "Categorías sanitarias",
+                        "Proveedores",
+                        "Equipos",
+                        "Alérgenos",
+                        "Ingredientes",
+                        "Productos",
+                      ].map((c) => (
+                        <Link
+                          key={c}
+                          to={c === "Alérgenos" ? "/panel/catalogos/alergenos" : "/panel/catalogos"}
+                          search={c === "Alérgenos" ? {} : { catalogo: c }}
+                          className={cn(
+                            "catalog-link",
+                            active === "/panel/catalogos/alergenos" &&
+                              c === "Alérgenos" &&
+                              "text-primary",
+                          )}
+                        >
+                          {c}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          ))}
+        </nav>
+        <div className="quality-user">
+          <span className="user-avatar">IA</span>
+          {!collapsed && (
+            <div>
+              <strong>Ingeniera de alimentos</strong>
+              <small>Planta Puerto Marino</small>
+            </div>
+          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Cerrar sesión"
+            title="Cerrar sesión"
+            onClick={() => {
+              salir();
+              navigate({ to: "/panel/login" });
+            }}
+          >
+            <LogOut size={20} />
+          </Button>
+        </div>
+      </aside>
+      <div className="quality-main">
+        <header className="quality-topbar">
+          <div className="min-w-0">
+            <div className="quality-breadcrumb">
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={collapsed ? "Mostrar menú" : "Contraer menú"}
+                onClick={() => setCollapsed(!collapsed)}
+              >
+                {collapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
+              </Button>
+              <span>Panel de calidad</span>
+              <ChevronRight size={20} />
+              <span>{title}</span>
+            </div>
+            <h1>{title}</h1>
+            <p>{subtitle}</p>
+          </div>
+          <div className="topbar-actions">
+            <span className={cn("online-pill", online ? "text-ok" : "text-warn")}>
+              <span className={cn("size-2 rounded-full", online ? "bg-ok" : "bg-warn")} />
+              {online ? "En línea · Sincronizado" : "Sin conexión · 0 pendientes"}
+            </span>
+            <div className="relative">
+              <Button
+                variant="outline"
+                size="icon"
+                className="notification-button"
+                aria-label="Avisos"
+                onClick={() => setNotifications(!notifications)}
+              >
+                <Bell size={20} />
+                <span className="notification-dot" />
+              </Button>
+              {notifications && (
+                <div className="notification-popover">
+                  <strong>Avisos de calidad</strong>
+                  <p>2 calibraciones próximas a vencer</p>
+                  <p>2 documentos BPM por vencer</p>
+                  <Button asChild variant="link">
+                    <Link to="/panel/bandeja">
+                      Ver bandeja <ChevronRight size={20} />
+                    </Link>
+                  </Button>
+                </div>
+              )}
+            </div>
+            {action}
+          </div>
+        </header>
+        <main className="quality-content">{children}</main>
+      </div>
+    </div>
+  );
 }

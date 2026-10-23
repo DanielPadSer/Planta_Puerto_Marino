@@ -1,15 +1,170 @@
-import { useState } from 'react';
-import { Link, useNavigate } from '@tanstack/react-router';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Layers3, UserRound, LockKeyhole, Eye, EyeOff, ArrowRight, ShieldCheck, Thermometer, PackageCheck, CheckCircle2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { validarAcceso, DEMO_USUARIO, DEMO_CLAVE } from '@/domain/calidad';
-import { usePanelSesion } from './store';
-import maqueta from '@/assets/maqueta-planta.png.asset.json';
-const schema=z.object({usuario:z.string().min(1,'Ingresa tu usuario o correo'),clave:z.string().min(1,'Ingresa tu contraseña'),mantener:z.boolean()});
-type LoginDatos=z.infer<typeof schema>;
-export function PanelLogin(){const [visible,setVisible]=useState(false);const [error,setError]=useState('');const navigate=useNavigate();const entrar=usePanelSesion(s=>s.entrar);const {register,handleSubmit,formState:{errors}}=useForm<LoginDatos>({resolver:zodResolver(schema),defaultValues:{usuario:DEMO_USUARIO,clave:DEMO_CLAVE,mantener:false}});
- return <div className="panel-login"><div className="login-form-side"><div className="login-role"><span>● ROL: INGENIERÍA DE ALIMENTOS</span><Link to="/">Cambiar acceso →</Link></div><Link to="/" className="login-brand"><span className="brand-symbol"><Layers3 size={20}/></span><div><strong>Puerto Marino</strong><small>SISTEMA DE TRAZABILIDAD INDUSTRIAL</small></div></Link><h1>Acceso al Panel Web</h1><p className="login-intro">Gestión de reglas HACCP, liberaciones sanitarias y control de calidad.</p><form className="space-y-5" onSubmit={handleSubmit(d=>{if(!validarAcceso(d.usuario,d.clave)){setError('Usuario o contraseña incorrectos.');return;}entrar();navigate({to:'/panel/bandeja'});})}><label className="field-label">Usuario o correo corporativo<div className="login-input"><UserRound size={20}/><input {...register('usuario')} autoComplete="username"/></div></label>{errors.usuario&&<p className="text-danger text-xs">{errors.usuario.message}</p>}<label className="field-label">Contraseña<div className="login-input"><LockKeyhole size={20}/><input {...register('clave')} type={visible?'text':'password'} autoComplete="current-password"/><Button type="button" variant="ghost" size="icon" aria-label={visible?'Ocultar contraseña':'Mostrar contraseña'} onClick={()=>setVisible(!visible)}>{visible?<EyeOff size={20}/>:<Eye size={20}/>}</Button></div></label><label className="flex items-start gap-3 text-sm"><input type="checkbox" {...register('mantener')} className="size-5 accent-primary"/><span>Mantener sesión en este equipo<small className="block text-xs text-muted-foreground">No usar en equipos compartidos. Sesión demo durante esta visita.</small></span></label>{error&&<p role="alert" className="text-danger text-sm">{error}</p>}<Button className="min-h-12 w-full" type="submit">Entrar al panel <ArrowRight size={20}/></Button></form><p className="login-forgot">¿Olvidaste la contraseña? <span className="text-primary underline">Contacta al administrador</span></p><div className="login-security"><ShieldCheck size={20}/><p>Acceso demo · datos simulados. En producción, el cifrado y la validación de identidad requieren conexión segura.</p></div><p className="mt-4 text-xs text-muted-foreground">Usuario demo precargado · contraseña: {DEMO_CLAVE}</p></div><div className="login-map-side"><div className="login-map-caption"><span className="text-primary font-mono text-xs">PUERTO MARINO / CONTROL DE PLANTA</span><h2>Calidad en cada etapa.</h2><p>Planta de pescado y mariscos</p></div><img src={maqueta.url} alt="Maqueta isométrica de la planta Puerto Marino"/><div className="login-metric metric-one"><ShieldCheck size={20}/><div><strong>3 lotes</strong><small>En revisión técnica</small></div></div><div className="login-metric metric-two"><Thermometer size={20}/><div><strong>3 cuartos fríos</strong><small>Control de temperatura</small></div></div><div className="login-metric metric-three"><PackageCheck size={20}/><div><strong>194 paquetes</strong><small>Trazabilidad de origen a destino</small></div></div><div className="login-map-bottom"><CheckCircle2 size={20}/>HACCP · BPM · Trazabilidad por lote<span>DATOS SIMULADOS</span></div></div></div>;
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Layers3,
+  UserRound,
+  LockKeyhole,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  ShieldCheck,
+  Thermometer,
+  PackageCheck,
+  CheckCircle2,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { validarAcceso, DEMO_USUARIO, DEMO_CLAVE } from "@/domain/calidad";
+import { usePanelSesion } from "./store";
+import maqueta from "@/assets/maqueta-planta.png.asset.json";
+const schema = z.object({
+  usuario: z.string().min(1, "Ingresa tu usuario o correo"),
+  clave: z.string().min(1, "Ingresa tu contraseña"),
+  mantener: z.boolean(),
+});
+type LoginDatos = z.infer<typeof schema>;
+export function PanelLogin() {
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
+  const [visible, setVisible] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const entrar = usePanelSesion((s) => s.entrar);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginDatos>({
+    resolver: zodResolver(schema),
+    defaultValues: { usuario: DEMO_USUARIO, clave: DEMO_CLAVE, mantener: false },
+  });
+  return (
+    <div className="panel-login">
+      <div className="login-form-side">
+        <div className="login-role">
+          <span>● ROL: INGENIERÍA DE ALIMENTOS</span>
+          <Link to="/">Cambiar acceso →</Link>
+        </div>
+        <Link to="/" className="login-brand">
+          <span className="brand-symbol">
+            <Layers3 size={20} />
+          </span>
+          <div>
+            <strong>Puerto Marino</strong>
+            <small>SISTEMA DE TRAZABILIDAD INDUSTRIAL</small>
+          </div>
+        </Link>
+        <h1>Acceso al Panel Web</h1>
+        <p className="login-intro">
+          Gestión de reglas HACCP, liberaciones sanitarias y control de calidad.
+        </p>
+        <form
+          className="space-y-5"
+          onSubmit={handleSubmit((d) => {
+            if (!validarAcceso(d.usuario, d.clave)) {
+              setError("Usuario o contraseña incorrectos.");
+              return;
+            }
+            entrar();
+            navigate({ to: "/panel/bandeja" });
+          })}
+        >
+          <label className="field-label">
+            Usuario o correo corporativo
+            <div className="login-input">
+              <UserRound size={20} />
+              <input {...register("usuario")} autoComplete="username" />
+            </div>
+          </label>
+          {errors.usuario && <p className="text-danger text-xs">{errors.usuario.message}</p>}
+          <label className="field-label">
+            Contraseña
+            <div className="login-input">
+              <LockKeyhole size={20} />
+              <input
+                {...register("clave")}
+                type={visible ? "text" : "password"}
+                autoComplete="current-password"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label={visible ? "Ocultar contraseña" : "Mostrar contraseña"}
+                onClick={() => setVisible(!visible)}
+              >
+                {visible ? <EyeOff size={20} /> : <Eye size={20} />}
+              </Button>
+            </div>
+          </label>
+          <label className="flex items-start gap-3 text-sm">
+            <input type="checkbox" {...register("mantener")} className="size-5 accent-primary" />
+            <span>
+              Mantener sesión en este equipo
+              <small className="block text-xs text-muted-foreground">
+                No usar en equipos compartidos. Sesión demo durante esta visita.
+              </small>
+            </span>
+          </label>
+          {error && (
+            <p role="alert" className="text-danger text-sm">
+              {error}
+            </p>
+          )}
+          <Button disabled={!ready} className="min-h-12 w-full" type="submit">
+            Entrar al panel <ArrowRight size={20} />
+          </Button>
+        </form>
+        <p className="login-forgot">
+          ¿Olvidaste la contraseña?{" "}
+          <span className="text-primary underline">Contacta al administrador</span>
+        </p>
+        <div className="login-security">
+          <ShieldCheck size={20} />
+          <p>
+            Acceso demo · datos simulados. En producción, el cifrado y la validación de identidad
+            requieren conexión segura.
+          </p>
+        </div>
+        <p className="mt-4 text-xs text-muted-foreground">
+          Usuario demo precargado · contraseña: {DEMO_CLAVE}
+        </p>
+      </div>
+      <div className="login-map-side">
+        <div className="login-map-caption">
+          <span className="text-primary font-mono text-xs">PUERTO MARINO / CONTROL DE PLANTA</span>
+          <h2>Calidad en cada etapa.</h2>
+          <p>Planta de pescado y mariscos</p>
+        </div>
+        <img src={maqueta.url} alt="Maqueta isométrica de la planta Puerto Marino" />
+        <div className="login-metric metric-one">
+          <ShieldCheck size={20} />
+          <div>
+            <strong>3 lotes</strong>
+            <small>En revisión técnica</small>
+          </div>
+        </div>
+        <div className="login-metric metric-two">
+          <Thermometer size={20} />
+          <div>
+            <strong>3 cuartos fríos</strong>
+            <small>Control de temperatura</small>
+          </div>
+        </div>
+        <div className="login-metric metric-three">
+          <PackageCheck size={20} />
+          <div>
+            <strong>194 paquetes</strong>
+            <small>Trazabilidad de origen a destino</small>
+          </div>
+        </div>
+        <div className="login-map-bottom">
+          <CheckCircle2 size={20} />
+          HACCP · BPM · Trazabilidad por lote<span>DATOS SIMULADOS</span>
+        </div>
+      </div>
+    </div>
+  );
 }
