@@ -1,8 +1,8 @@
 # Tercera fase · Panel de calidad
 # Actualización de identidad y acceso
-- [ ] Restaurar el login anterior e incorporar logo en accesos y menú lateral.
-- [ ] Favicon del logo y tarjetas relevantes sin radios con bordes difuminados.
-- [ ] Verificar acceso y visualización del logo.
+- [x] Restaurar el login anterior e incorporar logo en accesos y menú lateral.
+- [x] Favicon del logo y tarjetas relevantes sin radios con bordes difuminados.
+- [x] Verificar acceso y visualización del logo.
 
 - [x] Acceso demo protegido y layout común del panel.
 - [x] Bandeja y decisiones con motivo y conexión.
