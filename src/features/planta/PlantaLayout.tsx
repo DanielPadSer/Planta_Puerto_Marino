@@ -2,7 +2,6 @@ import { lazy, Suspense, useMemo } from "react";
 import { ClientOnly, Outlet, useNavigate, useParams } from "@tanstack/react-router";
 import type { ZonaId } from "@/domain/types";
 import { ZONAS } from "./zonas";
-import { useVista3D } from "./vista3d";
 
 const Planta3D = lazy(() => import("./Planta3D"));
 
@@ -10,15 +9,14 @@ const Planta3D = lazy(() => import("./Planta3D"));
 export function PlantaLayout() {
   const params = useParams({ strict: false }) as { zona?: string };
   const zona = (ZONAS.find((z) => z.id === params.zona)?.id ?? null) as ZonaId | null;
-  const atenuadas = useVista3D((s) => s.atenuadas);
   const navigate = useNavigate();
   const estados = useMemo(() => Object.fromEntries(ZONAS.filter((z) => z.estado || z.alerta)
     .map((z) => [z.id, { texto: z.estado?.texto ?? "", tono: z.estado?.tono ?? "warn", alerta: z.alerta }])), []);
 
   return (
     <div className="relative h-screen min-h-[720px] overflow-hidden bg-background">
-      <ClientOnly><Suspense fallback={null}>
-        <Planta3D zona={zona} atenuadas={zona ? [] : atenuadas} estados={zona ? {} : estados}
+      <ClientOnly><Suspense fallback={<div className="absolute inset-0 grid place-items-center"><span role="status" aria-label="Cargando maqueta" className="size-10 animate-spin rounded-full border-4 border-primary-soft border-t-primary" /></div>}>
+        <Planta3D zona={zona} atenuadas={[]} estados={zona ? {} : estados}
           onSeleccionar={(z) => navigate({ to: "/planta/$zona", params: { zona: z } })} />
       </Suspense></ClientOnly>
       <Outlet />
