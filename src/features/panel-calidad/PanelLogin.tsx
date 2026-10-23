@@ -44,7 +44,7 @@ export function PanelLogin() {
   });
   return (
     <div className="panel-login">
-      <motion.div className="login-form-side edge-surface" initial={quieto ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
+      <motion.div className="login-form-side" initial={quieto ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
         <div className="login-role">
           <span>● ROL: INGENIERÍA DE ALIMENTOS</span>
           <Link to="/">Cambiar acceso →</Link>
