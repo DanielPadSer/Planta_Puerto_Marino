@@ -125,24 +125,24 @@ function Escena({ zona, onSeleccionar, atenuadas = [], estados = {} }: Props) {
 
   return (
     <>
-      <hemisphereLight args={["#ffffff", "#cfd5e0", 1.05]} />
-      <directionalLight position={[-4, 26, 14]} intensity={2.1} color="#fffaf2" castShadow
+      <hemisphereLight data-tsd-source={undefined} args={["#ffffff", "#cfd5e0", 1.05]} />
+      <directionalLight data-tsd-source={undefined} position={[-4, 26, 14]} intensity={2.1} color="#fffaf2" castShadow
         shadow-mapSize={[2048, 2048]} shadow-radius={5} shadow-blurSamples={10} shadow-bias={-0.0006}
         shadow-camera-left={-19} shadow-camera-right={19} shadow-camera-top={19} shadow-camera-bottom={-19}
         shadow-camera-near={2} shadow-camera-far={80} target-position={[10.5, 0, -4.5]} />
-      <directionalLight position={[18, 10, -14]} intensity={0.4} />
-      <mesh rotation-x={-Math.PI / 2} position-y={-0.152} receiveShadow>
-        <planeGeometry args={[200, 200]} /><shadowMaterial opacity={0.18} />
+      <directionalLight data-tsd-source={undefined} position={[18, 10, -14]} intensity={0.4} />
+      <mesh data-tsd-source={undefined} rotation-x={-Math.PI / 2} position-y={-0.152} receiveShadow>
+        <planeGeometry data-tsd-source={undefined} args={[200, 200]} /><shadowMaterial data-tsd-source={undefined} opacity={0.18} />
       </mesh>
-      <primitive object={planta} onClick={click} />
-      <OrbitControls ref={controls} makeDefault enableDamping maxPolarAngle={Math.PI * 0.45} minDistance={5} maxDistance={150}
+      <primitive data-tsd-source={undefined} object={planta} onClick={click} />
+      <OrbitControls data-tsd-source={undefined} ref={controls} makeDefault enableDamping maxPolarAngle={Math.PI * 0.45} minDistance={5} maxDistance={150}
         onStart={() => { anim.current = 0; }} />
       {ESTACIONES.map((e) => {
         const zid = ID_ZONA[e.id]!;
         const activa = e.id === estacion, tenue = (!!estacion && !activa) || atenuadas.includes(zid);
         const est = estados[zid];
         return (
-          <Html key={e.id} position={e.ancla as V3} center zIndexRange={[20, 0]} style={{ pointerEvents: "auto" }}>
+          <Html data-tsd-source={undefined} key={e.id} position={e.ancla as V3} center zIndexRange={[20, 0]} style={{ pointerEvents: "auto" }}>
             <button onClick={() => onSeleccionar?.(zid)} className="relative flex items-center gap-2 whitespace-nowrap border bg-surface/95 text-foreground shadow-[var(--shadow-soft)] transition"
               style={{ padding: activa ? "10px 14px" : "5px 10px", borderRadius: activa ? 14 : 10, borderColor: activa ? e.color : undefined, opacity: tenue ? 0.6 : 1, transform: "translateY(-50%)" }}>
               <span className="shrink-0 rounded-[3px]" style={{ width: activa ? 12 : 9, height: activa ? 12 : 9, background: e.color }} />
