@@ -27,10 +27,10 @@ export function Acceso() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="access-screen relative min-h-screen overflow-hidden">
       <img src={maqueta.url} alt="" className="absolute inset-0 size-full scale-110 object-cover opacity-60 blur-md" />
       <div className="relative flex min-h-screen items-center justify-center p-6">
-        <main className="glass w-full max-w-[860px] rounded-[var(--radius-panel)] p-7">
+        <main className="glass edge-surface w-full max-w-[860px] p-7">
           <header className="flex flex-wrap items-start justify-between gap-4">
             <Marca subtitulo="PLANTA BUCARAMANGA · TRAZABILIDAD HACCP" />
             <div className="text-right">
