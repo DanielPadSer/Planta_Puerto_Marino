@@ -11,10 +11,20 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PanelBandejaRouteImport } from './routes/panel.bandeja'
+import { Route as PanelCatalogosRouteImport } from './routes/panel.catalogos'
+import { Route as PanelCuartosFriosRouteImport } from './routes/panel.cuartos-frios'
+import { Route as PanelDispositivosRouteImport } from './routes/panel.dispositivos'
+import { Route as PanelHistorialRouteImport } from './routes/panel.historial'
+import { Route as PanelLimpiezaRouteImport } from './routes/panel.limpieza'
 import { Route as PanelLoginRouteImport } from './routes/panel.login'
+import { Route as PanelPersonalRouteImport } from './routes/panel.personal'
+import { Route as PanelReglasRouteImport } from './routes/panel.reglas'
+import { Route as PanelReportesRouteImport } from './routes/panel.reportes'
+import { Route as PanelTrazabilidadRouteImport } from './routes/panel.trazabilidad'
 import { Route as PinEstacionRouteImport } from './routes/pin.$estacion'
 import { Route as PlantaIndexRouteImport } from './routes/planta.index'
 import { Route as PlantaZonaRouteImport } from './routes/planta.$zona'
+import { Route as PanelCatalogosAlergenosRouteImport } from './routes/panel.catalogos_.alergenos'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -26,9 +36,54 @@ const PanelBandejaRoute = PanelBandejaRouteImport.update({
   path: '/panel/bandeja',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PanelCatalogosRoute = PanelCatalogosRouteImport.update({
+  id: '/panel/catalogos',
+  path: '/panel/catalogos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PanelCuartosFriosRoute = PanelCuartosFriosRouteImport.update({
+  id: '/panel/cuartos-frios',
+  path: '/panel/cuartos-frios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PanelDispositivosRoute = PanelDispositivosRouteImport.update({
+  id: '/panel/dispositivos',
+  path: '/panel/dispositivos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PanelHistorialRoute = PanelHistorialRouteImport.update({
+  id: '/panel/historial',
+  path: '/panel/historial',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PanelLimpiezaRoute = PanelLimpiezaRouteImport.update({
+  id: '/panel/limpieza',
+  path: '/panel/limpieza',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PanelLoginRoute = PanelLoginRouteImport.update({
   id: '/panel/login',
   path: '/panel/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PanelPersonalRoute = PanelPersonalRouteImport.update({
+  id: '/panel/personal',
+  path: '/panel/personal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PanelReglasRoute = PanelReglasRouteImport.update({
+  id: '/panel/reglas',
+  path: '/panel/reglas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PanelReportesRoute = PanelReportesRouteImport.update({
+  id: '/panel/reportes',
+  path: '/panel/reportes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PanelTrazabilidadRoute = PanelTrazabilidadRouteImport.update({
+  id: '/panel/trazabilidad',
+  path: '/panel/trazabilidad',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PinEstacionRoute = PinEstacionRouteImport.update({
@@ -46,66 +101,141 @@ const PlantaZonaRoute = PlantaZonaRouteImport.update({
   path: '/planta/$zona',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PanelCatalogosAlergenosRoute = PanelCatalogosAlergenosRouteImport.update({
+  id: '/panel/catalogos_/alergenos',
+  path: '/panel/catalogos/alergenos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/panel/bandeja': typeof PanelBandejaRoute
+  '/panel/catalogos': typeof PanelCatalogosRoute
+  '/panel/cuartos-frios': typeof PanelCuartosFriosRoute
+  '/panel/dispositivos': typeof PanelDispositivosRoute
+  '/panel/historial': typeof PanelHistorialRoute
+  '/panel/limpieza': typeof PanelLimpiezaRoute
   '/panel/login': typeof PanelLoginRoute
+  '/panel/personal': typeof PanelPersonalRoute
+  '/panel/reglas': typeof PanelReglasRoute
+  '/panel/reportes': typeof PanelReportesRoute
+  '/panel/trazabilidad': typeof PanelTrazabilidadRoute
   '/pin/$estacion': typeof PinEstacionRoute
   '/planta/$zona': typeof PlantaZonaRoute
   '/planta/': typeof PlantaIndexRoute
+  '/panel/catalogos/alergenos': typeof PanelCatalogosAlergenosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/panel/bandeja': typeof PanelBandejaRoute
+  '/panel/catalogos': typeof PanelCatalogosRoute
+  '/panel/cuartos-frios': typeof PanelCuartosFriosRoute
+  '/panel/dispositivos': typeof PanelDispositivosRoute
+  '/panel/historial': typeof PanelHistorialRoute
+  '/panel/limpieza': typeof PanelLimpiezaRoute
   '/panel/login': typeof PanelLoginRoute
+  '/panel/personal': typeof PanelPersonalRoute
+  '/panel/reglas': typeof PanelReglasRoute
+  '/panel/reportes': typeof PanelReportesRoute
+  '/panel/trazabilidad': typeof PanelTrazabilidadRoute
   '/pin/$estacion': typeof PinEstacionRoute
   '/planta/$zona': typeof PlantaZonaRoute
   '/planta': typeof PlantaIndexRoute
+  '/panel/catalogos/alergenos': typeof PanelCatalogosAlergenosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/panel/bandeja': typeof PanelBandejaRoute
+  '/panel/catalogos': typeof PanelCatalogosRoute
+  '/panel/cuartos-frios': typeof PanelCuartosFriosRoute
+  '/panel/dispositivos': typeof PanelDispositivosRoute
+  '/panel/historial': typeof PanelHistorialRoute
+  '/panel/limpieza': typeof PanelLimpiezaRoute
   '/panel/login': typeof PanelLoginRoute
+  '/panel/personal': typeof PanelPersonalRoute
+  '/panel/reglas': typeof PanelReglasRoute
+  '/panel/reportes': typeof PanelReportesRoute
+  '/panel/trazabilidad': typeof PanelTrazabilidadRoute
   '/pin/$estacion': typeof PinEstacionRoute
   '/planta/$zona': typeof PlantaZonaRoute
   '/planta/': typeof PlantaIndexRoute
+  '/panel/catalogos_/alergenos': typeof PanelCatalogosAlergenosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/panel/bandeja'
+    | '/panel/catalogos'
+    | '/panel/cuartos-frios'
+    | '/panel/dispositivos'
+    | '/panel/historial'
+    | '/panel/limpieza'
     | '/panel/login'
+    | '/panel/personal'
+    | '/panel/reglas'
+    | '/panel/reportes'
+    | '/panel/trazabilidad'
     | '/pin/$estacion'
     | '/planta/$zona'
     | '/planta/'
+    | '/panel/catalogos/alergenos'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/panel/bandeja'
+    | '/panel/catalogos'
+    | '/panel/cuartos-frios'
+    | '/panel/dispositivos'
+    | '/panel/historial'
+    | '/panel/limpieza'
     | '/panel/login'
+    | '/panel/personal'
+    | '/panel/reglas'
+    | '/panel/reportes'
+    | '/panel/trazabilidad'
     | '/pin/$estacion'
     | '/planta/$zona'
     | '/planta'
+    | '/panel/catalogos/alergenos'
   id:
     | '__root__'
     | '/'
     | '/panel/bandeja'
+    | '/panel/catalogos'
+    | '/panel/cuartos-frios'
+    | '/panel/dispositivos'
+    | '/panel/historial'
+    | '/panel/limpieza'
     | '/panel/login'
+    | '/panel/personal'
+    | '/panel/reglas'
+    | '/panel/reportes'
+    | '/panel/trazabilidad'
     | '/pin/$estacion'
     | '/planta/$zona'
     | '/planta/'
+    | '/panel/catalogos_/alergenos'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PanelBandejaRoute: typeof PanelBandejaRoute
+  PanelCatalogosRoute: typeof PanelCatalogosRoute
+  PanelCuartosFriosRoute: typeof PanelCuartosFriosRoute
+  PanelDispositivosRoute: typeof PanelDispositivosRoute
+  PanelHistorialRoute: typeof PanelHistorialRoute
+  PanelLimpiezaRoute: typeof PanelLimpiezaRoute
   PanelLoginRoute: typeof PanelLoginRoute
+  PanelPersonalRoute: typeof PanelPersonalRoute
+  PanelReglasRoute: typeof PanelReglasRoute
+  PanelReportesRoute: typeof PanelReportesRoute
+  PanelTrazabilidadRoute: typeof PanelTrazabilidadRoute
   PinEstacionRoute: typeof PinEstacionRoute
   PlantaZonaRoute: typeof PlantaZonaRoute
   PlantaIndexRoute: typeof PlantaIndexRoute
+  PanelCatalogosAlergenosRoute: typeof PanelCatalogosAlergenosRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -124,11 +254,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PanelBandejaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/panel/catalogos': {
+      id: '/panel/catalogos'
+      path: '/panel/catalogos'
+      fullPath: '/panel/catalogos'
+      preLoaderRoute: typeof PanelCatalogosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/panel/cuartos-frios': {
+      id: '/panel/cuartos-frios'
+      path: '/panel/cuartos-frios'
+      fullPath: '/panel/cuartos-frios'
+      preLoaderRoute: typeof PanelCuartosFriosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/panel/dispositivos': {
+      id: '/panel/dispositivos'
+      path: '/panel/dispositivos'
+      fullPath: '/panel/dispositivos'
+      preLoaderRoute: typeof PanelDispositivosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/panel/historial': {
+      id: '/panel/historial'
+      path: '/panel/historial'
+      fullPath: '/panel/historial'
+      preLoaderRoute: typeof PanelHistorialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/panel/limpieza': {
+      id: '/panel/limpieza'
+      path: '/panel/limpieza'
+      fullPath: '/panel/limpieza'
+      preLoaderRoute: typeof PanelLimpiezaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/panel/login': {
       id: '/panel/login'
       path: '/panel/login'
       fullPath: '/panel/login'
       preLoaderRoute: typeof PanelLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/panel/personal': {
+      id: '/panel/personal'
+      path: '/panel/personal'
+      fullPath: '/panel/personal'
+      preLoaderRoute: typeof PanelPersonalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/panel/reglas': {
+      id: '/panel/reglas'
+      path: '/panel/reglas'
+      fullPath: '/panel/reglas'
+      preLoaderRoute: typeof PanelReglasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/panel/reportes': {
+      id: '/panel/reportes'
+      path: '/panel/reportes'
+      fullPath: '/panel/reportes'
+      preLoaderRoute: typeof PanelReportesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/panel/trazabilidad': {
+      id: '/panel/trazabilidad'
+      path: '/panel/trazabilidad'
+      fullPath: '/panel/trazabilidad'
+      preLoaderRoute: typeof PanelTrazabilidadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pin/$estacion': {
@@ -152,16 +345,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlantaZonaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/panel/catalogos_/alergenos': {
+      id: '/panel/catalogos_/alergenos'
+      path: '/panel/catalogos/alergenos'
+      fullPath: '/panel/catalogos/alergenos'
+      preLoaderRoute: typeof PanelCatalogosAlergenosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PanelBandejaRoute: PanelBandejaRoute,
+  PanelCatalogosRoute: PanelCatalogosRoute,
+  PanelCuartosFriosRoute: PanelCuartosFriosRoute,
+  PanelDispositivosRoute: PanelDispositivosRoute,
+  PanelHistorialRoute: PanelHistorialRoute,
+  PanelLimpiezaRoute: PanelLimpiezaRoute,
   PanelLoginRoute: PanelLoginRoute,
+  PanelPersonalRoute: PanelPersonalRoute,
+  PanelReglasRoute: PanelReglasRoute,
+  PanelReportesRoute: PanelReportesRoute,
+  PanelTrazabilidadRoute: PanelTrazabilidadRoute,
   PinEstacionRoute: PinEstacionRoute,
   PlantaZonaRoute: PlantaZonaRoute,
   PlantaIndexRoute: PlantaIndexRoute,
+  PanelCatalogosAlergenosRoute: PanelCatalogosAlergenosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
