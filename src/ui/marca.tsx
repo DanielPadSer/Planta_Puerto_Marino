@@ -1,12 +1,11 @@
-import { Fish, Wifi, WifiOff } from "lucide-react";
+import { Wifi, WifiOff } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/ui/logo";
 
 export function Marca({ subtitulo }: { subtitulo?: string }) {
   return (
     <div className="flex items-center gap-3">
-      <div className="grid size-12 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-[var(--shadow-primary)]">
-        <Fish size={20} />
-      </div>
+      <Logo />
       <div>
         <div className="flex items-center gap-2">
           <span className="text-lg font-semibold">Puerto Marino</span>

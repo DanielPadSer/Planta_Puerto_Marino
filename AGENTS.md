@@ -18,3 +18,4 @@
 - All quality screens share src/app/PanelLayout.tsx; local Zustand session guards run after hydration because the demo has no server authentication.
 - Quality mutations use pure domain validation and a shared append-only local audit store; product versions are copied, never overwritten, so historical lot approval versions remain stable.
 - Panel tables use the shared useSortableTable hook and native HTML tables, never TanStack Table.
+- Shared brand placements use src/ui/logo.tsx and the uploaded asset pointer; the favicon is a small raster derived from the same source so identity stays consistent.

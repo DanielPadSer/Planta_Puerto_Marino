@@ -2,7 +2,6 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Bell,
-  Layers3,
   Inbox,
   FileSliders,
   ShieldCheck,
@@ -23,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { usePanelSesion, useCalidad } from "@/features/panel-calidad/store";
 import { useConexion } from "@/features/panel-calidad/ui";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/ui/logo";
 export const panelNav = [
   { name: "Bandeja", path: "/panel/bandeja", icon: Inbox },
   { name: "Reglas por producto", path: "/panel/reglas", icon: FileSliders },
@@ -63,9 +63,7 @@ export function PanelLayout({
     <div className={cn("quality-panel", collapsed && "sidebar-mini")}>
       <aside className="quality-sidebar">
         <Link to="/panel/bandeja" className="quality-brand">
-          <span className="brand-symbol">
-            <Layers3 size={20} />
-          </span>
+          <Logo />
           {!collapsed && (
             <span>
               <strong>Puerto Marino</strong>
