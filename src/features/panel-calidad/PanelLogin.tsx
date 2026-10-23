@@ -24,7 +24,7 @@ const BURBUJAS = [
 function Ilustracion() {
   const quieto = useReducedMotion();
   return (
-    <svg viewBox="0 0 600 600" className="pl-ilus" aria-hidden="true">
+    <svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice" className="pl-ilus" aria-hidden="true">
       <defs>
         <linearGradient id="pl-mar" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="var(--primary)" />
