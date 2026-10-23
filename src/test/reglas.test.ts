@@ -3,8 +3,12 @@ import { calcularVencimiento, nivelExigido, pesoNeto, sugerirFEFO } from "@/doma
 
 describe("Matriz de limpieza", () => {
   it("pollo → pescado exige N2", () => expect(nivelExigido("ave", "pescado")).toBe("N2"));
-  it("hacia crustáceos exige N3", () => expect(nivelExigido("pescado", "crustaceos")).toBe("N3"));
-  it("desde moluscos exige N3", () => expect(nivelExigido("moluscos", "vegetal")).toBe("N3"));
+  it("hacia crustáceos exige N2 sin excepción", () => expect(nivelExigido("pescado", "crustaceos")).toBe("N2"));
+  it("desde moluscos exige N2 sin excepción", () => expect(nivelExigido("moluscos", "vegetal")).toBe("N2"));
+  it("mismo producto es N0 automático", () => expect(nivelExigido("pescado", "pescado")).toBe("N0"));
+  it("cambio de producto sin especie ni alérgenos exige N1", () => expect(nivelExigido("pescado", "pescado", false, false, false)).toBe("N1"));
+  it("cambio de especie en la misma categoría exige N2", () => expect(nivelExigido("pescado", "pescado", false, true, false)).toBe("N2"));
+  it("cambio de perfil en la misma categoría exige N2", () => expect(nivelExigido("pescado", "pescado", false, false, true)).toBe("N2"));
 });
 
 describe("Recepción", () => {
