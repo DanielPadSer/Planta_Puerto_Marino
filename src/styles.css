@@ -338,7 +338,6 @@
 .login-brand small { font-size:9px; }
 .login-role span,.login-role a { font-size:10px; }
 .login-forgot { margin:24px 0; }
-.access-screen aside.glass { box-shadow:var(--shadow-feather); }
 @media(max-width:800px) {
   .quality-brand>img+span { display:none; }
   .login-brand .puerto-logo { width:56px; height:56px; }
