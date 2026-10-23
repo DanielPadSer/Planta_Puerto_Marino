@@ -19,3 +19,4 @@
 - Quality mutations use pure domain validation and a shared append-only local audit store; product versions are copied, never overwritten, so historical lot approval versions remain stable.
 - Panel tables use the shared useSortableTable hook and native HTML tables, never TanStack Table.
 - Shared brand placements use src/ui/logo.tsx and the uploaded asset pointer; the favicon is a small raster derived from the same source so identity stays consistent.
+- R3F elements and drei components in Planta3D carry data-tsd-source={undefined}, because the dev source-injection plugin otherwise passes a dashed prop that R3F crashes on.
