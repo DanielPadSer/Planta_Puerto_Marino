@@ -1,6 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { ClientOnly, Link, useNavigate } from "@tanstack/react-router";
-import { Bell, ChevronLeft, ChevronRight, ClipboardList, Crosshair, Layers, ScanLine, Siren } from "lucide-react";
+import { Bell, ChevronLeft, ChevronRight, ClipboardList, Layers, ScanLine, Siren } from "lucide-react";
 import type { Zona, ZonaId } from "@/domain/types";
 import { OPERARIO_DEMO } from "@/mocks/estaciones";
 import { useSesion } from "@/features/auth/store";
@@ -37,7 +37,7 @@ export function ZonaVista({ zona }: { zona: Zona }) {
   const d = DETALLE[zona.id];
   const navigate = useNavigate();
   const op = useSesion((s) => s.operario) ?? OPERARIO_DEMO;
-  const [zoom, setZoom] = useState(false);
+  const [, setZoom] = useState(false);
   const [listo, setListo] = useState(false);
   const [tab, setTab] = useState<"registrar" | "flujo" | "lote">("registrar");
   const [info, setInfo] = useState<"pasa" | "registra" | "software">("registra");
