@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Bell, ChevronLeft, ChevronRight, ClipboardList, Crosshair, Layers, ScanLine, Siren, View } from "lucide-react";
-import maqueta from "@/assets/maqueta-planta.png.asset.json";
+import { Bell, ChevronLeft, ChevronRight, ClipboardList, Crosshair, Layers, ScanLine, Siren } from "lucide-react";
 import type { Zona, ZonaId } from "@/domain/types";
 import { OPERARIO_DEMO } from "@/mocks/estaciones";
 import { useSesion } from "@/features/auth/store";
@@ -9,15 +8,16 @@ import { Chip, Circulo, PillConexion } from "@/ui/marca";
 import { cn } from "@/lib/utils";
 import { ZONAS, RUTA_COCIDO, RUTA_MARINADO } from "./zonas";
 import { DETALLE, ORDEN_ZONAS } from "./zonaDetalle";
+import { Tablero, type TableroApi } from "./Tablero";
+import { DETALLE_IMG, MARCADA, PLANTA_GENERAL } from "./imagenes";
 import { PanelRecepcion } from "@/features/recepcion/PanelRecepcion";
 import { PanelCF1 } from "@/features/cf1/PanelCF1";
 import { PanelLimpieza } from "@/features/limpieza/PanelLimpieza";
 import { PanelEmpaque } from "@/features/empaque/PanelEmpaque";
 import { PanelGenerico } from "./PanelGenerico";
 
-const DURACION = 800;
+const DURACION = 500;
 const EASE = "cubic-bezier(.22,.8,.3,1)";
-const DESTINO = { x: 36, y: 52 }; // punto de la pantalla donde queda la zona
 
 const STEPPER: { ids: ZonaId[]; label: string }[] = [
   { ids: ["recepcion"], label: "1 Rec" },
@@ -41,15 +41,18 @@ export function ZonaVista({ zona }: { zona: Zona }) {
   const [listo, setListo] = useState(false);
   const [tab, setTab] = useState<"registrar" | "flujo" | "lote">("registrar");
   const [info, setInfo] = useState<"pasa" | "registra" | "software">("registra");
+  const [vista, setVista] = useState<"marcada" | "detalle">("marcada");
   const [dur, setDur] = useState(DURACION);
+  const tablero = useRef<TableroApi>(null);
 
   useEffect(() => {
     const reducido = usaMovimientoReducido();
     setDur(reducido ? 0 : DURACION);
+    setVista("marcada");
     const r = requestAnimationFrame(() => setZoom(true));
-    const t = setTimeout(() => setListo(true), reducido ? 0 : DURACION * 0.7);
+    const t = setTimeout(() => setListo(true), reducido ? 0 : DURACION * 0.5);
     return () => { cancelAnimationFrame(r); clearTimeout(t); };
-  }, []);
+  }, [zona.id]);
 
   const salir = useCallback(() => {
     setListo(false);
@@ -67,36 +70,24 @@ export function ZonaVista({ zona }: { zona: Zona }) {
   const prev = ZONAS.find((z) => z.id === ORDEN_ZONAS[(idx - 1 + ORDEN_ZONAS.length) % ORDEN_ZONAS.length])!;
   const next = ZONAS.find((z) => z.id === ORDEN_ZONAS[(idx + 1) % ORDEN_ZONAS.length])!;
 
-  const transform = zoom
-    ? `translate(${DESTINO.x - d.focal.x}%, ${DESTINO.y - d.focal.y}%) scale(${d.escala})`
-    : "translate(0,0) scale(1)";
-  const transicion = `transform ${dur}ms ${EASE}, transform-origin ${dur}ms ${EASE}`;
   const enRuta = RUTA_COCIDO.includes(zona.codigo) ? "cocido" : RUTA_MARINADO.includes(zona.codigo) ? "marinado" : null;
 
   return (
     <div className="relative h-screen min-h-[720px] overflow-hidden bg-background">
-      {/* Escena con zoom */}
-      <div className="absolute left-1/2 top-1/2 aspect-[16/9] w-[max(100vw,calc(100vh*16/9))] -translate-x-1/2 -translate-y-1/2">
-        <div className="absolute inset-0 will-change-transform" style={{ transform, transformOrigin: `${d.focal.x}% ${d.focal.y}%`, transition: transicion }}>
-          <img src={maqueta.url} alt={`Maqueta: ${zona.nombre}`} className="size-full" />
-          {d.hotspots.map((h) => (
-            <div key={h.texto} className={cn("absolute transition-opacity duration-300", listo ? "opacity-100" : "opacity-0")} style={{ left: `${h.x}%`, top: `${h.y}%`, transform: `translate(-50%,-50%) scale(${1 / d.escala})` }}>
-              <span className="flex items-center gap-2 whitespace-nowrap rounded-full border bg-surface px-3 py-1.5 font-mono text-[11px] font-semibold shadow-[var(--shadow-soft)]">
-                <span className={cn("size-2 rounded-full", h.tono === "ok" ? "bg-ok" : h.tono === "warn" ? "bg-warn" : h.tono === "danger" ? "bg-danger" : "bg-primary")} />{h.texto}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Escena: planta con la estación marcada o detalle de la estación */}
+      <Tablero key={zona.id} ref={tablero} controles={false}>
+        <img src={PLANTA_GENERAL} alt="" aria-hidden draggable={false} className="pointer-events-none absolute inset-0 size-full" />
+        {MARCADA[zona.id] && <img src={MARCADA[zona.id]} alt={`Planta con ${zona.nombre} marcada`} draggable={false}
+          className={cn("pointer-events-none absolute inset-0 size-full transition-opacity", zoom ? "opacity-100" : "opacity-0")} style={{ transitionDuration: `${dur}ms` }} />}
+        {DETALLE_IMG[zona.id] && <img src={DETALLE_IMG[zona.id]} alt={`Detalle de ${zona.nombre}`} draggable={false}
+          className={cn("pointer-events-none absolute inset-0 size-full transition-opacity", vista === "detalle" ? "opacity-100" : "opacity-0")} style={{ transitionDuration: `${dur}ms` }} />}
+      </Tablero>
 
-      {/* Callout */}
-      <div className={cn("glass absolute w-[300px] rounded-[var(--radius-card)] p-3 transition-all duration-500", listo ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0")}
-        style={{ left: `calc(${DESTINO.x}% - 150px)`, top: `calc(${DESTINO.y}% - 190px)` }}>
-        <div className="flex items-center gap-3">
-          <span className="grid size-12 place-items-center rounded-2xl" style={{ background: zona.color }}><Circulo codigo={zona.codigo} color={zona.color} size={36} /></span>
-          <div className="min-w-0"><p className="font-semibold"><span className="font-mono" style={{ color: zona.color }}>{zona.codigo}</span> {zona.nombre}</p><p className="text-xs text-muted-foreground">{d.subtitulo}</p></div>
-        </div>
-        <p className="mt-2 truncate font-mono text-[10px] text-muted-foreground">{d.meta}</p>
+      {/* Selector de vista */}
+      <div className="glass absolute left-1/2 top-20 flex -translate-x-[calc(50%+200px)] rounded-full p-1">
+        {([["marcada", "Planta marcada"], ["detalle", "Detalle de estación"]] as const).map(([k, l]) => (
+          <button key={k} onClick={() => setVista(k)} className={cn("tap rounded-full px-4 text-sm font-medium", vista === k ? "text-primary-foreground" : "text-muted-foreground")} style={vista === k ? { background: zona.color } : undefined}>{l}</button>
+        ))}
       </div>
 
       {/* Barra superior */}
@@ -149,8 +140,7 @@ export function ZonaVista({ zona }: { zona: Zona }) {
           <Link to="/planta/$zona" params={{ zona: next.id }} className="glass flex h-12 items-center gap-1 whitespace-nowrap rounded-full pl-4 pr-2 text-sm">{next.codigo} {next.nombre} <ChevronRight size={20} /></Link>
         </div>
         <div className="flex gap-2">
-          <span className="glass flex h-10 items-center gap-2 rounded-full px-3 text-xs"><View size={16} /> Vista isométrica 100 %</span>
-          <button onClick={() => { setZoom(false); requestAnimationFrame(() => requestAnimationFrame(() => setZoom(true))); }} className="glass flex h-10 items-center gap-2 rounded-full px-3 text-xs"><Crosshair size={16} style={{ color: zona.color }} /> Centrar {zona.nombre.split(" ")[0]}</button>
+          <button onClick={() => tablero.current?.reset()} className="glass flex h-10 items-center gap-2 rounded-full px-3 text-xs"><Crosshair size={16} style={{ color: zona.color }} /> Centrar vista · arrastra para moverte</button>
         </div>
       </div>
 
