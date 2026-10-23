@@ -1,0 +1,321 @@
+import { useState } from "react";
+import {
+  LockKeyhole,
+  ClipboardCheck,
+  CircleAlert,
+  CalendarClock,
+  Check,
+  X,
+  FileText,
+  ChevronRight,
+  ShieldCheck,
+} from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { PanelLayout } from "@/app/PanelLayout";
+import { useCalidad } from "./store";
+import { AVISOS } from "@/mocks/calidad";
+import {
+  KPIs,
+  Tabla,
+  TabsPanel,
+  EstadoChip,
+  MotivoForm,
+  Buscador,
+  useConexion,
+  EjemploPanel,
+} from "./ui";
+export function Bandeja() {
+  const { lotes, decidir } = useCalidad();
+  const [tab, setTab] = useState("Cuarentenas");
+  const [selected, setSelected] = useState("LT-0245");
+  const [search, setSearch] = useState("");
+  const [rechazar, setRechazar] = useState(false);
+  const online = useConexion();
+  const lote = lotes.find((l) => l.id === selected);
+  const cuarentenas = lotes.filter((l) => l.estado === "Cuarentena");
+  const filtered = cuarentenas.filter((l) =>
+    `${l.id} ${l.producto} ${l.motivo}`.toLowerCase().includes(search.toLowerCase()),
+  );
+  return (
+    <PanelLayout
+      title="Bandeja de decisiones"
+      subtitle="Lo que necesita tu decisión hoy"
+      active="/panel/bandeja"
+    >
+      <KPIs
+        items={[
+          {
+            label: "Lotes en cuarentena",
+            value: cuarentenas.length,
+            icon: <LockKeyhole size={20} />,
+          },
+          { label: "Limpiezas por verificar", value: 2, icon: <ClipboardCheck size={20} /> },
+          {
+            label: "No conformidades abiertas",
+            value: 4,
+            icon: <CircleAlert size={20} />,
+            danger: true,
+          },
+          { label: "Avisos de calibración", value: 2, icon: <CalendarClock size={20} /> },
+        ]}
+      />
+      <div className="decision-grid">
+        <section className="panel-surface decision-list">
+          <TabsPanel
+            tabs={[
+              "Cuarentenas",
+              "Limpiezas por verificar",
+              "No conformidades",
+              "Bloqueados",
+              "Avisos",
+            ]}
+            value={tab}
+            onChange={setTab}
+          />
+          <div className="p-4">
+            <Buscador
+              value={search}
+              onChange={setSearch}
+              placeholder="Buscar lote, producto o motivo…"
+            />
+          </div>
+          {tab === "Cuarentenas" ? (
+            <>
+              <p className="table-note">
+                {cuarentenas.length} lotes retenidos para validación técnica
+              </p>
+              <Tabla
+                data={filtered}
+                selected={selected}
+                onSelect={(l) => {
+                  setSelected(l.id);
+                  setRechazar(false);
+                }}
+                cols={[
+                  {
+                    key: "id",
+                    label: "Lote",
+                    render: (l) => (
+                      <span className="space-y-1">
+                        <span className="block font-mono text-primary">{l.id}</span>
+                        <EstadoChip tono="warn">Cuarentena</EstadoChip>
+                      </span>
+                    ),
+                  },
+                  {
+                    key: "producto",
+                    label: "Producto",
+                    render: (l) => (
+                      <span>
+                        <b>{l.producto}</b>
+                        <small className="block text-muted-foreground mt-1">
+                          {l.kg} kg · Regla v{l.version}
+                        </small>
+                      </span>
+                    ),
+                  },
+                  { key: "motivo", label: "Motivo" },
+                  {
+                    key: "medicion",
+                    label: "Medición vs. límite",
+                    render: (l) => <span className="measurement-bad">{l.medicion}</span>,
+                  },
+                  { key: "hora", label: "Ingreso" },
+                ]}
+              />
+            </>
+          ) : tab === "Avisos" ? (
+            <Tabla
+              data={AVISOS.filter((a) =>
+                `${a.nombre} ${a.detalle}`.toLowerCase().includes(search.toLowerCase()),
+              )}
+              cols={[
+                { key: "nombre", label: "Equipo / persona" },
+                { key: "tipo", label: "Tipo" },
+                {
+                  key: "detalle",
+                  label: "Vencimiento",
+                  render: (a) => <EstadoChip tono="warn">{a.detalle}</EstadoChip>,
+                },
+              ]}
+            />
+          ) : (
+            <Tabla
+              data={(tab === "Limpiezas por verificar"
+                ? [
+                    {
+                      id: "LIM-014",
+                      nombre: "Marmita 2",
+                      motivo: "Verificación de limpieza N2",
+                      estado: "Por verificar",
+                    },
+                    {
+                      id: "LIM-015",
+                      nombre: "Marinador 1",
+                      motivo: "Cambio de perfil de alérgenos",
+                      estado: "Por verificar",
+                    },
+                  ]
+                : tab === "Bloqueados"
+                  ? [
+                      {
+                        id: "EQ-06",
+                        nombre: "Tina de enfriamiento",
+                        motivo: "Mantenimiento pendiente",
+                        estado: "Bloqueado",
+                      },
+                    ]
+                  : [
+                      {
+                        id: "NC-014",
+                        nombre: "LT-0250",
+                        motivo: "Olor atípico",
+                        estado: "Abierta",
+                      },
+                      {
+                        id: "NC-015",
+                        nombre: "CF-2",
+                        motivo: "Temperatura fuera de rango",
+                        estado: "Abierta",
+                      },
+                      {
+                        id: "NC-016",
+                        nombre: "Báscula Cocina",
+                        motivo: "Modelo por confirmar",
+                        estado: "Abierta",
+                      },
+                      {
+                        id: "NC-017",
+                        nombre: "LT-0253",
+                        motivo: "Diferencia con factura",
+                        estado: "Abierta",
+                      },
+                    ]
+              ).filter((a) =>
+                `${a.nombre} ${a.motivo}`.toLowerCase().includes(search.toLowerCase()),
+              )}
+              cols={[
+                { key: "id", label: "Registro" },
+                { key: "nombre", label: "Lote / equipo" },
+                { key: "motivo", label: "Motivo" },
+                {
+                  key: "estado",
+                  label: "Estado",
+                  render: (a) => <EstadoChip tono="warn">{a.estado}</EstadoChip>,
+                },
+              ]}
+            />
+          )}
+          <div className="list-footer">
+            <ShieldCheck size={20} />
+            Cada decisión queda registrada con firma, dispositivo y hora.
+          </div>
+        </section>
+        <aside className="panel-surface decision-detail">
+          {lote ? (
+            <>
+              <div className="flex justify-between gap-3">
+                <h2>Detalle del lote {lote.id}</h2>
+                <EstadoChip
+                  tono={
+                    lote.estado === "Cuarentena"
+                      ? "warn"
+                      : lote.estado === "Liberado"
+                        ? "ok"
+                        : "danger"
+                  }
+                >
+                  {lote.estado === "Cuarentena" ? "En revisión" : lote.estado}
+                </EstadoChip>
+              </div>
+              <div className="detail-two">
+                <div>
+                  <small>PROVEEDOR</small>
+                  <b>{lote.proveedor}</b>
+                </div>
+                <div>
+                  <small>TEMP. / MEDICIÓN</small>
+                  <b className="text-danger">{lote.medicion}</b>
+                </div>
+              </div>
+              <h3>INSPECCIÓN TÉCNICA</h3>
+              <p className="detail-box">
+                {lote.motivo}. Revisar evidencia de recepción y contramuestra antes de decidir.
+                Termómetro calibrado · revisión organoléptica registrada.
+              </p>
+              <h3>DOCUMENTOS Y FOTOS DEL PROVEEDOR</h3>
+              <Button
+                variant="outline"
+                className="document-button"
+                onClick={() => toast.info("Documento simulado · Guía sanitaria AQS-8841")}
+              >
+                <FileText size={20} />
+                Guía sanitaria AQS-8841.pdf
+              </Button>
+              <h3>TRAZABILIDAD</h3>
+              <p className="detail-box">
+                Recepción R-01 · {lote.kg} kg · Regla aprobada v{lote.version}
+                <br />
+                Operario: Carlos Mendoza · Tablet Recepción 01
+              </p>
+              {lote.estado === "Cuarentena" ? (
+                <>
+                  <MotivoForm
+                    key={`${lote.id}-${rechazar}`}
+                    rechazo={rechazar}
+                    danger={rechazar}
+                    label={rechazar ? "Rechazar y registrar destino" : "Liberar lote"}
+                    onSubmit={(d) => {
+                      const error = decidir(lote.id, d.motivo, online, rechazar, d.destino ?? "");
+                      if (error) toast.error(error);
+                      else
+                        toast.success(
+                          `Lote ${lote.id} ${rechazar ? "rechazado" : "liberado"} · decisión registrada`,
+                        );
+                    }}
+                  >
+                    <p className="connection-warning">
+                      <CircleAlert size={20} />
+                      Liberar un lote exige conexión
+                    </p>
+                  </MotivoForm>
+                  <Button
+                    variant="outline"
+                    className="mt-2 w-full min-h-12 text-danger border-danger/30"
+                    onClick={() => setRechazar(!rechazar)}
+                  >
+                    {rechazar ? <Check size={20} /> : <X size={20} />}{" "}
+                    {rechazar ? "Volver a liberación" : "Rechazar y registrar destino"}
+                  </Button>
+                </>
+              ) : (
+                <p className="detail-box text-ok">
+                  Decisión registrada en el historial. Se conserva la regla v{lote.version}.
+                </p>
+              )}
+              <EjemploPanel />
+            </>
+          ) : (
+            <p>Selecciona un lote</p>
+          )}
+        </aside>
+      </div>
+      <div className="calibration-strip">
+        <CalendarClock size={20} />
+        <strong>Próximos vencimientos</strong>
+        {AVISOS.map((a) => (
+          <span key={a.id}>
+            {a.nombre}
+            <EstadoChip tono={a.tipo === "Calibración" ? "warn" : "primary"}>
+              {a.detalle.split("·")[1]}
+            </EstadoChip>
+          </span>
+        ))}
+        <Button variant="link" onClick={() => setTab("Avisos")}>
+          Ver avisos <ChevronRight size={20} />
+        </Button>
+      </div>
+    </PanelLayout>
+  );
+}

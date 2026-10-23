@@ -35,8 +35,8 @@ export function estaVencido(l: LoteStock, hoy: string): boolean {
 
 /* ---------- Limpieza ---------- */
 export type Categoria = "ave" | "pescado" | "crustaceos" | "moluscos" | "res" | "vegetal";
-export type Nivel = "N0" | "N1" | "N2" | "N3";
-export const NIVELES: Nivel[] = ["N0", "N1", "N2", "N3"];
+export type Nivel = "N0" | "N1" | "N2";
+export const NIVELES: Nivel[] = ["N0", "N1", "N2"];
 export const ALERGENOS: Categoria[] = ["crustaceos", "moluscos"];
 export const CATEGORIA_TEXTO: Record<Categoria, string> = {
   ave: "Ave", pescado: "Pescado", crustaceos: "Crustáceos", moluscos: "Moluscos", res: "Res", vegetal: "Vegetal",
@@ -47,19 +47,17 @@ export function esCambioAlergeno(anterior: Categoria, siguiente: Categoria): boo
   return ALERGENOS.includes(anterior) || ALERGENOS.includes(siguiente);
 }
 
-/** Matriz de ejemplo. Regla fija: cambio desde/hacia crustáceos o moluscos ⇒ N3 sin excepción. */
-export function nivelExigido(anterior: Categoria, siguiente: Categoria): Nivel {
-  if (esCambioAlergeno(anterior, siguiente)) return "N3";
-  if (anterior === siguiente) return "N0";
-  if (anterior === "vegetal" || siguiente === "vegetal") return "N1";
-  return "N2";
+/** Mismo producto: automático. Cambio de especie o perfil de alérgenos: profunda. */
+export function nivelExigido(anterior: Categoria, siguiente: Categoria, mismoProducto = anterior === siguiente, cambiaEspecie = anterior !== siguiente, cambiaPerfil = esCambioAlergeno(anterior, siguiente)): Nivel {
+  if (cambiaPerfil || cambiaEspecie) return "N2";
+  if (mismoProducto) return "N0";
+  return "N1";
 }
 
 export const PASOS_POE: Record<Nivel, string[]> = {
-  N0: ["Retiro de residuos visibles", "Enjuague con agua potable"],
-  N1: ["Retiro de residuos", "Enjuague", "Detergente y cepillado", "Enjuague final"],
-  N2: ["Retiro de residuos", "Pre-enjuague", "Detergente y cepillado", "Enjuague", "Desinfectante (tiempo de contacto)", "Enjuague final"],
-  N3: ["Desarme de piezas", "Retiro de residuos", "Pre-enjuague", "Detergente alcalino", "Enjuague", "Desinfectante (tiempo de contacto)", "Prueba de alérgenos", "Enjuague final y armado"],
+  N0: [],
+  N1: ["Retiro de residuos visibles"],
+  N2: ["Desarme y retiro de residuos", "Lavado con detergente alcalino", "Enjuague con agua potable", "Desinfección y tiempo de contacto", "Prueba ATP o de alérgeno · Si aplica · por confirmar", "Enjuague final y armado"],
 };
 
 /* ---------- Vencimiento ---------- */

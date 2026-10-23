@@ -9,6 +9,8 @@ export const Route = createFileRoute("/pin/$estacion")({
   },
   head: ({ loaderData }) => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: `PIN · ${loaderData?.nombre ?? "Estación"} · Puerto Marino` },
       { name: "description", content: "Ingresa con tu PIN de operario para registrar en la estación." },
       { property: "og:title", content: "Ingreso con PIN · Puerto Marino" },

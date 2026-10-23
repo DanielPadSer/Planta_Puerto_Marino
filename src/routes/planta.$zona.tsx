@@ -10,6 +10,8 @@ export const Route = createFileRoute("/planta/$zona")({
   },
   head: ({ loaderData }) => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: `${loaderData?.nombre ?? "Zona"} · Puerto Marino` },
       { name: "description", content: "Vista de zona de la planta Puerto Marino: registro, flujo y lote." },
       { property: "og:title", content: "Vista de zona · Puerto Marino" },

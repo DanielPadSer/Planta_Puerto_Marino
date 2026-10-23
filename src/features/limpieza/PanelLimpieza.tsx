@@ -21,12 +21,13 @@ const CATS = Object.keys(CATEGORIA_TEXTO) as Categoria[];
 export function PanelLimpieza({ color }: { color: string }) {
   const [equipos, setEquipos] = useState(EQUIPOS);
   const [selId, setSelId] = useState("m2");
-  const eq = equipos.find((e) => e.id === selId) ?? equipos[0]!;
+  const eq = equipos.find((e) => e.id === selId) ?? EQUIPOS[0];
   const [siguiente, setSiguiente] = useState<Categoria>("pescado");
   const [hechos, setHechos] = useState<Record<string, boolean>>({});
   const [ppm, setPpm] = useState("200");
   const [contacto, setContacto] = useState("10");
 
+  if (!eq) return null;
   const nivel = nivelExigido(eq.anterior, siguiente);
   const alergeno = esCambioAlergeno(eq.anterior, siguiente);
   const pasos = PASOS_POE[nivel];
@@ -68,7 +69,7 @@ export function PanelLimpieza({ color }: { color: string }) {
         </Seccion>
 
         <Seccion n={2} titulo="Nivel de limpieza exigido" activa>
-          <div className="grid grid-cols-4 gap-1">
+          <div className="grid grid-cols-3 gap-1">
             {NIVELES.map((n) => (
               <span key={n} className={cn("grid h-10 place-items-center rounded-xl font-mono text-sm font-bold", n === nivel ? "text-primary-foreground" : "bg-muted text-muted-foreground")} style={n === nivel ? { background: color } : undefined}>{n}</span>
             ))}
@@ -83,11 +84,12 @@ export function PanelLimpieza({ color }: { color: string }) {
               </select>
             </div>
           </div>
-          {alergeno && <p className="mt-2 text-[11px] text-danger">Cambio desde o hacia crustáceos y moluscos: N3 sin excepción.</p>}
+          {alergeno && <p className="mt-2 text-[11px] text-danger">Cambio de perfil de alérgenos: N2 sin excepción.</p>}
         </Seccion>
 
         <Seccion n={3} titulo="Registro de limpieza" extra={<span className="font-mono text-[11px]" style={{ color }}>{completados} de {pasos.length}</span>}>
-          <div className="mb-2 h-2 overflow-hidden rounded-full bg-muted"><div className="h-full transition-all" style={{ width: `${(completados / pasos.length) * 100}%`, background: color }} /></div>
+          <div className="mb-2 h-2 overflow-hidden rounded-full bg-muted"><div className="h-full transition-all" style={{ width: `${pasos.length ? (completados / pasos.length) * 100 : 100}%`, background: color }} /></div>
+          {nivel === "N0" && <Aviso tono="ok">Mismo producto · N0 automático.</Aviso>}
           <div className="space-y-1">
             {pasos.map((p) => {
               const k = `${eq.id}-${p}`;
