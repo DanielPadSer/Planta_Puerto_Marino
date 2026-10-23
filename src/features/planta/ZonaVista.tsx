@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Bell, ChevronLeft, ChevronRight, ClipboardList, Crosshair, Layers, ScanLine, Siren, View } from "lucide-react";
-import maqueta from "@/assets/maqueta-planta.png.asset.json";
+import { Bell, ChevronLeft, ChevronRight, ClipboardList, Crosshair, Layers, ScanLine, Siren } from "lucide-react";
 import type { Zona, ZonaId } from "@/domain/types";
 import { OPERARIO_DEMO } from "@/mocks/estaciones";
 import { useSesion } from "@/features/auth/store";
@@ -9,15 +8,16 @@ import { Chip, Circulo, PillConexion } from "@/ui/marca";
 import { cn } from "@/lib/utils";
 import { ZONAS, RUTA_COCIDO, RUTA_MARINADO } from "./zonas";
 import { DETALLE, ORDEN_ZONAS } from "./zonaDetalle";
+import { Tablero, type TableroApi } from "./Tablero";
+import { DETALLE_IMG, MARCADA, PLANTA_GENERAL } from "./imagenes";
 import { PanelRecepcion } from "@/features/recepcion/PanelRecepcion";
 import { PanelCF1 } from "@/features/cf1/PanelCF1";
 import { PanelLimpieza } from "@/features/limpieza/PanelLimpieza";
 import { PanelEmpaque } from "@/features/empaque/PanelEmpaque";
 import { PanelGenerico } from "./PanelGenerico";
 
-const DURACION = 800;
+const DURACION = 500;
 const EASE = "cubic-bezier(.22,.8,.3,1)";
-const DESTINO = { x: 36, y: 52 }; // punto de la pantalla donde queda la zona
 
 const STEPPER: { ids: ZonaId[]; label: string }[] = [
   { ids: ["recepcion"], label: "1 Rec" },
@@ -41,15 +41,18 @@ export function ZonaVista({ zona }: { zona: Zona }) {
   const [listo, setListo] = useState(false);
   const [tab, setTab] = useState<"registrar" | "flujo" | "lote">("registrar");
   const [info, setInfo] = useState<"pasa" | "registra" | "software">("registra");
+  const [vista, setVista] = useState<"marcada" | "detalle">("marcada");
   const [dur, setDur] = useState(DURACION);
+  const tablero = useRef<TableroApi>(null);
 
   useEffect(() => {
     const reducido = usaMovimientoReducido();
     setDur(reducido ? 0 : DURACION);
+    setVista("marcada");
     const r = requestAnimationFrame(() => setZoom(true));
-    const t = setTimeout(() => setListo(true), reducido ? 0 : DURACION * 0.7);
+    const t = setTimeout(() => setListo(true), reducido ? 0 : DURACION * 0.5);
     return () => { cancelAnimationFrame(r); clearTimeout(t); };
-  }, []);
+  }, [zona.id]);
 
   const salir = useCallback(() => {
     setListo(false);
@@ -67,10 +70,6 @@ export function ZonaVista({ zona }: { zona: Zona }) {
   const prev = ZONAS.find((z) => z.id === ORDEN_ZONAS[(idx - 1 + ORDEN_ZONAS.length) % ORDEN_ZONAS.length])!;
   const next = ZONAS.find((z) => z.id === ORDEN_ZONAS[(idx + 1) % ORDEN_ZONAS.length])!;
 
-  const transform = zoom
-    ? `translate(${DESTINO.x - d.focal.x}%, ${DESTINO.y - d.focal.y}%) scale(${d.escala})`
-    : "translate(0,0) scale(1)";
-  const transicion = `transform ${dur}ms ${EASE}, transform-origin ${dur}ms ${EASE}`;
   const enRuta = RUTA_COCIDO.includes(zona.codigo) ? "cocido" : RUTA_MARINADO.includes(zona.codigo) ? "marinado" : null;
 
   return (
