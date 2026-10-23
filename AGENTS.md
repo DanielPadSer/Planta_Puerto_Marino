@@ -14,7 +14,7 @@
 - Do not add a QueryClient or query provider; simulated data and interactive screens use local state, while mandatory TanStack Start routing remains intact.
 - Pure business rules live in src/domain, typed mock data in src/mocks; no backend — all data simulated.
 - Offline storage via Dexie in src/offline/db.ts, guarded for SSR (getDb returns null without indexedDB).
-- Plant map labels use % coordinates over a 16:9 cover container so they stay aligned with the mockup image.
+- The plant map is a lazily loaded client-only R3F scene (Planta3D) driven by the GLB asset and its manifest; manifest station ids map to ZonaId so the 3D model and domain stay decoupled.
 - All quality screens share src/app/PanelLayout.tsx; local Zustand session guards run after hydration because the demo has no server authentication.
 - Quality mutations use pure domain validation and a shared append-only local audit store; product versions are copied, never overwritten, so historical lot approval versions remain stable.
 - Panel tables use the shared useSortableTable hook and native HTML tables, never TanStack Table.

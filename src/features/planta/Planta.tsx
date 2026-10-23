@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { lazy, Suspense, useState } from "react";
+import { ClientOnly, Link, useNavigate } from "@tanstack/react-router";
 import { AlertTriangle, Bell, Camera, ChevronLeft, Layers, List, Map as MapIcon, ScanLine, Search, Siren, TrendingUp } from "lucide-react";
 import { ALERTAS, OPERARIO_DEMO } from "@/mocks/estaciones";
 import type { FiltroRuta, ZonaId } from "@/domain/types";
@@ -7,8 +7,8 @@ import { useSesion } from "@/features/auth/store";
 import { PillConexion } from "@/ui/marca";
 import { cn } from "@/lib/utils";
 import { RUTA_COCIDO, RUTA_MARINADO, ZONAS } from "./zonas";
-import { Tablero } from "./Tablero";
-import { MARCADA, PLANTA_GENERAL } from "./imagenes";
+
+const Planta3D = lazy(() => import("./Planta3D"));
 
 const SOLO_COCIDO: ZonaId[] = ["marinado", "cf3"];
 const SOLO_MARINADO: ZonaId[] = ["coccion", "cf2"];
@@ -18,32 +18,20 @@ export function Planta() {
   const op = useSesion((s) => s.operario) ?? OPERARIO_DEMO;
   const [filtro, setFiltro] = useState<FiltroRuta>("todo");
   const [tab, setTab] = useState<"resumen" | "preguntas" | "rutas">("resumen");
-  const [hover, setHover] = useState<ZonaId | null>(null);
+  const navigate = useNavigate();
 
   const atenuada = (id: ZonaId) => (filtro === "cocido" && SOLO_COCIDO.includes(id)) || (filtro === "marinado" && SOLO_MARINADO.includes(id));
 
   return (
     <div className="relative h-screen min-h-[720px] overflow-hidden bg-background">
-      <Tablero>
-        <img src={PLANTA_GENERAL} alt="Maqueta isométrica de la planta Puerto Marino" className="pointer-events-none size-full" draggable={false} />
-        {ZONAS.map((z) => MARCADA[z.id] && (
-          <img key={z.id} src={MARCADA[z.id]} alt="" aria-hidden draggable={false} loading="lazy"
-            className={cn("pointer-events-none absolute inset-0 size-full transition-opacity duration-300", hover === z.id ? "opacity-100" : "opacity-0")} />
-        ))}
-        {ZONAS.map((z) => (
-          <Link key={z.id} to="/planta/$zona" params={{ zona: z.id }} aria-label={`${z.codigo} ${z.nombre}`}
-            onMouseEnter={() => setHover(z.id)} onMouseLeave={() => setHover(null)} onFocus={() => setHover(z.id)} onBlur={() => setHover(null)}
-            className={cn("absolute h-[4.5%] w-[13%] -translate-x-1/2 -translate-y-1/2 rounded-full outline-none transition", atenuada(z.id) ? "bg-background/60" : "focus-visible:ring-2 focus-visible:ring-primary")}
-            style={{ left: `${z.x}%`, top: `${z.y}%`, boxShadow: hover === z.id ? `0 0 0 2px ${z.color}` : undefined }}
-            draggable={false}>
-            {z.estado && <span className={cn("absolute -top-3 right-0 whitespace-nowrap rounded-full px-1.5 font-mono text-[10px] font-semibold shadow-[var(--shadow-soft)]", z.estado.tono === "danger" ? "bg-danger text-primary-foreground" : "bg-warn text-foreground")}>{z.estado.texto}</span>}
-            {z.alerta && <span className="absolute -left-1 -top-1 size-2.5 animate-pulse rounded-full bg-danger ring-2 ring-surface" />}
-          </Link>
-        ))}
-      </Tablero>
+      <ClientOnly><Suspense fallback={null}>
+        <Planta3D zona={null} onSeleccionar={(z) => navigate({ to: "/planta/$zona", params: { zona: z } })}
+          atenuadas={ZONAS.map((z) => z.id).filter(atenuada)}
+          estados={Object.fromEntries(ZONAS.filter((z) => z.estado || z.alerta).map((z) => [z.id, { texto: z.estado?.texto ?? "", tono: z.estado?.tono ?? "warn", alerta: z.alerta }]))} />
+      </Suspense></ClientOnly>
 
       {/* Barra superior */}
-      <header className="absolute inset-x-4 top-4 flex items-center gap-3">
+      <header className="absolute z-40 inset-x-4 top-4 flex items-center gap-3">
         <Link to="/" aria-label="Volver" className="glass tap grid place-items-center rounded-full"><ChevronLeft size={20} /></Link>
         <div className="glass flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-4">
           <span className="grid size-9 place-items-center rounded-full bg-primary font-mono text-xs font-bold text-primary-foreground">PM</span>
@@ -72,7 +60,7 @@ export function Planta() {
       </nav>
 
       {/* Panel derecho */}
-      <aside className="glass absolute bottom-4 right-4 top-24 flex w-[340px] flex-col rounded-[var(--radius-panel)] p-4">
+      <aside className="glass absolute z-40 bottom-4 right-4 top-24 flex w-[340px] flex-col rounded-[var(--radius-panel)] p-4">
         <div className="flex items-center gap-3">
           <span className="grid size-10 place-items-center rounded-xl bg-primary text-primary-foreground"><MapIcon size={20} /></span>
           <div className="flex-1"><p className="font-semibold">Planta Puerto Marino</p><p className="text-[11px] text-muted-foreground">Toca una zona del mapa para entrar</p></div>

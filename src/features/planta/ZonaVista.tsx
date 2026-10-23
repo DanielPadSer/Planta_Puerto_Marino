@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
-import { Bell, ChevronLeft, ChevronRight, ClipboardList, Crosshair, Layers, ScanLine, Siren } from "lucide-react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
+import { ClientOnly, Link, useNavigate } from "@tanstack/react-router";
+import { Bell, ChevronLeft, ChevronRight, ClipboardList, Layers, ScanLine, Siren } from "lucide-react";
 import type { Zona, ZonaId } from "@/domain/types";
 import { OPERARIO_DEMO } from "@/mocks/estaciones";
 import { useSesion } from "@/features/auth/store";
@@ -8,13 +8,13 @@ import { Chip, Circulo, PillConexion } from "@/ui/marca";
 import { cn } from "@/lib/utils";
 import { ZONAS, RUTA_COCIDO, RUTA_MARINADO } from "./zonas";
 import { DETALLE, ORDEN_ZONAS } from "./zonaDetalle";
-import { Tablero, type TableroApi } from "./Tablero";
-import { DETALLE_IMG, MARCADA, PLANTA_GENERAL } from "./imagenes";
 import { PanelRecepcion } from "@/features/recepcion/PanelRecepcion";
 import { PanelCF1 } from "@/features/cf1/PanelCF1";
 import { PanelLimpieza } from "@/features/limpieza/PanelLimpieza";
 import { PanelEmpaque } from "@/features/empaque/PanelEmpaque";
 import { PanelGenerico } from "./PanelGenerico";
+
+const Planta3D = lazy(() => import("./Planta3D"));
 
 const DURACION = 500;
 const EASE = "cubic-bezier(.22,.8,.3,1)";
@@ -37,18 +37,15 @@ export function ZonaVista({ zona }: { zona: Zona }) {
   const d = DETALLE[zona.id];
   const navigate = useNavigate();
   const op = useSesion((s) => s.operario) ?? OPERARIO_DEMO;
-  const [zoom, setZoom] = useState(false);
+  const [, setZoom] = useState(false);
   const [listo, setListo] = useState(false);
   const [tab, setTab] = useState<"registrar" | "flujo" | "lote">("registrar");
   const [info, setInfo] = useState<"pasa" | "registra" | "software">("registra");
-  const [vista, setVista] = useState<"marcada" | "detalle">("marcada");
   const [dur, setDur] = useState(DURACION);
-  const tablero = useRef<TableroApi>(null);
 
   useEffect(() => {
     const reducido = usaMovimientoReducido();
     setDur(reducido ? 0 : DURACION);
-    setVista("marcada");
     const r = requestAnimationFrame(() => setZoom(true));
     const t = setTimeout(() => setListo(true), reducido ? 0 : DURACION * 0.5);
     return () => { cancelAnimationFrame(r); clearTimeout(t); };
@@ -75,23 +72,12 @@ export function ZonaVista({ zona }: { zona: Zona }) {
   return (
     <div className="relative h-screen min-h-[720px] overflow-hidden bg-background">
       {/* Escena: planta con la estación marcada o detalle de la estación */}
-      <Tablero key={zona.id} ref={tablero} controles={false}>
-        <img src={PLANTA_GENERAL} alt="" aria-hidden draggable={false} className="pointer-events-none absolute inset-0 size-full" />
-        {MARCADA[zona.id] && <img src={MARCADA[zona.id]} alt={`Planta con ${zona.nombre} marcada`} draggable={false}
-          className={cn("pointer-events-none absolute inset-0 size-full transition-opacity", zoom ? "opacity-100" : "opacity-0")} style={{ transitionDuration: `${dur}ms` }} />}
-        {DETALLE_IMG[zona.id] && <img src={DETALLE_IMG[zona.id]} alt={`Detalle de ${zona.nombre}`} draggable={false}
-          className={cn("pointer-events-none absolute inset-0 size-full transition-opacity", vista === "detalle" ? "opacity-100" : "opacity-0")} style={{ transitionDuration: `${dur}ms` }} />}
-      </Tablero>
-
-      {/* Selector de vista */}
-      <div className="glass absolute left-1/2 top-20 flex -translate-x-[calc(50%+200px)] rounded-full p-1">
-        {([["marcada", "Planta marcada"], ["detalle", "Detalle de estación"]] as const).map(([k, l]) => (
-          <button key={k} onClick={() => setVista(k)} className={cn("tap rounded-full px-4 text-sm font-medium", vista === k ? "text-primary-foreground" : "text-muted-foreground")} style={vista === k ? { background: zona.color } : undefined}>{l}</button>
-        ))}
-      </div>
+      <ClientOnly><Suspense fallback={null}>
+        <Planta3D zona={zona.id} onSeleccionar={(z) => navigate({ to: "/planta/$zona", params: { zona: z } })} />
+      </Suspense></ClientOnly>
 
       {/* Barra superior */}
-      <header className="absolute inset-x-4 top-4 flex items-center gap-2">
+      <header className="absolute z-40 inset-x-4 top-4 flex items-center gap-2">
         <button onClick={salir} aria-label="Volver a la planta" className="glass tap grid place-items-center rounded-full"><ChevronLeft size={20} /></button>
         <span className="glass flex h-12 items-center gap-2 rounded-full px-4 text-xs">
           <span className="text-muted-foreground">PLANTA ›</span><span className="size-2 rounded-full" style={{ background: zona.color }} /><b className="whitespace-nowrap">{zona.codigo} {zona.nombre}</b>
@@ -139,13 +125,10 @@ export function ZonaVista({ zona }: { zona: Zona }) {
           <Link to="/planta/$zona" params={{ zona: prev.id }} className="glass flex h-12 items-center gap-1 whitespace-nowrap rounded-full pl-2 pr-4 text-sm"><ChevronLeft size={20} /> {prev.codigo} {prev.nombre}</Link>
           <Link to="/planta/$zona" params={{ zona: next.id }} className="glass flex h-12 items-center gap-1 whitespace-nowrap rounded-full pl-4 pr-2 text-sm">{next.codigo} {next.nombre} <ChevronRight size={20} /></Link>
         </div>
-        <div className="flex gap-2">
-          <button onClick={() => tablero.current?.reset()} className="glass flex h-10 items-center gap-2 rounded-full px-3 text-xs"><Crosshair size={16} style={{ color: zona.color }} /> Centrar vista · arrastra para moverte</button>
-        </div>
       </div>
 
       {/* Panel derecho */}
-      <aside className={cn("absolute bottom-4 right-4 top-20 flex w-[400px] flex-col overflow-hidden rounded-[var(--radius-panel)] bg-surface shadow-[var(--shadow-soft)] transition-all duration-500", listo ? "translate-x-0 opacity-100" : "translate-x-[110%] opacity-0")} style={{ transitionTimingFunction: EASE }}>
+      <aside className={cn("absolute z-40 bottom-4 right-4 top-20 flex w-[400px] flex-col overflow-hidden rounded-[var(--radius-panel)] bg-surface shadow-[var(--shadow-soft)] transition-all duration-500", listo ? "translate-x-0 opacity-100" : "translate-x-[110%] opacity-0")} style={{ transitionTimingFunction: EASE }}>
         <div className="p-4 pb-0">
           <div className="flex items-start gap-3">
             <span className="grid size-12 shrink-0 place-items-center rounded-2xl" style={{ background: zona.color }}><Circulo codigo={zona.codigo} color={zona.color} size={36} /></span>
