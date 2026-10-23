@@ -140,8 +140,7 @@ export function ZonaVista({ zona }: { zona: Zona }) {
           <Link to="/planta/$zona" params={{ zona: next.id }} className="glass flex h-12 items-center gap-1 whitespace-nowrap rounded-full pl-4 pr-2 text-sm">{next.codigo} {next.nombre} <ChevronRight size={20} /></Link>
         </div>
         <div className="flex gap-2">
-          <span className="glass flex h-10 items-center gap-2 rounded-full px-3 text-xs"><View size={16} /> Vista isométrica 100 %</span>
-          <button onClick={() => { setZoom(false); requestAnimationFrame(() => requestAnimationFrame(() => setZoom(true))); }} className="glass flex h-10 items-center gap-2 rounded-full px-3 text-xs"><Crosshair size={16} style={{ color: zona.color }} /> Centrar {zona.nombre.split(" ")[0]}</button>
+          <button onClick={() => tablero.current?.reset()} className="glass flex h-10 items-center gap-2 rounded-full px-3 text-xs"><Crosshair size={16} style={{ color: zona.color }} /> Centrar vista · arrastra para moverte</button>
         </div>
       </div>
 
