@@ -1,0 +1,603 @@
+{
+ "modelo": "planta_embutidos.glb",
+ "unidades": "metros",
+ "ejes": "glTF estándar: Y hacia arriba. En el plano, X = este y -Z = norte.",
+ "nota_escala": "La planta está ampliada 1.7x para que se lean los equipos; los equipos conservan su tamaño real. Las áreas (area_m2) son las del plano real.",
+ "muros": {
+  "nodos": "Muros/Muro_###",
+  "geometria": "Cada muro mide 1 m de alto en su geometría; la altura visible es scale.y.",
+  "vista_general": "scale.y = max(min(z1, 0.32) - z0, 0.001)  (así viene el archivo)",
+  "vista_detalle": "Para los muros listados en muros_fondo de la estación: scale.y = z1 - z0 (z0 y z1 vienen en los extras de cada nodo)."
+ },
+ "estaciones": [
+  {
+   "id": "P0",
+   "num": "0",
+   "nombre": "Pedidos y plan",
+   "subtitulo": "OP del día y faltantes",
+   "color": "#a78bfa",
+   "area_m2": null,
+   "espacio": "Oficina de planeación (fuera de planta)",
+   "equipos": [],
+   "recibe_de": [],
+   "entrega_a": [
+    "P1"
+   ],
+   "nodos": {
+    "zona": "Zona_P0",
+    "piso": "Zona_P0_piso",
+    "borde": "Zona_P0_borde",
+    "muros_color": "Zona_P0_muros",
+    "ancla": "Ancla_P0",
+    "camara": "Camara_P0",
+    "equipos": "Equipos_P0"
+   },
+   "ancla": [
+    3.23,
+    2.95,
+    4.93
+   ],
+   "camara_detalle": {
+    "posicion": [
+     -3.7161,
+     10.931,
+     12.8497
+    ],
+    "objetivo": [
+     3.23,
+     0.7,
+     4.93
+    ],
+    "fov_vertical": 20
+   },
+   "muros_fondo": []
+  },
+  {
+   "id": "P1",
+   "num": "1",
+   "nombre": "Recepción",
+   "subtitulo": "Báscula descuenta la tara",
+   "color": "#3b9bff",
+   "area_m2": 16.85,
+   "espacio": "Recepción",
+   "equipos": [
+    "Báscula de piso"
+   ],
+   "recibe_de": [
+    "P0"
+   ],
+   "entrega_a": [
+    "P2"
+   ],
+   "nodos": {
+    "zona": "Zona_P1",
+    "piso": "Zona_P1_piso",
+    "borde": "Zona_P1_borde",
+    "muros_color": "Zona_P1_muros",
+    "ancla": "Ancla_P1",
+    "camara": "Camara_P1",
+    "equipos": "Equipos_P1"
+   },
+   "ancla": [
+    6.63,
+    2.95,
+    -6.12
+   ],
+   "camara_detalle": {
+    "posicion": [
+     -12.3645,
+     29.0159,
+     15.1915
+    ],
+    "objetivo": [
+     6.86,
+     0.7,
+     -6.7275
+    ],
+    "fov_vertical": 20
+   },
+   "muros_fondo": [
+    "Muro_050",
+    "Muro_054",
+    "Muro_055",
+    "Muro_056",
+    "Muro_063",
+    "Muro_064",
+    "Muro_065"
+   ]
+  },
+  {
+   "id": "P2",
+   "num": "2",
+   "nombre": "CF-1 materia prima",
+   "subtitulo": "FEFO y retiros parciales",
+   "color": "#22d3ee",
+   "area_m2": 22.27,
+   "espacio": "Cuarto frío materia prima",
+   "equipos": [
+    "Estanterías de cuarto frío"
+   ],
+   "recibe_de": [
+    "P1"
+   ],
+   "entrega_a": [
+    "P3A",
+    "P3B"
+   ],
+   "nodos": {
+    "zona": "Zona_P2",
+    "piso": "Zona_P2_piso",
+    "borde": "Zona_P2_borde",
+    "muros_color": "Zona_P2_muros",
+    "ancla": "Ancla_P2",
+    "camara": "Camara_P2",
+    "equipos": "Equipos_P2"
+   },
+   "ancla": [
+    11.985,
+    2.95,
+    -5.78
+   ],
+   "camara_detalle": {
+    "posicion": [
+     -4.4951,
+     24.9737,
+     13.0699
+    ],
+    "objetivo": [
+     11.985,
+     0.7,
+     -5.72
+    ],
+    "fov_vertical": 20
+   },
+   "muros_fondo": [
+    "Muro_054",
+    "Muro_066",
+    "Muro_070",
+    "Muro_075"
+   ]
+  },
+  {
+   "id": "P3A",
+   "num": "3A",
+   "nombre": "Cocción y enfriamiento",
+   "subtitulo": "Solo en equipo liberado",
+   "color": "#ff7a2f",
+   "area_m2": 15.96,
+   "espacio": "Cocina",
+   "equipos": [
+    "Paila / marmita 500 L",
+    "Horno combi",
+    "Paila / marmita 200 L"
+   ],
+   "recibe_de": [
+    "P2",
+    "PL"
+   ],
+   "entrega_a": [
+    "P4"
+   ],
+   "nodos": {
+    "zona": "Zona_P3A",
+    "piso": "Zona_P3A_piso",
+    "borde": "Zona_P3A_borde",
+    "muros_color": "Zona_P3A_muros",
+    "ancla": "Ancla_P3A",
+    "camara": "Camara_P3A",
+    "equipos": "Equipos_P3A"
+   },
+   "ancla": [
+    2.72,
+    2.95,
+    -8.33
+   ],
+   "camara_detalle": {
+    "posicion": [
+     -13.032,
+     23.4189,
+     9.464
+    ],
+    "objetivo": [
+     2.3925,
+     0.7,
+     -8.1225
+    ],
+    "fov_vertical": 20
+   },
+   "muros_fondo": [
+    "Muro_051",
+    "Muro_052",
+    "Muro_057",
+    "Muro_058",
+    "Muro_059"
+   ]
+  },
+  {
+   "id": "PL",
+   "num": "",
+   "nombre": "Limpieza y verificación",
+   "subtitulo": "Libera el equipo",
+   "color": "#a3e635",
+   "area_m2": 2.31,
+   "espacio": "Canastillas (lavado de canastillas y utensilios)",
+   "equipos": [],
+   "recibe_de": [],
+   "entrega_a": [
+    "P3A",
+    "P3B"
+   ],
+   "nodos": {
+    "zona": "Zona_PL",
+    "piso": "Zona_PL_piso",
+    "borde": "Zona_PL_borde",
+    "muros_color": "Zona_PL_muros",
+    "ancla": "Ancla_PL",
+    "camara": "Camara_PL",
+    "equipos": "Equipos_PL"
+   },
+   "ancla": [
+    3.4,
+    2.95,
+    -1.445
+   ],
+   "camara_detalle": {
+    "posicion": [
+     -3.5086,
+     10.931,
+     6.4622
+    ],
+    "objetivo": [
+     3.4375,
+     0.7,
+     -1.4575
+    ],
+    "fov_vertical": 20
+   },
+   "muros_fondo": [
+    "Muro_061",
+    "Muro_062"
+   ]
+  },
+  {
+   "id": "P3B",
+   "num": "3B",
+   "nombre": "Marinado",
+   "subtitulo": "Solo en equipo liberado",
+   "color": "#ff4f7b",
+   "area_m2": 7.51,
+   "espacio": "Sala de proceso, sector occidental",
+   "equipos": [
+    "Cortadora de vegetales",
+    "Cortadora de proteínas",
+    "Bombo de marinado (ilustrativo)"
+   ],
+   "recibe_de": [
+    "P2",
+    "PL"
+   ],
+   "entrega_a": [
+    "P4"
+   ],
+   "nodos": {
+    "zona": "Zona_P3B",
+    "piso": "Zona_P3B_piso",
+    "borde": "Zona_P3B_borde",
+    "muros_color": "Zona_P3B_muros",
+    "ancla": "Ancla_P3B",
+    "camara": "Camara_P3B",
+    "equipos": "Equipos_P3B"
+   },
+   "ancla": [
+    4.08,
+    2.95,
+    -15.3
+   ],
+   "camara_detalle": {
+    "posicion": [
+     -6.8466,
+     15.866,
+     -3.4627
+    ],
+    "objetivo": [
+     3.45,
+     0.7,
+     -15.2025
+    ],
+    "fov_vertical": 20
+   },
+   "muros_fondo": [
+    "Muro_026",
+    "Muro_027",
+    "Muro_030",
+    "Muro_031",
+    "Muro_032"
+   ]
+  },
+  {
+   "id": "P4",
+   "num": "4",
+   "nombre": "Porcionado y empaque",
+   "subtitulo": "Etiqueta por paquete",
+   "color": "#fbbf24",
+   "area_m2": 14.84,
+   "espacio": "Sala de proceso, sector oriental",
+   "equipos": [
+    "Mesa + molino de carne",
+    "Mesa + embutidora",
+    "Mesa de trabajo inox.",
+    "Atadora de salchichas"
+   ],
+   "recibe_de": [
+    "P3A",
+    "P3B"
+   ],
+   "entrega_a": [
+    "P5A",
+    "P5B"
+   ],
+   "nodos": {
+    "zona": "Zona_P4",
+    "piso": "Zona_P4_piso",
+    "borde": "Zona_P4_borde",
+    "muros_color": "Zona_P4_muros",
+    "ancla": "Ancla_P4",
+    "camara": "Camara_P4",
+    "equipos": "Equipos_P4"
+   },
+   "ancla": [
+    10.88,
+    2.95,
+    -14.195
+   ],
+   "camara_detalle": {
+    "posicion": [
+     -1.362,
+     18.6946,
+     -0.2406
+    ],
+    "objetivo": [
+     10.855,
+     0.7,
+     -14.17
+    ],
+    "fov_vertical": 20
+   },
+   "muros_fondo": [
+    "Muro_028",
+    "Muro_033",
+    "Muro_034",
+    "Muro_035",
+    "Muro_036",
+    "Muro_037",
+    "Muro_038",
+    "Muro_039",
+    "Muro_040",
+    "Muro_041",
+    "Muro_067",
+    "Muro_068",
+    "Muro_069",
+    "Muro_071",
+    "Muro_072"
+   ]
+  },
+  {
+   "id": "P5A",
+   "num": "5A",
+   "nombre": "CF-2 terminado",
+   "subtitulo": "Liberado y vigente",
+   "color": "#2dd4bf",
+   "area_m2": 9.6,
+   "espacio": "Cuarto frío materia terminada",
+   "equipos": [
+    "Estanterías de cuarto frío"
+   ],
+   "recibe_de": [
+    "P4"
+   ],
+   "entrega_a": [
+    "P6"
+   ],
+   "nodos": {
+    "zona": "Zona_P5A",
+    "piso": "Zona_P5A_piso",
+    "borde": "Zona_P5A_borde",
+    "muros_color": "Zona_P5A_muros",
+    "ancla": "Ancla_P5A",
+    "camara": "Camara_P5A",
+    "equipos": "Equipos_P5A"
+   },
+   "ancla": [
+    17.51,
+    2.95,
+    -11.475
+   ],
+   "camara_detalle": {
+    "posicion": [
+     8.3461,
+     14.1608,
+     -1.0551
+    ],
+    "objetivo": [
+     17.485,
+     0.7,
+     -11.475
+    ],
+    "fov_vertical": 20
+   },
+   "muros_fondo": [
+    "Muro_022",
+    "Muro_023",
+    "Muro_024",
+    "Muro_025",
+    "Muro_073"
+   ]
+  },
+  {
+   "id": "P5B",
+   "num": "5B",
+   "nombre": "CF-3 ultracongelador",
+   "subtitulo": "Congelado verificado",
+   "color": "#7c8cff",
+   "area_m2": 3.85,
+   "espacio": "Ultracongelador",
+   "equipos": [
+    "Estanterías de congelación"
+   ],
+   "recibe_de": [
+    "P4"
+   ],
+   "entrega_a": [
+    "P6"
+   ],
+   "nodos": {
+    "zona": "Zona_P5B",
+    "piso": "Zona_P5B_piso",
+    "borde": "Zona_P5B_borde",
+    "muros_color": "Zona_P5B_muros",
+    "ancla": "Ancla_P5B",
+    "camara": "Camara_P5B",
+    "equipos": "Equipos_P5B"
+   },
+   "ancla": [
+    17.51,
+    2.95,
+    -15.725
+   ],
+   "camara_detalle": {
+    "posicion": [
+     9.5718,
+     12.3554,
+     -6.6777
+    ],
+    "objetivo": [
+     17.485,
+     0.7,
+     -15.7
+    ],
+    "fov_vertical": 20
+   },
+   "muros_fondo": [
+    "Muro_021",
+    "Muro_028",
+    "Muro_029",
+    "Muro_042",
+    "Muro_043",
+    "Muro_044"
+   ]
+  },
+  {
+   "id": "P6",
+   "num": "6",
+   "nombre": "Despacho",
+   "subtitulo": "FEFO y remisión",
+   "color": "#34d399",
+   "area_m2": 5.58,
+   "espacio": "Pasillo de salida + bahía de carga exterior",
+   "equipos": [
+    "Plataforma de carga",
+    "Furgón refrigerado"
+   ],
+   "recibe_de": [
+    "P5A",
+    "P5B"
+   ],
+   "entrega_a": [
+    "P7"
+   ],
+   "nodos": {
+    "zona": "Zona_P6",
+    "piso": "Zona_P6_piso",
+    "borde": "Zona_P6_borde",
+    "muros_color": "Zona_P6_muros",
+    "ancla": "Ancla_P6",
+    "camara": "Camara_P6",
+    "equipos": "Equipos_P6"
+   },
+   "ancla": [
+    16.065,
+    2.95,
+    -4.08
+   ],
+   "camara_detalle": {
+    "posicion": [
+     0.5463,
+     23.8302,
+     14.7898
+    ],
+    "objetivo": [
+     16.25,
+     0.7,
+     -3.115
+    ],
+    "fov_vertical": 20
+   },
+   "muros_fondo": [
+    "Muro_015",
+    "Muro_016",
+    "Muro_017",
+    "Muro_018",
+    "Muro_019",
+    "Muro_074",
+    "Muro_075",
+    "Muro_076"
+   ]
+  },
+  {
+   "id": "P7",
+   "num": "7",
+   "nombre": "Recepción en sede",
+   "subtitulo": "Confirma lo recibido",
+   "color": "#f472d0",
+   "area_m2": null,
+   "espacio": "Sede (fuera de planta)",
+   "equipos": [],
+   "recibe_de": [
+    "P6"
+   ],
+   "entrega_a": [],
+   "nodos": {
+    "zona": "Zona_P7",
+    "piso": "Zona_P7_piso",
+    "borde": "Zona_P7_borde",
+    "muros_color": "Zona_P7_muros",
+    "ancla": "Ancla_P7",
+    "camara": "Camara_P7",
+    "equipos": "Equipos_P7"
+   },
+   "ancla": [
+    19.72,
+    2.95,
+    4.42
+   ],
+   "camara_detalle": {
+    "posicion": [
+     12.7739,
+     10.931,
+     12.3397
+    ],
+    "objetivo": [
+     19.72,
+     0.7,
+     4.42
+    ],
+    "fov_vertical": 20
+   },
+   "muros_fondo": []
+  }
+ ],
+ "camara_general": {
+  "posicion": [
+   -13.6343,
+   33.3528,
+   20.4941
+  ],
+  "objetivo": [
+   10.3,
+   0.3,
+   -3.7
+  ],
+  "fov_vertical": 26,
+  "aspecto": "16:9"
+ }
+}
