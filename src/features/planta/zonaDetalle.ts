@@ -57,7 +57,7 @@ export const DETALLE: Record<ZonaId, ZonaDetalle> = {
   limpieza: {
     focal: { x: 40, y: 68 }, escala: 2.1, subtitulo: "Libera el equipo para producción", meta: "Estación de lavado · Desinfectante 200 ppm",
     chip: { texto: "1 por verificar", tono: "warn" },
-    que: { pasa: "Cada equipo usado se limpia según el nivel exigido y luego se verifica.", registra: "Pasos del procedimiento, concentración, tiempo de contacto y prueba ATP o de alérgenos; quién limpió y quién verifica.", software: "Calcula el nivel N0–N3 por la matriz y no libera el equipo hasta verificarlo." },
+    que: { pasa: "Cada equipo usado se limpia según el nivel exigido y luego se verifica.", registra: "Pasos del procedimiento, concentración, tiempo de contacto y prueba ATP o de alérgenos si aplica (por confirmar); quién limpió y quién verifica.", software: "Calcula el nivel N0/N1/N2 por la matriz y no libera el equipo hasta verificarlo." },
     hotspots: [
       { x: 37, y: 70, texto: "Estación de lavado", tono: "ok" },
       { x: 45, y: 72, texto: "Canastillas y utensilios · lavado", tono: "info" },
