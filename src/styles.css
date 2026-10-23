@@ -327,13 +327,10 @@
 .quality-brand>img+span { min-width:0; }
 .login-brand .puerto-logo { width:68px; height:68px; }
 .panel-login { background:var(--background); }
-.login-form-side { border-radius:0; border-color:transparent; }
-.edge-surface,.login-metric,.quality-panel .panel-surface,.quality-panel .kpi,.quality-panel .cold-room-card {
+.login-form-side,.login-metric {
   border-radius:0; border-color:transparent; box-shadow:var(--shadow-feather);
 }
-.panel-login :is(button,.login-role,.login-input,.login-security,.login-map-side>img),
-.access-screen :is(button,main,aside,.rounded-2xl),
-.quality-panel :is(.quality-nav-item,.quality-user,.panel-tabs,.tab-button,.panel-search,.panel-input,.detail-box,.detail-two>div,.rule-accordion,.catalog-index,.report-index,.trace-search-band,.trace-summary,.trace-stage,.calibration-strip,.equipment-strip) { border-radius:0; }
+.panel-login :is(button,.login-role,.login-input,.login-security,.login-map-side>img) { border-radius:0; }
 .login-input { background:var(--secondary); border:1px solid var(--border); }
 .login-input:focus-within { border-color:var(--primary); }
 .login-map-side>img { mask-image:linear-gradient(to right,transparent, var(--surface) 8%,var(--surface) 92%,transparent); }
