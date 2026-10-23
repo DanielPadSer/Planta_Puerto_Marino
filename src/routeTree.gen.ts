@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PlantaRouteImport } from './routes/planta'
 import { Route as PanelBandejaRouteImport } from './routes/panel.bandeja'
 import { Route as PanelCatalogosRouteImport } from './routes/panel.catalogos'
 import { Route as PanelCuartosFriosRouteImport } from './routes/panel.cuartos-frios'
@@ -29,6 +30,11 @@ import { Route as PanelCatalogosAlergenosRouteImport } from './routes/panel.cata
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlantaRoute = PlantaRouteImport.update({
+  id: '/planta',
+  path: '/planta',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PanelBandejaRoute = PanelBandejaRouteImport.update({
@@ -92,14 +98,14 @@ const PinEstacionRoute = PinEstacionRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlantaIndexRoute = PlantaIndexRouteImport.update({
-  id: '/planta/',
-  path: '/planta/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => PlantaRoute,
 } as any)
 const PlantaZonaRoute = PlantaZonaRouteImport.update({
-  id: '/planta/$zona',
-  path: '/planta/$zona',
-  getParentRoute: () => rootRouteImport,
+  id: '/$zona',
+  path: '/$zona',
+  getParentRoute: () => PlantaRoute,
 } as any)
 const PanelCatalogosAlergenosRoute = PanelCatalogosAlergenosRouteImport.update({
   id: '/panel/catalogos_/alergenos',
@@ -109,6 +115,7 @@ const PanelCatalogosAlergenosRoute = PanelCatalogosAlergenosRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/planta': typeof PlantaRouteWithChildren
   '/panel/bandeja': typeof PanelBandejaRoute
   '/panel/catalogos': typeof PanelCatalogosRoute
   '/panel/cuartos-frios': typeof PanelCuartosFriosRoute
@@ -146,6 +153,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/planta': typeof PlantaRouteWithChildren
   '/panel/bandeja': typeof PanelBandejaRoute
   '/panel/catalogos': typeof PanelCatalogosRoute
   '/panel/cuartos-frios': typeof PanelCuartosFriosRoute
@@ -166,6 +174,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/planta'
     | '/panel/bandeja'
     | '/panel/catalogos'
     | '/panel/cuartos-frios'
@@ -202,6 +211,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/planta'
     | '/panel/bandeja'
     | '/panel/catalogos'
     | '/panel/cuartos-frios'
@@ -221,6 +231,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PlantaRoute: typeof PlantaRouteWithChildren
   PanelBandejaRoute: typeof PanelBandejaRoute
   PanelCatalogosRoute: typeof PanelCatalogosRoute
   PanelCuartosFriosRoute: typeof PanelCuartosFriosRoute
@@ -233,8 +244,6 @@ export interface RootRouteChildren {
   PanelReportesRoute: typeof PanelReportesRoute
   PanelTrazabilidadRoute: typeof PanelTrazabilidadRoute
   PinEstacionRoute: typeof PinEstacionRoute
-  PlantaZonaRoute: typeof PlantaZonaRoute
-  PlantaIndexRoute: typeof PlantaIndexRoute
   PanelCatalogosAlergenosRoute: typeof PanelCatalogosAlergenosRoute
 }
 
@@ -245,6 +254,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/planta': {
+      id: '/planta'
+      path: '/planta'
+      fullPath: '/planta'
+      preLoaderRoute: typeof PlantaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/panel/bandeja': {
@@ -333,17 +349,17 @@ declare module '@tanstack/react-router' {
     }
     '/planta/': {
       id: '/planta/'
-      path: '/planta'
+      path: '/'
       fullPath: '/planta/'
       preLoaderRoute: typeof PlantaIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof PlantaRoute
     }
     '/planta/$zona': {
       id: '/planta/$zona'
-      path: '/planta/$zona'
+      path: '/$zona'
       fullPath: '/planta/$zona'
       preLoaderRoute: typeof PlantaZonaRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof PlantaRoute
     }
     '/panel/catalogos_/alergenos': {
       id: '/panel/catalogos_/alergenos'
@@ -355,8 +371,22 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface PlantaRouteChildren {
+  PlantaZonaRoute: typeof PlantaZonaRoute
+  PlantaIndexRoute: typeof PlantaIndexRoute
+}
+
+const PlantaRouteChildren: PlantaRouteChildren = {
+  PlantaZonaRoute: PlantaZonaRoute,
+  PlantaIndexRoute: PlantaIndexRoute,
+}
+
+const PlantaRouteWithChildren =
+  PlantaRoute._addFileChildren(PlantaRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PlantaRoute: PlantaRouteWithChildren,
   PanelBandejaRoute: PanelBandejaRoute,
   PanelCatalogosRoute: PanelCatalogosRoute,
   PanelCuartosFriosRoute: PanelCuartosFriosRoute,
@@ -369,8 +399,6 @@ const rootRouteChildren: RootRouteChildren = {
   PanelReportesRoute: PanelReportesRoute,
   PanelTrazabilidadRoute: PanelTrazabilidadRoute,
   PinEstacionRoute: PinEstacionRoute,
-  PlantaZonaRoute: PlantaZonaRoute,
-  PlantaIndexRoute: PlantaIndexRoute,
   PanelCatalogosAlergenosRoute: PanelCatalogosAlergenosRoute,
 }
 export const routeTree = rootRouteImport

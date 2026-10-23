@@ -1,14 +1,14 @@
-import { lazy, Suspense, useState } from "react";
-import { ClientOnly, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { AlertTriangle, Bell, Camera, ChevronLeft, Layers, List, Map as MapIcon, ScanLine, Search, Siren, TrendingUp } from "lucide-react";
 import { ALERTAS, OPERARIO_DEMO } from "@/mocks/estaciones";
 import type { FiltroRuta, ZonaId } from "@/domain/types";
 import { useSesion } from "@/features/auth/store";
 import { PillConexion } from "@/ui/marca";
 import { cn } from "@/lib/utils";
+import { useVista3D } from "./vista3d";
 import { RUTA_COCIDO, RUTA_MARINADO, ZONAS } from "./zonas";
 
-const Planta3D = lazy(() => import("./Planta3D"));
 
 const SOLO_COCIDO: ZonaId[] = ["marinado", "cf3"];
 const SOLO_MARINADO: ZonaId[] = ["coccion", "cf2"];
@@ -18,17 +18,18 @@ export function Planta() {
   const op = useSesion((s) => s.operario) ?? OPERARIO_DEMO;
   const [filtro, setFiltro] = useState<FiltroRuta>("todo");
   const [tab, setTab] = useState<"resumen" | "preguntas" | "rutas">("resumen");
-  const navigate = useNavigate();
 
   const atenuada = (id: ZonaId) => (filtro === "cocido" && SOLO_COCIDO.includes(id)) || (filtro === "marinado" && SOLO_MARINADO.includes(id));
 
+  const setAtenuadas = useVista3D((s) => s.setAtenuadas);
+  useEffect(() => {
+    setAtenuadas(ZONAS.map((z) => z.id).filter(atenuada));
+    return () => setAtenuadas([]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filtro, setAtenuadas]);
+
   return (
-    <div className="relative h-screen min-h-[720px] overflow-hidden bg-background">
-      <ClientOnly><Suspense fallback={null}>
-        <Planta3D zona={null} onSeleccionar={(z) => navigate({ to: "/planta/$zona", params: { zona: z } })}
-          atenuadas={ZONAS.map((z) => z.id).filter(atenuada)}
-          estados={Object.fromEntries(ZONAS.filter((z) => z.estado || z.alerta).map((z) => [z.id, { texto: z.estado?.texto ?? "", tono: z.estado?.tono ?? "warn", alerta: z.alerta }]))} />
-      </Suspense></ClientOnly>
+    <div className="pointer-events-none absolute inset-0 [&>*]:pointer-events-auto">
 
       {/* Barra superior */}
       <header className="absolute z-40 inset-x-4 top-4 flex items-center gap-3">
