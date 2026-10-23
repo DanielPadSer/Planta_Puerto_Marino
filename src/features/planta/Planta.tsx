@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { AlertTriangle, Bell, Camera, ChevronLeft, Crosshair, Layers, List, Map as MapIcon, ScanLine, Search, Siren, TrendingUp, View } from "lucide-react";
-import maqueta from "@/assets/maqueta-planta.png.asset.json";
+import { AlertTriangle, Bell, Camera, ChevronLeft, Layers, List, Map as MapIcon, ScanLine, Search, Siren, TrendingUp } from "lucide-react";
 import { ALERTAS, OPERARIO_DEMO } from "@/mocks/estaciones";
 import type { FiltroRuta, ZonaId } from "@/domain/types";
 import { useSesion } from "@/features/auth/store";
 import { PillConexion } from "@/ui/marca";
 import { cn } from "@/lib/utils";
 import { RUTA_COCIDO, RUTA_MARINADO, ZONAS } from "./zonas";
+import { Tablero } from "./Tablero";
+import { MARCADA, PLANTA_GENERAL } from "./imagenes";
 
 const SOLO_COCIDO: ZonaId[] = ["marinado", "cf3"];
 const SOLO_MARINADO: ZonaId[] = ["coccion", "cf2"];
@@ -17,28 +18,29 @@ export function Planta() {
   const op = useSesion((s) => s.operario) ?? OPERARIO_DEMO;
   const [filtro, setFiltro] = useState<FiltroRuta>("todo");
   const [tab, setTab] = useState<"resumen" | "preguntas" | "rutas">("resumen");
+  const [hover, setHover] = useState<ZonaId | null>(null);
 
   const atenuada = (id: ZonaId) => (filtro === "cocido" && SOLO_COCIDO.includes(id)) || (filtro === "marinado" && SOLO_MARINADO.includes(id));
 
   return (
     <div className="relative h-screen min-h-[720px] overflow-hidden bg-background">
-      <div className="absolute left-1/2 top-1/2 aspect-[16/9] w-[max(100vw,calc(100vh*16/9))] -translate-x-1/2 -translate-y-1/2">
-        <img src={maqueta.url} alt="Maqueta isométrica de la planta Puerto Marino" className="size-full" />
+      <Tablero>
+        <img src={PLANTA_GENERAL} alt="Maqueta isométrica de la planta Puerto Marino" className="pointer-events-none size-full" draggable={false} />
+        {ZONAS.map((z) => MARCADA[z.id] && (
+          <img key={z.id} src={MARCADA[z.id]} alt="" aria-hidden draggable={false} loading="lazy"
+            className={cn("pointer-events-none absolute inset-0 size-full transition-opacity duration-300", hover === z.id ? "opacity-100" : "opacity-0")} />
+        ))}
         {ZONAS.map((z) => (
-          <Link key={z.id} to="/planta/$zona" params={{ zona: z.id }}
-            className={cn("absolute flex -translate-x-1/2 -translate-y-[14px] flex-col items-center transition", atenuada(z.id) && "opacity-30")}
-            style={{ left: `${z.x}%`, top: `${z.y}%` }}>
-            <span className="relative flex items-center gap-2 whitespace-nowrap rounded-full border bg-surface py-1 pl-1 pr-3 text-xs font-semibold shadow-[var(--shadow-soft)] hover:scale-105">
-              <span className="grid size-6 place-items-center rounded-full text-primary-foreground" style={{ background: z.color }}><MapIcon size={12} /></span>
-              <span className="font-mono" style={{ color: z.color }}>{z.codigo}</span> {z.nombre}
-              {z.estado && <span className={cn("rounded-full px-1.5 font-mono text-[10px]", z.estado.tono === "danger" ? "bg-danger/12 text-danger" : "bg-warn/15 text-warn")}>{z.estado.texto}</span>}
-              {z.alerta && <span className="absolute -right-1 -top-1 size-2.5 rounded-full bg-danger ring-2 ring-surface" />}
-            </span>
-            <span className="h-8 w-px" style={{ background: z.color }} />
-            <span className="size-2 rounded-full" style={{ background: z.color }} />
+          <Link key={z.id} to="/planta/$zona" params={{ zona: z.id }} aria-label={`${z.codigo} ${z.nombre}`}
+            onMouseEnter={() => setHover(z.id)} onMouseLeave={() => setHover(null)} onFocus={() => setHover(z.id)} onBlur={() => setHover(null)}
+            className={cn("absolute h-[4.5%] w-[13%] -translate-x-1/2 -translate-y-1/2 rounded-full outline-none transition", atenuada(z.id) ? "bg-background/60" : "focus-visible:ring-2 focus-visible:ring-primary")}
+            style={{ left: `${z.x}%`, top: `${z.y}%`, boxShadow: hover === z.id ? `0 0 0 2px ${z.color}` : undefined }}
+            draggable={false}>
+            {z.estado && <span className={cn("absolute -top-3 right-0 whitespace-nowrap rounded-full px-1.5 font-mono text-[10px] font-semibold shadow-[var(--shadow-soft)]", z.estado.tono === "danger" ? "bg-danger text-primary-foreground" : "bg-warn text-foreground")}>{z.estado.texto}</span>}
+            {z.alerta && <span className="absolute -left-1 -top-1 size-2.5 animate-pulse rounded-full bg-danger ring-2 ring-surface" />}
           </Link>
         ))}
-      </div>
+      </Tablero>
 
       {/* Barra superior */}
       <header className="absolute inset-x-4 top-4 flex items-center gap-3">
@@ -121,11 +123,7 @@ export function Planta() {
         <button className="tap mt-3 flex items-center justify-center gap-2 rounded-2xl bg-primary font-semibold text-primary-foreground shadow-[var(--shadow-primary)]"><TrendingUp size={20} /> Seguir un lote en el mapa</button>
       </aside>
 
-      <div className="glass absolute bottom-4 left-4 w-[340px] rounded-[var(--radius-card)] p-4"><Rutas /></div>
-      <div className="absolute bottom-4 left-[372px] flex gap-2">
-        <span className="glass flex h-12 items-center gap-2 rounded-full px-4 text-sm"><View size={20} /> Vista isométrica 100 %</span>
-        <button className="glass flex h-12 items-center gap-2 rounded-full px-4 text-sm"><Crosshair size={20} /> Centrar planta</button>
-      </div>
+      <div className="glass absolute bottom-4 left-4 hidden w-[340px] rounded-[var(--radius-card)] p-4 2xl:block"><Rutas /></div>
     </div>
   );
 }
