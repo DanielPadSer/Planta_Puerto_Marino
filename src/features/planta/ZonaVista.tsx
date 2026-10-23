@@ -77,7 +77,7 @@ export function ZonaVista({ zona }: { zona: Zona }) {
       </Suspense></ClientOnly>
 
       {/* Barra superior */}
-      <header className="absolute inset-x-4 top-4 flex items-center gap-2">
+      <header className="absolute z-40 inset-x-4 top-4 flex items-center gap-2">
         <button onClick={salir} aria-label="Volver a la planta" className="glass tap grid place-items-center rounded-full"><ChevronLeft size={20} /></button>
         <span className="glass flex h-12 items-center gap-2 rounded-full px-4 text-xs">
           <span className="text-muted-foreground">PLANTA ›</span><span className="size-2 rounded-full" style={{ background: zona.color }} /><b className="whitespace-nowrap">{zona.codigo} {zona.nombre}</b>
@@ -128,7 +128,7 @@ export function ZonaVista({ zona }: { zona: Zona }) {
       </div>
 
       {/* Panel derecho */}
-      <aside className={cn("absolute bottom-4 right-4 top-20 flex w-[400px] flex-col overflow-hidden rounded-[var(--radius-panel)] bg-surface shadow-[var(--shadow-soft)] transition-all duration-500", listo ? "translate-x-0 opacity-100" : "translate-x-[110%] opacity-0")} style={{ transitionTimingFunction: EASE }}>
+      <aside className={cn("absolute z-40 bottom-4 right-4 top-20 flex w-[400px] flex-col overflow-hidden rounded-[var(--radius-panel)] bg-surface shadow-[var(--shadow-soft)] transition-all duration-500", listo ? "translate-x-0 opacity-100" : "translate-x-[110%] opacity-0")} style={{ transitionTimingFunction: EASE }}>
         <div className="p-4 pb-0">
           <div className="flex items-start gap-3">
             <span className="grid size-12 shrink-0 place-items-center rounded-2xl" style={{ background: zona.color }}><Circulo codigo={zona.codigo} color={zona.color} size={36} /></span>

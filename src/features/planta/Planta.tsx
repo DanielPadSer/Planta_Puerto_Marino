@@ -31,7 +31,7 @@ export function Planta() {
       </Suspense></ClientOnly>
 
       {/* Barra superior */}
-      <header className="absolute inset-x-4 top-4 flex items-center gap-3">
+      <header className="absolute z-40 inset-x-4 top-4 flex items-center gap-3">
         <Link to="/" aria-label="Volver" className="glass tap grid place-items-center rounded-full"><ChevronLeft size={20} /></Link>
         <div className="glass flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-4">
           <span className="grid size-9 place-items-center rounded-full bg-primary font-mono text-xs font-bold text-primary-foreground">PM</span>
@@ -60,7 +60,7 @@ export function Planta() {
       </nav>
 
       {/* Panel derecho */}
-      <aside className="glass absolute bottom-4 right-4 top-24 flex w-[340px] flex-col rounded-[var(--radius-panel)] p-4">
+      <aside className="glass absolute z-40 bottom-4 right-4 top-24 flex w-[340px] flex-col rounded-[var(--radius-panel)] p-4">
         <div className="flex items-center gap-3">
           <span className="grid size-10 place-items-center rounded-xl bg-primary text-primary-foreground"><MapIcon size={20} /></span>
           <div className="flex-1"><p className="font-semibold">Planta Puerto Marino</p><p className="text-[11px] text-muted-foreground">Toca una zona del mapa para entrar</p></div>
