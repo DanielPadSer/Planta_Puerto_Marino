@@ -19,6 +19,7 @@ export const ID_ZONA: Record<string, ZonaId> = {
 };
 const ID_MANIFIESTO = Object.fromEntries(Object.entries(ID_ZONA).map(([k, v]) => [v, k])) as Record<ZonaId, string>;
 const ESTACIONES = manifiesto.estaciones;
+useGLTF.preload(MODELO);
 
 type V3 = [number, number, number];
 interface Props {

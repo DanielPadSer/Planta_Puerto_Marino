@@ -1,5 +1,5 @@
-import { lazy, Suspense, useCallback, useEffect, useState } from "react";
-import { ClientOnly, Link, useNavigate } from "@tanstack/react-router";
+import { useCallback, useEffect, useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Bell, ChevronLeft, ChevronRight, ClipboardList, Layers, ScanLine, Siren } from "lucide-react";
 import type { Zona, ZonaId } from "@/domain/types";
 import { OPERARIO_DEMO } from "@/mocks/estaciones";
@@ -14,7 +14,6 @@ import { PanelLimpieza } from "@/features/limpieza/PanelLimpieza";
 import { PanelEmpaque } from "@/features/empaque/PanelEmpaque";
 import { PanelGenerico } from "./PanelGenerico";
 
-const Planta3D = lazy(() => import("./Planta3D"));
 
 const DURACION = 500;
 const EASE = "cubic-bezier(.22,.8,.3,1)";
@@ -70,11 +69,7 @@ export function ZonaVista({ zona }: { zona: Zona }) {
   const enRuta = RUTA_COCIDO.includes(zona.codigo) ? "cocido" : RUTA_MARINADO.includes(zona.codigo) ? "marinado" : null;
 
   return (
-    <div className="relative h-screen min-h-[720px] overflow-hidden bg-background">
-      {/* Escena: planta con la estación marcada o detalle de la estación */}
-      <ClientOnly><Suspense fallback={null}>
-        <Planta3D zona={zona.id} onSeleccionar={(z) => navigate({ to: "/planta/$zona", params: { zona: z } })} />
-      </Suspense></ClientOnly>
+    <div className="pointer-events-none absolute inset-0 [&>*]:pointer-events-auto">
 
       {/* Barra superior */}
       <header className="absolute z-40 inset-x-4 top-4 flex items-center gap-2">
