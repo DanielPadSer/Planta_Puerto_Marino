@@ -2,7 +2,7 @@
 import { Suspense, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
-import { Html, OrbitControls, useGLTF } from "@react-three/drei";
+import { Html, OrbitControls, useGLTF, useProgress } from "@react-three/drei";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import type { OrbitControls as OrbitImpl } from "three-stdlib";
 import type { ZonaId } from "@/domain/types";
@@ -37,6 +37,25 @@ export default function Planta3D(p: Props) {
         camera={{ fov: g.fov_vertical, near: 0.1, far: 400, position: g.posicion as V3 }}>
         <Suspense fallback={null}><Escena {...p} /></Suspense>
       </Canvas>
+      <Cargando />
+    </div>
+  );
+}
+
+function Cargando() {
+  const { active, progress } = useProgress();
+  if (!active && progress >= 100) return null;
+  const pct = Math.round(progress);
+  return (
+    <div className="absolute inset-0 z-30 grid place-items-center bg-background/70 backdrop-blur-sm" role="status" aria-live="polite">
+      <div className="glass w-72 rounded-[var(--radius-card)] p-5 text-center">
+        <span className="mx-auto block size-10 animate-spin rounded-full border-4 border-primary-soft border-t-primary" />
+        <p className="mt-3 text-sm font-semibold">Cargando maqueta de la planta…</p>
+        <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
+          <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${pct}%` }} />
+        </div>
+        <p className="mt-1 font-mono text-[11px] text-muted-foreground">{pct}%</p>
+      </div>
     </div>
   );
 }
