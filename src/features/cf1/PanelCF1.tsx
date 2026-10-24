@@ -96,7 +96,7 @@ export function PanelCF1({ color }: { color: string }) {
               </>}
               <Button variant="outline" className="mt-3 min-h-16 w-full border-2 border-primary text-primary" disabled={!lectura.estable || sinSenal || !!errorPeso} onClick={capturar}><Scale size={20} />{capturas.length ? "+ Otra tanda · Capturar peso" : "Capturar peso"}</Button>
               {!lectura.estable && <p className="mt-1 text-xs text-muted-foreground">Espera a que la lectura se estabilice</p>}
-              {!sinSenal && errorPeso && <p role="alert" className="mt-2 text-xs text-danger">{errorPeso}</p>}
+              {!sinSenal && errorPeso && cant < lote.saldoKg && <p role="alert" className="mt-2 text-xs text-danger">{errorPeso}</p>}
               <div className={cn(!capturas.length && "opacity-50")}>
                 <p className="mt-2 text-[11px] text-muted-foreground">Saldo que queda en {lote.estante}: <b className="font-mono">{kg(redondear(Math.max(0, lote.saldoKg - (capturas.length ? cant : lectura.kg))))} kg</b></p>
                 {(capturas.length ? cant : lectura.kg) < META_KG && <p className="mt-1 text-[11px] text-warn">Faltan {kg(redondear(META_KG - (capturas.length ? cant : lectura.kg)))} kg: completa con el siguiente lote sugerido.</p>}

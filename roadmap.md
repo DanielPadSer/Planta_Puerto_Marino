@@ -6,7 +6,7 @@
 - [x] Matriz editable y versionada.
 - [x] Monitoreo y gráfica de registros.
 - [x] Quitar certificado de Trazabilidad.
-- [ ] Verificar flujos y tamaños 1024×768 y 1280×800.
+- [x] Verificar flujos y tamaños 1024×768 y 1280×800 (32 pruebas; captura, guardado e historial simulados).
 # Actualización de identidad y acceso
 - [x] Restaurar el login anterior e incorporar logo en accesos y menú lateral.
 - [x] Favicon del logo y tarjetas relevantes sin radios con bordes difuminados.
