@@ -136,11 +136,13 @@ export function Tabla<T extends { id: string }>({
   cols,
   onSelect,
   selected,
+  rowClassName,
 }: {
   data: readonly T[];
   cols: Col<T>[];
   onSelect?: (row: T) => void;
   selected?: string | undefined;
+  rowClassName?: (row: T) => string;
 }) {
   const initial = cols[0]?.key ?? "id";
   const { rows, sort, toggle } = useSortableTable(data, initial);
@@ -166,7 +168,7 @@ export function Tabla<T extends { id: string }>({
           {rows.map((row) => (
             <tr
               key={row.id}
-              className={cn(selected === row.id && "selected-row", onSelect && "cursor-pointer")}
+              className={cn(selected === row.id && "selected-row", onSelect && "cursor-pointer", rowClassName?.(row))}
               onClick={() => onSelect?.(row)}
             >
               {cols.map((c, i) => (

@@ -27,7 +27,7 @@ export const panelNav = [
   { name: "Bandeja", path: "/panel/bandeja", icon: Inbox },
   { name: "Reglas por producto", path: "/panel/reglas", icon: FileSliders },
   { name: "Limpieza y equipos", path: "/panel/limpieza", icon: ShieldCheck },
-  { name: "Cuartos fríos", path: "/panel/cuartos-frios", icon: Refrigerator },
+  { name: "Monitoreo", path: "/panel/cuartos-frios", icon: Refrigerator },
   { name: "Dispositivos y equipos", path: "/panel/dispositivos", icon: Monitor },
   { name: "Personal y BPM", path: "/panel/personal", icon: Users },
   { name: "Catálogos", path: "/panel/catalogos", icon: ListTree },
