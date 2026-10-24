@@ -131,7 +131,7 @@ export function Limpieza() {
       <div className="cleaning-grid">
         <section className="panel-surface p-5">
           {tab === "Matriz de cambio" ? (
-            <MatrizEditable onNivel={setNivel} />
+            <MatrizEditable onNivel={(n) => setNivel(n === "N3" ? "N2" : n)} />
           ) : tab === "Procedimientos (POE)" ? (
             <Tabla
               data={[

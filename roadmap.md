@@ -1,11 +1,11 @@
 # Tercera fase · Panel de calidad
 # Seis mejoras puntuales
 - [x] Selección inicial de Vista Planta.
-- [ ] Panel de planta desplegable y tarjetas de zona.
-- [ ] Captura de báscula en CF-1.
-- [ ] Matriz editable y versionada.
-- [ ] Monitoreo y gráfica de registros.
-- [ ] Quitar certificado de Trazabilidad.
+- [x] Panel de planta desplegable y tarjetas de zona.
+- [x] Captura de báscula en CF-1.
+- [x] Matriz editable y versionada.
+- [x] Monitoreo y gráfica de registros.
+- [x] Quitar certificado de Trazabilidad.
 - [ ] Verificar flujos y tamaños 1024×768 y 1280×800.
 # Actualización de identidad y acceso
 - [x] Restaurar el login anterior e incorporar logo en accesos y menú lateral.

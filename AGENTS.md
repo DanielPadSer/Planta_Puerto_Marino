@@ -20,3 +20,6 @@
 - Panel tables use the shared useSortableTable hook and native HTML tables, never TanStack Table.
 - Shared brand placements use src/ui/logo.tsx and the uploaded asset pointer; the favicon is a small raster derived from the same source so identity stays consistent.
 - R3F elements and drei components in Planta3D carry data-tsd-source={undefined}, because the dev source-injection plugin otherwise passes a dashed prop that R3F crashes on.
+- Editable quality matrices retain immutable snapshots in the shared quality store and use their own level type; this preserves legacy station rules and historical approvals.
+- The sanitary category list is shared between catalog and matrix so both grow together without duplicate category definitions.
+- CF-1 reuses the reception scale hook with an optional simulation interval and isolated weight validation; manual authorization remains explicitly simulated.
