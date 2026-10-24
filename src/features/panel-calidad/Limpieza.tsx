@@ -4,23 +4,11 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { PanelLayout } from "@/app/PanelLayout";
 import {
-  CATEGORIA_TEXTO,
-  nivelExigido,
-  esCambioAlergeno,
   PASOS_POE,
-  type Categoria,
 } from "@/domain/reglas";
 import { TabsPanel, EstadoChip, MotivoForm, EjemploPanel, Tabla, Drawer } from "./ui";
 import { useCalidad } from "./store";
-import { cn } from "@/lib/utils";
-const cats: Categoria[] = ["vegetal", "ave", "res", "pescado", "crustaceos"];
-const names: Record<string, string> = {
-  vegetal: "Vegetal",
-  ave: "Pollo y aves",
-  res: "Res y cerdo",
-  pescado: "Pescado",
-  crustaceos: "Crustáceos y moluscos",
-};
+import { MatrizEditable } from "./MatrizEditable";
 const EQUIPOS = [
   { id: "EQ-01", nombre: "Marmita 1", estado: "Liberado" },
   { id: "EQ-02", nombre: "Marmita 2", estado: "Usado" },
@@ -143,87 +131,7 @@ export function Limpieza() {
       <div className="cleaning-grid">
         <section className="panel-surface p-5">
           {tab === "Matriz de cambio" ? (
-            <>
-              <div className="flex justify-between gap-3">
-                <div>
-                  <h2>Nivel de limpieza exigido al cambiar de producto</h2>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Categoría previa vs. siguiente · N0 mismo producto automático
-                  </p>
-                </div>
-                <EstadoChip>Matriz v{version} activa</EstadoChip>
-              </div>
-              <p className="matrix-axis">PRODUCTO A PROCESAR (HACIA) →</p>
-              <div className="matrix-wrap">
-                <table className="cleaning-matrix">
-                  <thead>
-                    <tr>
-                      <th>
-                        ÚLTIMO USO
-                        <br />
-                        (DESDE) ↓
-                      </th>
-                      {cats.map((c) => (
-                        <th key={c}>{names[c]}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {cats.map((a) => (
-                      <tr key={a}>
-                        <th>{names[a]}</th>
-                        {cats.map((b) => {
-                          const n = nivelExigido(a, b);
-                          const allergen = esCambioAlergeno(a, b);
-                          return (
-                            <td key={b}>
-                              <Button
-                                variant="ghost"
-                                onClick={() => setNivel(n)}
-                                className={cn(
-                                  "matrix-cell",
-                                  n === "N0"
-                                    ? "bg-ok/12 text-ok"
-                                    : n === "N1"
-                                      ? "bg-primary-soft text-primary"
-                                      : "bg-warn/15 text-foreground",
-                                  allergen && "matrix-allergen",
-                                  nivel === n && "ring-1 ring-primary/20",
-                                )}
-                              >
-                                <b>{n}</b>
-                                <small>
-                                  {allergen
-                                    ? "Sin excepción"
-                                    : n === "N0"
-                                      ? "Automático"
-                                      : n === "N1"
-                                        ? "Superficial"
-                                        : "Profunda"}
-                                </small>
-                              </Button>
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <div className="matrix-legend">
-                <p>
-                  <EstadoChip>N0</EstadoChip>Mismo producto · automático
-                </p>
-                <p>
-                  <EstadoChip tono="primary">N1</EstadoChip>Superficial · retiro de residuos
-                </p>
-                <p>
-                  <EstadoChip tono="warn">N2</EstadoChip>Profunda · cambio de especie o perfil de
-                  alérgenos
-                </p>
-              </div>
-              <EjemploPanel />
-            </>
+            <MatrizEditable onNivel={setNivel} />
           ) : tab === "Procedimientos (POE)" ? (
             <Tabla
               data={[
