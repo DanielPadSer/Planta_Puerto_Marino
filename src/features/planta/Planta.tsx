@@ -1,15 +1,18 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { AlertTriangle, Bell, Camera, ChevronLeft, Layers, List, Map as MapIcon, ScanLine, Search, Siren, TrendingUp } from "lucide-react";
+import { AlertTriangle, Bell, Camera, ChevronLeft, ChevronRight, Layers, List, Map as MapIcon, ScanLine, Search, Siren, TrendingUp } from "lucide-react";
 import { ALERTAS, OPERARIO_DEMO } from "@/mocks/estaciones";
 import { LOTES } from "@/mocks/calidad";
 import { useSesion } from "@/features/auth/store";
 import { PillConexion } from "@/ui/marca";
 import { Logo } from "@/ui/logo";
+import { create } from "zustand";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { RUTA_COCIDO, RUTA_MARINADO, ZONAS } from "./zonas";
 
 const ROLES: Record<string, string> = { operario: "Operario", supervisor: "Supervisor", limpieza: "Encargada de limpieza", ingeniera: "Ingeniera de alimentos", sede: "Sede", administrador: "Administrador" };
+const usePanelPlanta = create<{ abierto: boolean; cambiar: (abierto: boolean) => void }>((set) => ({ abierto: false, cambiar: (abierto) => set({ abierto }) }));
 type Tab = "resumen" | "lotes" | "alertas";
 
 export function Planta() {
@@ -20,19 +23,29 @@ export function Planta() {
   const [busqueda, setBusqueda] = useState("");
   const buscador = useRef<HTMLInputElement>(null);
 
-  const escanear = () => { setTab("resumen"); setTimeout(() => buscador.current?.focus(), 0); };
+  const { abierto, cambiar } = usePanelPlanta();
+  const panel = useRef<HTMLElement>(null);
+  const manija = useRef<HTMLButtonElement>(null);
+  const inicio = useRef<{ x: number; y: number } | null>(null);
+  const abrirTab = (t: Tab) => { cambiar(true); setTab(t); };
+  useEffect(() => {
+    const cerrar = (e: KeyboardEvent) => { if (e.key === "Escape" && abierto) { cambiar(false); manija.current?.focus(); } };
+    window.addEventListener("keydown", cerrar);
+    return () => window.removeEventListener("keydown", cerrar);
+  }, [abierto, cambiar]);
+  const escanear = () => { cambiar(true); setTab("resumen"); setTimeout(() => buscador.current?.focus(), 0); };
   const lotesFiltrados = LOTES.filter((l) => `${l.id} ${l.producto}`.toLowerCase().includes(busqueda.toLowerCase()));
 
   const rail = [
     { Icon: Layers, l: "Rutas", on: rutas, dot: false, fn: () => setRutas(!rutas) },
     { Icon: ScanLine, l: "Escanear", on: false, dot: false, fn: escanear },
-    { Icon: List, l: "Lotes", on: tab === "lotes", dot: false, fn: () => setTab("lotes") },
-    { Icon: Siren, l: "Alertas", on: tab === "alertas", dot: true, fn: () => setTab("alertas") },
+    { Icon: List, l: "Lotes", on: tab === "lotes", dot: false, fn: () => abrirTab("lotes") },
+    { Icon: Siren, l: "Alertas", on: tab === "alertas", dot: true, fn: () => abrirTab("alertas") },
   ];
 
   return (
     <div className="pointer-events-none absolute inset-0 [&>*]:pointer-events-auto">
-      <header className="absolute z-40 left-4 right-[372px] top-4 flex items-center gap-3">
+      <header className={cn("absolute z-40 left-4 top-4 flex items-center gap-3", abierto ? "right-[372px]" : "right-20")}>
         <Link to="/" aria-label="Volver" className="glass tap grid place-items-center rounded-full"><ChevronLeft size={20} /></Link>
         <div className="glass flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-4">
           <Logo className="size-9 rounded-full object-contain" />
@@ -40,7 +53,7 @@ export function Planta() {
         </div>
         <div className="flex-1" />
         <PillConexion className="glass hidden py-3 lg:inline-flex" />
-        <button aria-label="Notificaciones" onClick={() => setTab("alertas")} className="glass tap relative grid place-items-center rounded-full"><Bell size={20} /><span className="absolute right-3 top-3 size-2 rounded-full bg-danger" /></button>
+        <button aria-label="Notificaciones" onClick={() => abrirTab("alertas")} className="glass tap relative grid place-items-center rounded-full"><Bell size={20} /><span className="absolute right-3 top-3 size-2 rounded-full bg-danger" /></button>
         <div className="glass flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-4">
           <span className="grid size-9 place-items-center rounded-full bg-primary font-mono text-xs font-bold text-primary-foreground">{op.iniciales}</span>
           <div className="hidden xl:block"><p className="text-sm font-semibold leading-tight">{ROLES[op.rol]}</p><p className="text-[11px] text-muted-foreground">{op.turno}</p></div>
@@ -55,15 +68,22 @@ export function Planta() {
         ))}
       </nav>
 
-      <aside className="glass absolute z-40 bottom-4 right-4 top-4 flex w-[340px] flex-col rounded-[var(--radius-panel)] p-4">
+      <div className="plant-edge-gesture" onTouchStart={(e) => { const t = e.touches[0]; if (t) inicio.current = { x: t.clientX, y: t.clientY }; }} onTouchEnd={(e) => { const t = e.changedTouches[0]; if (t && inicio.current && inicio.current.x - t.clientX > 48 && Math.abs(t.clientY - inicio.current.y) < 80) cambiar(true); inicio.current = null; }} />
+      <Button ref={manija} variant="outline" aria-label={abierto ? "Cerrar panel de planta" : "Abrir panel de planta"} aria-expanded={abierto} aria-controls="panel-planta" onClick={() => cambiar(!abierto)} className={cn("plant-handle", abierto && "plant-handle-open")}>
+        <ChevronLeft size={20} className={cn("transition-transform", abierto && "rotate-180")} />
+        {ALERTAS.length > 0 && <span className={cn("plant-alert-count", ALERTAS.some((a) => a.tono === "danger") && "animate-pulse")}>{ALERTAS.length}</span>}
+      </Button>
+      <aside ref={panel} id="panel-planta" role="complementary" aria-label="Resumen de Planta Puerto Marino" aria-hidden={!abierto} inert={!abierto} data-open={abierto} className="glass plant-summary absolute z-40 bottom-4 right-4 top-4 flex w-[340px] flex-col rounded-[var(--radius-panel)] p-4"
+        onTouchStart={(e) => { const t = e.touches[0]; if (t) inicio.current = { x: t.clientX, y: t.clientY }; }} onTouchEnd={(e) => { const t = e.changedTouches[0]; if (t && inicio.current && t.clientX - inicio.current.x > 64 && Math.abs(t.clientY - inicio.current.y) < 80) { cambiar(false); manija.current?.focus(); } inicio.current = null; }}>
+
         <div className="flex items-center gap-3">
           <span className="grid size-10 place-items-center rounded-xl bg-primary text-primary-foreground"><MapIcon size={20} /></span>
           <div className="flex-1"><p className="font-semibold">Planta Puerto Marino</p><p className="text-[11px] text-muted-foreground">Toca una zona del mapa para entrar</p></div>
-          <span className="rounded-full bg-muted px-2 py-1 font-mono text-[10px]">11 zonas</span>
+          <span className="rounded-full bg-muted px-2 py-1 font-mono text-[10px]">11 zonas</span><Button variant="ghost" size="icon" className="min-h-12 min-w-12" aria-label="Cerrar resumen" onClick={() => { cambiar(false); manija.current?.focus(); }}><ChevronRight size={20} /></Button>
         </div>
         <div className="mt-3 flex gap-4 border-b text-sm">
           {(["resumen", "lotes", "alertas"] as const).map((t) => (
-            <button key={t} onClick={() => setTab(t)} className={cn("-mb-px border-b-2 pb-2 capitalize", tab === t ? "border-primary font-semibold text-primary" : "border-transparent text-muted-foreground")}>{t}</button>
+            <Button variant="ghost" key={t} onClick={() => setTab(t)} className={cn("-mb-px border-b-2 pb-2 min-h-12 capitalize", tab === t ? "border-primary font-semibold text-primary" : "border-transparent text-muted-foreground")}>{t}</Button>
           ))}
         </div>
         <div className="mt-3 flex-1 space-y-3 overflow-y-auto pr-1">
@@ -87,9 +107,9 @@ export function Planta() {
             </div>
             <div>
               <p className="font-mono text-[10px] font-semibold text-muted-foreground">ENTRAR A UNA ZONA</p>
-              <div className="mt-1 flex flex-wrap gap-1.5">
+              <div className="plant-zone-grid mt-3 grid grid-cols-2 gap-3">
                 {ZONAS.map((z) => (
-                  <Link key={z.id} to="/planta/$zona" params={{ zona: z.id }} className="rounded-full px-2.5 py-1 text-[11px] font-semibold text-primary-foreground" style={{ background: z.color }}>{z.codigo} {z.nombre.split(" ")[0]}</Link>
+                  <Link key={z.id} to="/planta/$zona" params={{ zona: z.id }} className="plant-zone" style={{ "--zone": z.color, "--order": ZONAS.indexOf(z) } as CSSProperties}><b>{z.codigo}</b><span>{z.nombre.split(" ")[0]}</span></Link>
                 ))}
               </div>
             </div>
@@ -118,7 +138,7 @@ export function Planta() {
             </div>
           )}
         </div>
-        <button onClick={() => navigate({ to: "/panel/trazabilidad" })} className="tap mt-3 flex items-center justify-center gap-2 rounded-2xl bg-primary font-semibold text-primary-foreground shadow-[var(--shadow-primary)]"><TrendingUp size={20} /> Seguir un lote</button>
+        <Button onClick={() => navigate({ to: "/panel/trazabilidad" })} className="tap mt-3 flex items-center justify-center gap-2 rounded-2xl bg-primary font-semibold text-primary-foreground shadow-[var(--shadow-primary)]"><TrendingUp size={20} /> Seguir un lote</Button>
       </aside>
 
       {rutas && <div className="glass absolute bottom-4 left-24 z-30 w-[340px] rounded-[var(--radius-card)] p-4"><Rutas /></div>}

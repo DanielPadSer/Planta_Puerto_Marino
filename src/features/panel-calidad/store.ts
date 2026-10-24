@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { MATRIZ_INICIAL, validarCelda, type VersionMatriz, type CeldaMatriz } from "@/domain/matriz";
 import { PRODUCTOS, LOTES, EVENTOS, DISPOSITIVOS, CONTENEDORES } from "@/mocks/calidad";
 import {
   siguienteVersion,
@@ -20,6 +21,8 @@ export const usePanelSesion = create<SesionPanel>((set) => ({
   salir: () => set({ activa: false }),
 }));
 interface CalidadState {
+  matrices: VersionMatriz[];
+  guardarMatriz: (celdas: CeldaMatriz[], motivo: string) => string | null;
   productos: ProductoRegla[];
   versiones: ProductoRegla[];
   lotes: LoteCalidad[];
@@ -47,6 +50,16 @@ interface CalidadState {
   guardarTara: (c: ContenedorCalidad, motivo: string) => void;
 }
 export const useCalidad = create<CalidadState>((set, get) => ({
+  matrices: [MATRIZ_INICIAL],
+  guardarMatriz: (celdas, motivo) => {
+    if (!motivo.trim()) return "El motivo del cambio es obligatorio";
+    const previa = get().matrices.at(-1);
+    if (!previa || celdas.length !== previa.celdas.length || celdas.some((c, i) => !validarCelda(c) || c.desde !== previa.celdas[i]?.desde || c.hacia !== previa.celdas[i]?.hacia)) return "Revisa las reglas de las celdas";
+    const nueva = { version: previa.version + 1, celdas: celdas.map((c) => ({ ...c })) };
+    set((s) => ({ matrices: [...s.matrices, nueva] }));
+    get().auditar("Matriz de limpieza", "Celdas", JSON.stringify(previa), JSON.stringify(nueva), motivo, nueva.version);
+    return null;
+  },
   productos: PRODUCTOS,
   versiones: PRODUCTOS,
   lotes: LOTES,

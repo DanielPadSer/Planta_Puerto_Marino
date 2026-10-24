@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Thermometer, Settings2, Clock, CheckCircle2 } from "lucide-react";
+import { Thermometer, Settings2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { PanelLayout } from "@/app/PanelLayout";
 import { TabsPanel, EstadoChip, Tabla, Drawer, MotivoForm, EjemploPanel } from "./ui";
 import { useCalidad } from "./store";
+import { TemperaturaChart } from "./TemperaturaChart";
 const INITIAL = [
   {
     id: "CF-1",
@@ -43,15 +44,10 @@ export function CuartosFrios() {
   const room = rooms.find((r) => r.id === sel) ?? INITIAL[0];
   if (!room) return null;
   const range = room.max - room.min;
-  const vals = Array.from(
-    { length: 24 },
-    (_, i) =>
-      room.min + range * (0.3 + 0.18 * Math.sin(i * 0.7)) + (room.id === "CF-2" && i > 19 ? 2 : 0),
-  );
   return (
     <PanelLayout
-      title="Cuartos fríos"
-      subtitle="Temperaturas, registros y condiciones de almacenamiento"
+      title="Monitoreo"
+      subtitle="Temperaturas, registros y condiciones de almacenamiento de los cuartos fríos"
       active="/panel/cuartos-frios"
       action={
         <Button
@@ -102,46 +98,12 @@ export function CuartosFrios() {
         ))}
       </div>
       <section className="panel-surface p-6 mt-5">
-        <div className="flex justify-between">
-          <h2>{room.id} · Temperatura de las últimas 24 h</h2>
-          <span className="text-xs text-muted-foreground">
-            Banda permitida: {room.min} a {room.max} °C
-          </span>
-        </div>
-        <div className="temperature-chart">
-          <div className="chart-y">
-            <span>{room.max + 3} °C</span>
-            <span>{room.max} °C</span>
-            <span>{room.min} °C</span>
-            <span>{room.min - 2} °C</span>
-          </div>
-          <svg
-            viewBox="0 0 1000 180"
-            preserveAspectRatio="none"
-            role="img"
-            aria-label={`Gráfica de temperatura ${room.id}`}
-          >
-            <rect x="0" y="45" width="1000" height="90" className="chart-band" />
-            {[45, 90, 135].map((y) => (
-              <line key={y} x1="0" x2="1000" y1={y} y2={y} className="chart-grid-line" />
-            ))}
-            <polyline
-              points={vals
-                .map((v, i) => `${(i * 1000) / 23},${135 - ((v - room.min) / range) * 90}`)
-                .join(" ")}
-              className="chart-temperature-line"
-            />
-          </svg>
-        </div>
-        <div className="chart-hours">
-          {["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "23:00"].map((x) => (
-            <span key={x}>{x}</span>
-          ))}
-        </div>
+        <TemperaturaChart room={room} />
       </section>
       <section className="panel-surface p-5 mt-5">
         <h2 className="mb-4">Registros de temperatura · {room.id}</h2>
         <Tabla
+          rowClassName={(r) => r.estado === "Fuera de rango" ? "temperature-alert-row" : ""}
           data={["06:00", "12:00", "18:00"].map((h, i) => ({
             id: `${room.id}-${i}`,
             hora: `23/10/2026 · ${h}`,
@@ -155,7 +117,7 @@ export function CuartosFrios() {
             {
               key: "temperatura",
               label: "Temperatura",
-              render: (r) => <span className="font-mono">{r.temperatura.toFixed(1)} °C</span>,
+              render: (r) => <span className="font-mono">{r.temperatura.toLocaleString("es-CO", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} °C</span>,
             },
             { key: "operario", label: "Responsable" },
             { key: "dispositivo", label: "Dispositivo" },

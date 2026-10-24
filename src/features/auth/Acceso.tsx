@@ -16,7 +16,7 @@ const PESTANAS = {
 
 export function Acceso() {
   const [modo, setModo] = useState<Modo>("planta");
-  const [sel, setSel] = useState<EstacionId>("marinado");
+  const [sel, setSel] = useState<EstacionId>("vista-planta");
   const [tab, setTab] = useState<keyof typeof PESTANAS>("pasa");
   const navigate = useNavigate();
   const est = ESTACIONES.find((e) => e.id === sel) ?? ESTACIONES[0]!;
@@ -82,7 +82,7 @@ export function Acceso() {
             <button onClick={continuar}
               className="tap inline-flex items-center gap-2 rounded-2xl px-6 py-3 font-semibold text-primary-foreground shadow-[var(--shadow-soft)] transition hover:brightness-110"
               style={{ background: modo === "panel" ? "var(--primary)" : est.color }}>
-              {modo === "panel" ? "Continuar al Panel web" : `Continuar a ${est.codigo} ${est.nombre}`} <ArrowRight size={20} />
+              {modo === "panel" ? "Continuar al Panel web" : `Continuar a ${sel === "vista-planta" ? est.nombre : `${est.codigo} ${est.nombre}`}`} <ArrowRight size={20} />
             </button>
           </footer>
         </main>

@@ -93,15 +93,6 @@ export function Trazabilidad() {
       title="Trazabilidad de lote"
       subtitle="Árbol genealógico completo, evidencia por etapa y despachos a sedes"
       active="/panel/trazabilidad"
-      action={
-        <Button
-          variant="outline"
-          onClick={() => toast.info("Certificado HACCP · descarga simulada")}
-        >
-          <Download size={20} />
-          Descargar certificado HACCP
-        </Button>
-      }
     >
       <section className="trace-search-band">
         <Buscador value={query} onChange={setQuery} placeholder="Buscar lote interno…" />

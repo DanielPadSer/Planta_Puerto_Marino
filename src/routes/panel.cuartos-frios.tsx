@@ -3,12 +3,12 @@ import { CuartosFrios } from "@/features/panel-calidad/CuartosFrios";
 export const Route = createFileRoute("/panel/cuartos-frios")({
   head: () => ({
     meta: [
-      { title: "Cuartos fríos · Puerto Marino" },
+      { title: "Monitoreo · Puerto Marino" },
       {
         name: "description",
         content: "Temperaturas y configuración de los cuartos CF-1, CF-2 y CF-3.",
       },
-      { property: "og:title", content: "Cuartos fríos · Puerto Marino" },
+      { property: "og:title", content: "Monitoreo · Puerto Marino" },
       {
         property: "og:description",
         content: "Temperaturas y configuración de los cuartos CF-1, CF-2 y CF-3.",
