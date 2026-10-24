@@ -7,6 +7,7 @@ import { PanelLayout } from "@/app/PanelLayout";
 import { useCalidad } from "./store";
 import { Tabla, Buscador, EstadoChip, Drawer, MotivoForm, EjemploPanel } from "./ui";
 import type { ContenedorCalidad } from "@/domain/calidad";
+import { CATEGORIAS_SANITARIAS } from "@/domain/matriz";
 const catalogs = [
   "Contenedores y tara",
   "Categorías sanitarias",
@@ -17,13 +18,7 @@ const catalogs = [
   "Productos",
 ];
 const generic: Record<string, { id: string; nombre: string; estado: string }[]> = {
-  "Categorías sanitarias": [
-    "Vegetal",
-    "Pollo y aves",
-    "Res y cerdo",
-    "Pescado",
-    "Crustáceos y moluscos",
-  ].map((nombre, i) => ({ id: `CAT-${i + 1}`, nombre, estado: "Vigente" })),
+  "Categorías sanitarias": CATEGORIAS_SANITARIAS.map((c, i) => ({ id: `CAT-${i + 1}`, nombre: c.nombre, estado: "Vigente" })),
   Proveedores: [
     { id: "PRO-01", nombre: "Pescados del Caribe S.A.S.", estado: "Activo" },
     { id: "PRO-02", nombre: "Mariscos del Pacífico", estado: "Activo" },
