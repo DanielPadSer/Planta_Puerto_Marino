@@ -45,7 +45,7 @@ export function Planta() {
 
   return (
     <div className="pointer-events-none absolute inset-0 [&>*]:pointer-events-auto">
-      <header className="absolute z-40 left-4 right-20 top-4 flex items-center gap-3">
+      <header className={cn("absolute z-40 left-4 top-4 flex items-center gap-3", abierto ? "right-[372px]" : "right-20")}>
         <Link to="/" aria-label="Volver" className="glass tap grid place-items-center rounded-full"><ChevronLeft size={20} /></Link>
         <div className="glass flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-4">
           <Logo className="size-9 rounded-full object-contain" />
