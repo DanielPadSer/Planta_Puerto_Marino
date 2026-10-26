@@ -120,4 +120,11 @@ describe("Versiones auditadas e inmutables", () => {
     expect(useCuarta.getState().plantillas.at(-1)?.version).toBe(3);
     expect(useCuarta.getState().plantillas[1]?.items.length).toBe(10);
   });
+  it("publicación normativa no omite perfiles sin validar", () => {
+    expect(useCuarta.getState().publicarNormativa("Publicación demo")).not.toBeNull();
+    expect(useCuarta.getState().alergenos[3]?.version).toBe(3);
+    useCuarta.setState({perfiles:PERFILES_DEMO.map(p=>({...p,estadoFicha:"validado"}))});
+    expect(useCuarta.getState().publicarNormativa("Publicación demo")).toBeNull();
+    expect(useCuarta.getState().alergenos[3]?.version).toBe(4);
+  });
 });

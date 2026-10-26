@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import {
   ShieldCheck,
   CircleAlert,
@@ -40,6 +40,12 @@ import {
   type Alergeno,
   type Perfil,
 } from "@/domain/cuartaFase";
+import { z } from "zod";
+const draftSchema = z.object({
+  draft: z.object({id:z.string(),codigo:z.string(),nombreRotulado:z.string(),descripcion:z.string(),activo:z.boolean(),version:z.number(),normaReferencia:z.string()}).nullable(),
+  perfilDraft: z.object({id:z.string(),codigo:z.string(),nombre:z.string(),tipo:z.enum(["Producto","Ingrediente","Kit"]),alergenoIds:z.array(z.string()),estadoFicha:z.enum(["validado","sin_perfil","revision"]),version:z.number(),riesgoCruzado:z.boolean(),notas:z.string()}).nullable(),
+  perfilId:z.string(),recetaId:z.string(),motivoReceta:z.string(),trazas:z.boolean(),justificacion:z.string(),norma:z.string(),loteId:z.string(),
+});
 const STEPS = [
   "Catálogo",
   "Perfiles",
@@ -102,18 +108,18 @@ export function Alergenos({ paso = 1 }: { paso?: number }) {
       )
     : "";
   const ir = (n: number) =>
-    navigate({ to: "/panel/catalogos/alergenos/paso/$paso", params: { paso: String(n) } });
+    { guardarEstado(); return navigate({ to: "/panel/catalogos/alergenos/paso/$paso", params: { paso: String(n) } }); };
   useEffect(() => {
-    const b = s.borradores[`alergenos-${paso}`];
-    if (!b || typeof b !== "object") return;
-    if ("trazas" in b && typeof b.trazas === "boolean") setTrazas(b.trazas);
-    if ("justificacion" in b && typeof b.justificacion === "string")
-      setJustificacion(b.justificacion);
+    const parsed = draftSchema.safeParse(useCuarta.getState().borradores['alergenos']);
+    if (!parsed.success) return;
+    const b=parsed.data;
+    setDraft(b.draft);setPerfilDraft(b.perfilDraft);setPerfilId(b.perfilId);setRecetaId(b.recetaId);setMotivoReceta(b.motivoReceta);setTrazas(b.trazas);setJustificacion(b.justificacion);setNorma(b.norma);setLoteId(b.loteId);
   }, [paso]);
-  function guardarBorrador() {
-    s.guardarBorrador(`alergenos-${paso}`, {
+  function guardarEstado() {
+    s.guardarBorrador('alergenos', {
       draft,
       perfilDraft,
+      perfilId,
       recetaId,
       motivoReceta,
       trazas,
@@ -121,6 +127,9 @@ export function Alergenos({ paso = 1 }: { paso?: number }) {
       norma,
       loteId,
     });
+  }
+  function guardarBorrador() {
+    guardarEstado();
     toast.success("Borrador guardado durante esta visita");
   }
   function continuar() {
@@ -887,20 +896,20 @@ export function Alergenos({ paso = 1 }: { paso?: number }) {
                 <Button
                   disabled={
                     motivoFinal.trim().length < 5 ||
-                    s.perfiles.some((p) => p.estadoFicha === "sin_perfil")
+                    s.perfiles.some((p) => p.estadoFicha !== "validado")
                   }
                   className="w-full h-auto min-h-12 whitespace-normal"
                   onClick={() => {
                     const a = s.alergenos.find((x) => x.id === "ALG-004");
                     if (!a) return;
-                    s.guardarAlergeno(a, motivoFinal);
-                    s.completar(5);
+                    const error = s.publicarNormativa(motivoFinal);
+                    if (error) { toast.error(error); return; }
                     toast.success(`Versión normativa v${a.version + 1} publicada · simulación`);
                   }}
                 >
                   Finalizar y publicar versión normativa en planta
                 </Button>
-                {s.perfiles.some((p) => p.estadoFicha === "sin_perfil") && (
+                {s.perfiles.some((p) => p.estadoFicha !== "validado") && (
                   <p className="text-xs text-danger">
                     Resuelve los perfiles pendientes antes de publicar.
                   </p>

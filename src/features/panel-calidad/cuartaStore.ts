@@ -9,6 +9,7 @@ import {
   type Perfil,
   type PlantillaBPM,
   type Receta,
+  alergenosDeReceta,
 } from "@/domain/cuartaFase";
 import {
   PERSONAL_DEMO,
@@ -67,6 +68,7 @@ interface CuartaState {
   guardarPerfil: (p: Perfil, motivo: string) => void;
   aprobarReceta: (id: string, motivo: string) => string | null;
   retener: (motivo: string) => void;
+  publicarNormativa: (motivo: string) => string | null;
 }
 export const useCuarta = create<CuartaState>((set, get) => ({
   personal: PERSONAL_DEMO,
@@ -132,6 +134,11 @@ export const useCuarta = create<CuartaState>((set, get) => ({
   guardarPerfil: (p, motivo) => {
     const previo = get().perfiles.find((x) => x.id === p.id);
     if (!previo) return;
+    if (p.tipo === "Kit") {
+      const receta = get().recetas.find(r => r.codigo === p.codigo);
+      if (!receta || validarReceta(receta, get().perfiles)) throw Error("Valida los ingredientes del kit antes de publicar.");
+      p = { ...p, alergenoIds: alergenosDeReceta(receta, get().perfiles) };
+    }
     const nuevo = {
       ...p,
       alergenoIds: [...p.alergenoIds],
@@ -163,5 +170,14 @@ export const useCuarta = create<CuartaState>((set, get) => ({
     const nuevo = anterior.map((l) => ({ ...l, estado: "Retenido en cuarentena" }));
     set({ lotes: nuevo });
     auditarCuarta("Lotes afectados", anterior, nuevo, motivo);
+  },
+  publicarNormativa: (motivo) => {
+    if (get().perfiles.some(p => p.estadoFicha !== "validado")) return "Todos los perfiles requieren validación técnica antes de publicar.";
+    if (get().recetas.some(r => validarReceta(r, get().perfiles))) return "Revisa las fichas de las recetas antes de publicar.";
+    const alergeno = get().alergenos.find(a => a.id === "ALG-004");
+    if (!alergeno) return "No se encontró el alérgeno.";
+    get().guardarAlergeno(alergeno, motivo);
+    get().completar(5);
+    return null;
   },
 }));

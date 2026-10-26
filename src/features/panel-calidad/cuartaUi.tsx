@@ -47,7 +47,7 @@ export function ToggleCuarta({
   return (
     <label className="flex min-h-12 items-center justify-between gap-4 text-sm">
       <span>{label}</span>
-      <Switch aria-label={label} checked={checked} onCheckedChange={onChange} />
+      <Switch className="cuarta-switch" aria-label={label} checked={checked} onCheckedChange={onChange} />
     </label>
   );
 }

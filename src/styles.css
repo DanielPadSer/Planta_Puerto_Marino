@@ -392,6 +392,11 @@
 .cuarta-scope button,.cuarta-drawer button,.cuarta-dialog button { min-height:48px; }
 .cuarta-scope .panel-input,.cuarta-drawer .panel-input,.cuarta-dialog .panel-input { min-height:48px; }
 .cuarta-drawer>button,.cuarta-dialog>button { min-width:48px; }
+.cuarta-scope button.cuarta-switch,.cuarta-drawer button.cuarta-switch { min-height:20px; min-width:36px; height:20px; }
+.cuarta-switch { position:relative; }
+.cuarta-switch::before { content:""; position:absolute; inset:-14px -6px; }
+.cuarta-scope .panel-table td:first-child { min-width:90px; }
+.cuarta-scope .panel-table td { min-width:110px; }
 .cuarta-scope .panel-table td { overflow-wrap:anywhere; }
 .cuarta-scope .panel-table button { white-space:normal; }
 .allergen-flow { padding-bottom:110px; }
