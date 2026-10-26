@@ -35,15 +35,7 @@ import {
   type TipoDocumentoPersonal,
 } from "@/domain/cuartaFase";
 import { HOY_DEMO, REGISTROS_BPM } from "@/mocks/cuartaFase";
-function Renovacion({
-  operario,
-  tipoInicial,
-  onClose,
-}: {
-  operario: OperarioPersonal;
-  tipoInicial: TipoDocumentoPersonal;
-  onClose: () => void;
-}) {
+function Renovacion({ operario, onClose }: { operario: OperarioPersonal; onClose: () => void }) {
   const renovar = useCuarta((s) => s.renovar);
   const [archivo, setArchivo] = useState<File | null>(null);
   const {
@@ -54,7 +46,7 @@ function Renovacion({
   } = useForm<z.infer<typeof documentoSchema>>({
     resolver: zodResolver(documentoSchema),
     defaultValues: {
-      tipo: tipoInicial,
+      tipo: "capacitacion_bpm",
       emitidoEn: HOY_DEMO,
       venceEn: "",
       entidad: "",
@@ -112,27 +104,18 @@ function Renovacion({
             Horas de capacitación
             <input type="number" className="panel-input" {...register("horas")} />
           </label>
-          <span className="field-label">Archivo adjunto</span>
-          <input
-            id="archivo-renovacion"
-            type="file"
-            accept=".pdf,image/*"
-            className="sr-only"
-            onChange={(e) => {
-              const f = e.target.files?.[0] ?? null;
-              setArchivo(f);
-              setValue("archivoNombre", f?.name ?? "");
-            }}
-          />
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full min-h-12 justify-start"
-            onClick={() => document.getElementById("archivo-renovacion")?.click()}
-          >
-            <Upload size={20} />
-            {archivo ? archivo.name : "Seleccionar archivo"}
-          </Button>
+          <label className="field-label">
+            Archivo adjunto
+            <input
+              type="file"
+              accept=".pdf,image/*"
+              onChange={(e) => {
+                const f = e.target.files?.[0] ?? null;
+                setArchivo(f);
+                setValue("archivoNombre", f?.name ?? "");
+              }}
+            />
+          </label>
           {Object.values(errors).map((e, i) => (
             <p key={i} role="alert" className="text-danger text-xs">
               {e.message}
@@ -154,7 +137,6 @@ export function Personal() {
   const [filtro, setFiltro] = useState("Todos");
   const [selected, setSelected] = useState<string | null>(null);
   const [renovar, setRenovar] = useState(false);
-  const [renovarTipo, setRenovarTipo] = useState<TipoDocumentoPersonal>("capacitacion_bpm");
   const [registro, setRegistro] = useState(false);
   const [nombre, setNombre] = useState("");
   const [rol, setRol] = useState<RolPersonal>("operario");
@@ -572,19 +554,6 @@ export function Personal() {
                       : "CAPACITACIÓN EN BPM"}
                   </h3>
                   <DocumentoChip {...(d ? { doc: d } : {})} diasAviso={s.diasAviso} />
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => {
-                      setRenovarTipo(tipo);
-                      setRenovar(true);
-                    }}
-                  >
-                    <Upload size={20} />
-                    {tipo === "certificado_medico"
-                      ? "Cargar certificado de aptitud"
-                      : "Cargar documento"}
-                  </Button>
                   {d && (
                     <>
                       <p className="text-sm">
@@ -755,13 +724,7 @@ export function Personal() {
           </form>
         </DialogContent>
       </Dialog>
-      {renovar && operario && (
-        <Renovacion
-          operario={operario}
-          tipoInicial={renovarTipo}
-          onClose={() => setRenovar(false)}
-        />
-      )}
+      {renovar && operario && <Renovacion operario={operario} onClose={() => setRenovar(false)} />}
     </PanelLayout>
   );
 }
