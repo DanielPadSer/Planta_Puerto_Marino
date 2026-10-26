@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Users,
   FileCheck,
@@ -38,6 +38,7 @@ import { HOY_DEMO, REGISTROS_BPM } from "@/mocks/cuartaFase";
 function Renovacion({ operario, onClose }: { operario: OperarioPersonal; onClose: () => void }) {
   const renovar = useCuarta((s) => s.renovar);
   const [archivo, setArchivo] = useState<File | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   const {
     register,
     handleSubmit,
@@ -104,18 +105,32 @@ function Renovacion({ operario, onClose }: { operario: OperarioPersonal; onClose
             Horas de capacitación
             <input type="number" className="panel-input" {...register("horas")} />
           </label>
-          <label className="field-label">
+          <div className="field-label">
             Archivo adjunto
             <input
+              ref={fileRef}
               type="file"
               accept=".pdf,image/*"
+              className="sr-only"
               onChange={(e) => {
                 const f = e.target.files?.[0] ?? null;
                 setArchivo(f);
                 setValue("archivoNombre", f?.name ?? "");
               }}
             />
-          </label>
+            <Button
+              type="button"
+              variant="outline"
+              className="mt-1.5 min-h-12 w-full justify-start border-dashed font-normal"
+              onClick={() => fileRef.current?.click()}
+            >
+              <Upload size={20} />
+              {archivo ? archivo.name : "Seleccionar archivo"}
+            </Button>
+            <p className="mt-1.5 text-xs font-normal text-muted-foreground">
+              PDF o imagen · se guarda durante esta visita
+            </p>
+          </div>
           {Object.values(errors).map((e, i) => (
             <p key={i} role="alert" className="text-danger text-xs">
               {e.message}
