@@ -25,7 +25,17 @@ import {
   useConexion,
   EjemploPanel,
 } from "./ui";
+import { useCuarta } from "./cuartaStore";
+import { documentoActivo, vigenciaDocumento, fechaCO } from "@/domain/cuartaFase";
+import { HOY_DEMO } from "@/mocks/cuartaFase";
 export function Bandeja() {
+  const personal = useCuarta(s => s.personal);
+  const diasAviso = useCuarta(s => s.diasAviso);
+  const avisosDocumentales = personal.flatMap(o => (["certificado_medico", "capacitacion_bpm"] as const).flatMap(tipo => {
+    const doc = documentoActivo(o, tipo);
+    const estado = doc ? vigenciaDocumento(doc, HOY_DEMO, diasAviso) : "sin_documento";
+    return estado === "vigente" ? [] : [{ id: `${o.id}-${tipo}`, nombre: o.nombre, tipo: tipo === "certificado_medico" ? "Certificado médico" : "Capacitación BPM", detalle: doc ? `${estado === "vencido" ? "Vencido" : "Por vencer"} · ${fechaCO(doc.venceEn)}` : "Sin documento" }];
+  }));
   const { lotes, decidir } = useCalidad();
   const [tab, setTab] = useState("Cuarentenas");
   const [selected, setSelected] = useState("LT-0245");
@@ -127,7 +137,7 @@ export function Bandeja() {
             </>
           ) : tab === "Avisos" ? (
             <Tabla
-              data={AVISOS.filter((a) =>
+              data={[...AVISOS, ...avisosDocumentales].filter((a) =>
                 `${a.nombre} ${a.detalle}`.toLowerCase().includes(search.toLowerCase()),
               )}
               cols={[
