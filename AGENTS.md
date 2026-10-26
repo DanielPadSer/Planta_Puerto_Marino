@@ -23,3 +23,6 @@
 - Editable quality matrices retain immutable snapshots in the shared quality store and use their own level type; this preserves legacy station rules and historical approvals.
 - The sanitary category list is shared between catalog and matrix so both grow together without duplicate category definitions.
 - CF-1 reuses the reception scale hook with an optional simulation interval and isolated weight validation; manual authorization remains explicitly simulated.
+- Personal/BPM and allergens use a dedicated local Zustand store with immutable snapshots and append events to the shared quality audit; this keeps simulated module data isolated without a backend.
+- Allergen wizard steps use a single validated dynamic leaf route and session draft state; navigation changes the URL without losing edits.
+- Barcode rendering and PDF/Excel libraries load only inside browser effects or actions; this avoids browser-only work during SSR and defers export costs.

@@ -1,4 +1,9 @@
 # Tercera fase · Panel de calidad
+# Cuarta fase · Personal/BPM y Alérgenos
+- [x] Documentos, renovaciones, controles de turno y plantillas BPM.
+- [x] Catálogo, perfiles, recetas, etiquetas y trazabilidad de alérgenos.
+- [x] Avisos de documentos y auditoría de nuevas versiones.
+- [x] Pruebas de reglas y flujos completos con datos simulados (46 pruebas; renovaciones, recetas, impresión demo, PDF/Excel, retención y auditoría; 1024×768 y 1280×800).
 # Seis mejoras puntuales
 - [x] Selección inicial de Vista Planta.
 - [x] Panel de planta desplegable y tarjetas de zona.

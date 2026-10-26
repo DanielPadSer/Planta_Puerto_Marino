@@ -26,6 +26,7 @@ import { Route as PinEstacionRouteImport } from './routes/pin.$estacion'
 import { Route as PlantaIndexRouteImport } from './routes/planta.index'
 import { Route as PlantaZonaRouteImport } from './routes/planta.$zona'
 import { Route as PanelCatalogosAlergenosRouteImport } from './routes/panel.catalogos_.alergenos'
+import { Route as PanelCatalogosAlergenosPasoPasoRouteImport } from './routes/panel.catalogos_.alergenos_.paso.$paso'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -112,6 +113,12 @@ const PanelCatalogosAlergenosRoute = PanelCatalogosAlergenosRouteImport.update({
   path: '/panel/catalogos/alergenos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PanelCatalogosAlergenosPasoPasoRoute =
+  PanelCatalogosAlergenosPasoPasoRouteImport.update({
+    id: '/panel/catalogos_/alergenos_/paso/$paso',
+    path: '/panel/catalogos/alergenos/paso/$paso',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/planta/$zona': typeof PlantaZonaRoute
   '/planta/': typeof PlantaIndexRoute
   '/panel/catalogos/alergenos': typeof PanelCatalogosAlergenosRoute
+  '/panel/catalogos/alergenos/paso/$paso': typeof PanelCatalogosAlergenosPasoPasoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -149,6 +157,7 @@ export interface FileRoutesByTo {
   '/planta/$zona': typeof PlantaZonaRoute
   '/planta': typeof PlantaIndexRoute
   '/panel/catalogos/alergenos': typeof PanelCatalogosAlergenosRoute
+  '/panel/catalogos/alergenos/paso/$paso': typeof PanelCatalogosAlergenosPasoPasoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -169,6 +178,7 @@ export interface FileRoutesById {
   '/planta/$zona': typeof PlantaZonaRoute
   '/planta/': typeof PlantaIndexRoute
   '/panel/catalogos_/alergenos': typeof PanelCatalogosAlergenosRoute
+  '/panel/catalogos_/alergenos_/paso/$paso': typeof PanelCatalogosAlergenosPasoPasoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -190,6 +200,7 @@ export interface FileRouteTypes {
     | '/planta/$zona'
     | '/planta/'
     | '/panel/catalogos/alergenos'
+    | '/panel/catalogos/alergenos/paso/$paso'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -208,6 +219,7 @@ export interface FileRouteTypes {
     | '/planta/$zona'
     | '/planta'
     | '/panel/catalogos/alergenos'
+    | '/panel/catalogos/alergenos/paso/$paso'
   id:
     | '__root__'
     | '/'
@@ -227,6 +239,7 @@ export interface FileRouteTypes {
     | '/planta/$zona'
     | '/planta/'
     | '/panel/catalogos_/alergenos'
+    | '/panel/catalogos_/alergenos_/paso/$paso'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -245,6 +258,7 @@ export interface RootRouteChildren {
   PanelTrazabilidadRoute: typeof PanelTrazabilidadRoute
   PinEstacionRoute: typeof PinEstacionRoute
   PanelCatalogosAlergenosRoute: typeof PanelCatalogosAlergenosRoute
+  PanelCatalogosAlergenosPasoPasoRoute: typeof PanelCatalogosAlergenosPasoPasoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -368,6 +382,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PanelCatalogosAlergenosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/panel/catalogos_/alergenos_/paso/$paso': {
+      id: '/panel/catalogos_/alergenos_/paso/$paso'
+      path: '/panel/catalogos/alergenos/paso/$paso'
+      fullPath: '/panel/catalogos/alergenos/paso/$paso'
+      preLoaderRoute: typeof PanelCatalogosAlergenosPasoPasoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -400,6 +421,7 @@ const rootRouteChildren: RootRouteChildren = {
   PanelTrazabilidadRoute: PanelTrazabilidadRoute,
   PinEstacionRoute: PinEstacionRoute,
   PanelCatalogosAlergenosRoute: PanelCatalogosAlergenosRoute,
+  PanelCatalogosAlergenosPasoPasoRoute: PanelCatalogosAlergenosPasoPasoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

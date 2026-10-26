@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Pendiente } from "@/features/panel-calidad/Pendiente";
+import { Alergenos } from "@/features/panel-calidad/Alergenos";
 export const Route = createFileRoute("/panel/catalogos_/alergenos")({
   head: () => ({
     meta: [
@@ -7,7 +7,7 @@ export const Route = createFileRoute("/panel/catalogos_/alergenos")({
       {
         name: "description",
         content:
-          "Catálogo de alérgenos del panel de calidad Puerto Marino, pendiente de la siguiente fase.",
+          "Catálogo versionado, perfiles, recetas y rotulado de alérgenos de Puerto Marino.",
       },
       { property: "og:title", content: "Catálogo de alérgenos · Puerto Marino" },
       {
@@ -18,5 +18,5 @@ export const Route = createFileRoute("/panel/catalogos_/alergenos")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: () => <Pendiente alergenos />,
+  component: Alergenos,
 });

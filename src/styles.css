@@ -387,3 +387,37 @@
 @media(max-width:1200px) { .monitor-summary { grid-template-columns:repeat(3,minmax(0,1fr)); } }
 @media(max-width:800px) { .matrix-save-bar { left:90px; } }
 @media(prefers-reduced-motion:reduce) { .matrix-save-bar,.editable-matrix[data-editing="true"] tr,.editable-matrix .matrix-cell.ring-2 { animation:plant-fade 150ms; animation-delay:0s; } }
+
+/* Cuarta fase: reutiliza superficies y controles del panel. */
+.cuarta-scope button,.cuarta-drawer button,.cuarta-dialog button { min-height:48px; }
+.cuarta-scope .panel-input,.cuarta-drawer .panel-input,.cuarta-dialog .panel-input { min-height:48px; }
+.cuarta-drawer>button,.cuarta-dialog>button { min-width:48px; }
+.cuarta-scope button.cuarta-switch,.cuarta-drawer button.cuarta-switch { min-height:20px; min-width:36px; height:20px; }
+.cuarta-switch { position:relative; }
+.cuarta-switch::before { content:""; position:absolute; inset:-14px -6px; }
+.cuarta-scope .panel-table td:first-child { min-width:90px; }
+.cuarta-scope .panel-table td { min-width:110px; }
+.cuarta-scope .panel-table td { overflow-wrap:anywhere; }
+.cuarta-scope .panel-table button { white-space:normal; }
+.allergen-flow { padding-bottom:110px; }
+.allergen-flow>.kpi-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.allergen-steps { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; padding:8px; border:1px solid var(--border); border-radius:16px; background:var(--surface); margin-bottom:20px; }
+.allergen-step { min-height:76px!important; height:auto; white-space:normal; justify-content:flex-start; padding:12px; font-size:12px; text-align:left; gap:8px; }
+.step-number { display:grid; place-items:center; border:1px solid var(--border); border-radius:50%; width:28px; height:28px; flex-shrink:0; font-family:var(--font-mono); }
+.allergen-cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; margin-top:20px; }
+.allergen-split { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr); gap:20px; margin-top:20px; align-items:start; }
+.allergen-label-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,1fr); gap:18px; align-items:start; }
+.allergen-footer { position:fixed; left:276px; right:28px; bottom:16px; z-index:35; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:12px; display:flex; flex-wrap:wrap; justify-content:flex-end; gap:10px; box-shadow:var(--shadow-soft); }
+.allergen-footer button:first-child { margin-right:auto; }
+.allergen-footer button { white-space:normal; height:auto; }
+.sidebar-mini .allergen-footer { left:104px; }
+:root { --label-background:oklch(1 0 0); --label-ink:oklch(.15 0 0); --label-inverse:oklch(1 0 0); }
+.print-label { background:var(--label-background); color:var(--label-ink); border:1px solid var(--border); padding:18px; width:100%; aspect-ratio:10/7; overflow-wrap:anywhere; }
+.print-label .puerto-logo { width:36px; height:36px; }
+.label-declaration { background:var(--label-ink); color:var(--label-inverse); padding:12px; display:flex; gap:8px; font-weight:700; font-size:12px; }
+.quality-panel .label-barcode { width:140px; height:38px; }
+.quality-panel .print-label svg:not(.label-barcode):not(.lucide) { width:64px; height:64px; }
+@media(max-width:1200px) { .allergen-label-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }.allergen-label-grid>aside { grid-column:1/-1; }.allergen-steps { gap:2px; padding:4px; }.allergen-step { flex-direction:column; align-items:flex-start; padding:8px; }.allergen-footer { left:268px; right:20px; } }
+@media(max-width:1000px) { .allergen-split { grid-template-columns:1fr; }.allergen-footer { left:230px; } }
+@media(max-width:800px) { .allergen-cards,.allergen-label-grid { grid-template-columns:1fr; }.allergen-flow>.kpi-grid { grid-template-columns:1fr; }.allergen-footer { left:90px; right:14px; }.allergen-flow { padding-bottom:220px; }.allergen-steps { grid-template-columns:repeat(2,minmax(0,1fr)); }.allergen-step { flex-direction:row; }.allergen-label-grid>aside { grid-column:auto; } }
+@media(prefers-reduced-motion:reduce) { .cuarta-drawer,.cuarta-dialog { animation:plant-fade 150ms!important; transition:none!important; } }

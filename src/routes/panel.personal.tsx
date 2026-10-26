@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Pendiente } from "@/features/panel-calidad/Pendiente";
+import { Personal } from "@/features/panel-calidad/Personal";
 export const Route = createFileRoute("/panel/personal")({
   head: () => ({
     meta: [
@@ -7,7 +7,7 @@ export const Route = createFileRoute("/panel/personal")({
       {
         name: "description",
         content:
-          "Personal y BPM del panel de calidad Puerto Marino, pendiente de la siguiente fase.",
+          "Vigencia documental, controles de turno y plantillas BPM de Puerto Marino.",
       },
       { property: "og:title", content: "Personal y BPM · Puerto Marino" },
       { property: "og:description", content: "Personal y BPM del panel de calidad de la planta." },
@@ -15,5 +15,5 @@ export const Route = createFileRoute("/panel/personal")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: () => <Pendiente />,
+  component: Personal,
 });
