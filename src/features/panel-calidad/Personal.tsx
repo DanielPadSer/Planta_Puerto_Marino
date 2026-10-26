@@ -154,6 +154,7 @@ export function Personal() {
   const [filtro, setFiltro] = useState("Todos");
   const [selected, setSelected] = useState<string | null>(null);
   const [renovar, setRenovar] = useState(false);
+  const [renovarTipo, setRenovarTipo] = useState<TipoDocumentoPersonal>("capacitacion_bpm");
   const [registro, setRegistro] = useState(false);
   const [nombre, setNombre] = useState("");
   const [rol, setRol] = useState<RolPersonal>("operario");
@@ -571,6 +572,19 @@ export function Personal() {
                       : "CAPACITACIÓN EN BPM"}
                   </h3>
                   <DocumentoChip {...(d ? { doc: d } : {})} diasAviso={s.diasAviso} />
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => {
+                      setRenovarTipo(tipo);
+                      setRenovar(true);
+                    }}
+                  >
+                    <Upload size={20} />
+                    {tipo === "certificado_medico"
+                      ? "Cargar certificado de aptitud"
+                      : "Cargar documento"}
+                  </Button>
                   {d && (
                     <>
                       <p className="text-sm">
@@ -741,7 +755,13 @@ export function Personal() {
           </form>
         </DialogContent>
       </Dialog>
-      {renovar && operario && <Renovacion operario={operario} onClose={() => setRenovar(false)} />}
+      {renovar && operario && (
+        <Renovacion
+          operario={operario}
+          tipoInicial={renovarTipo}
+          onClose={() => setRenovar(false)}
+        />
+      )}
     </PanelLayout>
   );
 }
