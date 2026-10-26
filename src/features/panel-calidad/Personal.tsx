@@ -1,42 +1,730 @@
-import { useState } from 'react';
-import { Users, FileCheck, CalendarClock, CircleAlert, Plus, Upload, FileText, ArrowUp, ArrowDown, Trash2 } from 'lucide-react';
-import { toast } from 'sonner';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { PanelLayout } from '@/app/PanelLayout';
-import { KPIs, TabsPanel, Buscador, Tabla, MotivoForm, EstadoChip, EjemploPanel } from './ui';
-import { DrawerCuarta, ToggleCuarta, DocumentoChip, VigenciaChip, Notice } from './cuartaUi';
-import { useCuarta } from './cuartaStore';
-import { documentoActivo, vigenciaDocumento, vigenciaOperario, documentoSchema, diasHasta, fechaCO, ROLES_PERSONAL, GRUPOS_BPM, type OperarioPersonal, type RolPersonal, type TipoDocumentoPersonal } from '@/domain/cuartaFase';
-import { HOY_DEMO, REGISTROS_BPM } from '@/mocks/cuartaFase';
-function Renovacion({operario,onClose}:{operario:OperarioPersonal;onClose:()=>void}) {
- const renovar=useCuarta(s=>s.renovar);const [archivo,setArchivo]=useState<File|null>(null);
- const {register,handleSubmit,setValue,formState:{errors}}=useForm<z.infer<typeof documentoSchema>>({resolver:zodResolver(documentoSchema),defaultValues:{tipo:'capacitacion_bpm',emitidoEn:HOY_DEMO,venceEn:'',entidad:'',horas:10,archivoNombre:''}});
- return <Dialog open onOpenChange={v=>{if(!v)onClose();}}><DialogContent className="cuarta-dialog max-h-[90vh] overflow-y-auto bg-surface"><DialogTitle>Cargar renovación · {operario.nombre}</DialogTitle><DialogDescription>Documento de ejemplo · almacenamiento durante esta visita.</DialogDescription><form className="space-y-4" onSubmit={handleSubmit(d=>{renovar(operario.id,{...d,id:crypto.randomUUID(),operarioId:operario.id,...(archivo?{archivoUrl:URL.createObjectURL(archivo)}:{})});toast.success('Renovación registrada en el historial');onClose();})}>
- <label className="field-label">Tipo de documento<select className="panel-input" {...register('tipo')}><option value="certificado_medico">Certificado médico de aptitud</option><option value="capacitacion_bpm">Capacitación BPM</option></select></label>
- <div className="detail-two"><label className="field-label">Emisión<input type="date" className="panel-input" {...register('emitidoEn')}/></label><label className="field-label">Vencimiento<input type="date" className="panel-input" {...register('venceEn')}/></label></div>
- <label className="field-label">Entidad<input className="panel-input" {...register('entidad')}/></label><label className="field-label">Horas de capacitación<input type="number" className="panel-input" {...register('horas')}/></label>
- <label className="field-label">Archivo adjunto<input type="file" accept=".pdf,image/*" onChange={e=>{const f=e.target.files?.[0]??null;setArchivo(f);setValue('archivoNombre',f?.name??'');}}/></label>
- {Object.values(errors).map((e,i)=><p key={i} role="alert" className="text-danger text-xs">{e.message}</p>)}<Button type="submit" className="min-h-12 w-full"><Upload size={20}/>Guardar renovación</Button></form></DialogContent></Dialog>;
+import { useState } from "react";
+import {
+  Users,
+  FileCheck,
+  CalendarClock,
+  CircleAlert,
+  Plus,
+  Upload,
+  FileText,
+  ArrowUp,
+  ArrowDown,
+  Trash2,
+} from "lucide-react";
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { PanelLayout } from "@/app/PanelLayout";
+import { KPIs, TabsPanel, Buscador, Tabla, MotivoForm, EstadoChip, EjemploPanel } from "./ui";
+import { DrawerCuarta, ToggleCuarta, DocumentoChip, VigenciaChip, Notice } from "./cuartaUi";
+import { useCuarta } from "./cuartaStore";
+import {
+  documentoActivo,
+  vigenciaDocumento,
+  vigenciaOperario,
+  documentoSchema,
+  diasHasta,
+  fechaCO,
+  ROLES_PERSONAL,
+  GRUPOS_BPM,
+  type OperarioPersonal,
+  type RolPersonal,
+  type TipoDocumentoPersonal,
+} from "@/domain/cuartaFase";
+import { HOY_DEMO, REGISTROS_BPM } from "@/mocks/cuartaFase";
+function Renovacion({ operario, onClose }: { operario: OperarioPersonal; onClose: () => void }) {
+  const renovar = useCuarta((s) => s.renovar);
+  const [archivo, setArchivo] = useState<File | null>(null);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<z.infer<typeof documentoSchema>>({
+    resolver: zodResolver(documentoSchema),
+    defaultValues: {
+      tipo: "capacitacion_bpm",
+      emitidoEn: HOY_DEMO,
+      venceEn: "",
+      entidad: "",
+      horas: 10,
+      archivoNombre: "",
+    },
+  });
+  return (
+    <Dialog
+      open
+      onOpenChange={(v) => {
+        if (!v) onClose();
+      }}
+    >
+      <DialogContent className="cuarta-dialog max-h-[90vh] overflow-y-auto bg-surface">
+        <DialogTitle>Cargar renovación · {operario.nombre}</DialogTitle>
+        <DialogDescription>
+          Documento de ejemplo · almacenamiento durante esta visita.
+        </DialogDescription>
+        <form
+          className="space-y-4"
+          onSubmit={handleSubmit((d) => {
+            renovar(operario.id, {
+              ...d,
+              id: crypto.randomUUID(),
+              operarioId: operario.id,
+              ...(archivo ? { archivoUrl: URL.createObjectURL(archivo) } : {}),
+            });
+            toast.success("Renovación registrada en el historial");
+            onClose();
+          })}
+        >
+          <label className="field-label">
+            Tipo de documento
+            <select className="panel-input" {...register("tipo")}>
+              <option value="certificado_medico">Certificado médico de aptitud</option>
+              <option value="capacitacion_bpm">Capacitación BPM</option>
+            </select>
+          </label>
+          <div className="detail-two">
+            <label className="field-label">
+              Emisión
+              <input type="date" className="panel-input" {...register("emitidoEn")} />
+            </label>
+            <label className="field-label">
+              Vencimiento
+              <input type="date" className="panel-input" {...register("venceEn")} />
+            </label>
+          </div>
+          <label className="field-label">
+            Entidad
+            <input className="panel-input" {...register("entidad")} />
+          </label>
+          <label className="field-label">
+            Horas de capacitación
+            <input type="number" className="panel-input" {...register("horas")} />
+          </label>
+          <label className="field-label">
+            Archivo adjunto
+            <input
+              type="file"
+              accept=".pdf,image/*"
+              onChange={(e) => {
+                const f = e.target.files?.[0] ?? null;
+                setArchivo(f);
+                setValue("archivoNombre", f?.name ?? "");
+              }}
+            />
+          </label>
+          {Object.values(errors).map((e, i) => (
+            <p key={i} role="alert" className="text-danger text-xs">
+              {e.message}
+            </p>
+          ))}
+          <Button type="submit" className="min-h-12 w-full">
+            <Upload size={20} />
+            Guardar renovación
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
 }
 export function Personal() {
- const s=useCuarta();const [tab,setTab]=useState('Operarios');const [search,setSearch]=useState('');const [filtro,setFiltro]=useState('Todos');const [selected,setSelected]=useState<string|null>(null);const [renovar,setRenovar]=useState(false);const [registro,setRegistro]=useState(false);const [nombre,setNombre]=useState('');const [rol,setRol]=useState<RolPersonal>('operario');const [dias,setDias]=useState(s.diasAviso);const [bloquear,setBloquear]=useState(s.bloquear);const [fecha,setFecha]=useState('');const [operarioFiltro,setOperarioFiltro]=useState('');const [observaciones,setObservaciones]=useState(false);const [registroId,setRegistroId]=useState<string|null>(null);const [plantilla,setPlantilla]=useState(()=>structuredClone(s.plantillas.at(-1)??s.plantillas[0]));
- const operario=s.personal.find(o=>o.id===selected);const registroBPM=REGISTROS_BPM.find(r=>r.id===registroId);const actual=s.plantillas.at(-1);const docs=s.personal.flatMap(o=>o.documentos.map(d=>({doc:d,estado:vigenciaDocumento(d,HOY_DEMO,s.diasAviso)})));const filters:Record<string,string>={'Vigentes':'vigente','Por vencer':'por_vencer','Vencidos':'vencido','Sin documento':'sin_documento'};
- const filtered=s.personal.filter(o=>`${o.nombre} ${o.id}`.toLowerCase().includes(search.toLowerCase())&&(filtro==='Todos'||vigenciaOperario(o,HOY_DEMO,s.diasAviso)===filters[filtro]));
- const docCell=(o:OperarioPersonal,tipo:TipoDocumentoPersonal)=>{const d=documentoActivo(o,tipo);return <div className="space-y-2">{d&&<><b>{fechaCO(d.venceEn)}</b><small className="block text-muted-foreground">{tipo==='capacitacion_bpm'?`${d.horas} h · ${d.entidad}`:`${Math.max(0,diasHasta(d.venceEn,HOY_DEMO))} días restantes`}</small></>}<DocumentoChip {...(d?{doc:d}:{})} diasAviso={s.diasAviso}/></div>;};
- return <PanelLayout title="Personal y BPM" subtitle="Vigencia de certificados y controles de buenas prácticas de manufactura" active="/panel/personal" action={<Button className="min-h-12" onClick={()=>setRegistro(true)}><Plus size={20}/>Registrar operario</Button>}>
- <div className="cuarta-scope"><KPIs items={[{label:'Operarios activos',value:s.personal.length,icon:<Users/>},{label:'Documentos vigentes',value:docs.filter(d=>d.estado==='vigente').length,icon:<FileCheck/>},{label:'Por vencer (30 días)',value:docs.filter(d=>d.estado==='por_vencer').length,icon:<CalendarClock/>},{label:'Vencidos o sin documento',value:s.personal.filter(o=>['vencido','sin_documento'].includes(vigenciaOperario(o,HOY_DEMO,s.diasAviso))).length,icon:<CircleAlert/>,danger:true}]}/>
- <TabsPanel tabs={['Operarios','Controles de turno','Plantillas de checklist']} value={tab} onChange={setTab}/>
- {tab==='Operarios'?<section className="panel-surface mt-5 p-5"><Buscador value={search} onChange={setSearch} placeholder="Buscar operario…"/><div className="my-4 flex flex-wrap gap-2">{['Todos','Vigentes','Por vencer','Vencidos','Sin documento'].map(f=><Button key={f} variant={f===filtro?'secondary':'ghost'} className={f===filtro?'bg-primary-soft text-primary':''} onClick={()=>setFiltro(f)}>{f}</Button>)}</div><Tabla data={filtered} onSelect={o=>setSelected(o.id)} cols={[{key:'nombre',label:'Operario',render:o=><span className="flex items-center gap-2"><span className="user-avatar">{o.id.slice(0,2)}</span><span>{o.nombre}<small className="block font-mono text-muted-foreground">{o.id}</small></span></span>},{key:'rol',label:'Rol',render:o=>ROLES_PERSONAL[o.rol]},{key:'documentos',label:'Certificado médico de aptitud',render:o=>docCell(o,'certificado_medico')},{key:'id',label:'Capacitación BPM',render:o=>docCell(o,'capacitacion_bpm')},{key:'rol',label:'Estado general',render:o=><VigenciaChip estado={vigenciaOperario(o,HOY_DEMO,s.diasAviso)}/>},{key:'id',label:'Acción',render:o=><Button variant="link" onClick={()=>setSelected(o.id)}>{vigenciaOperario(o,HOY_DEMO,s.diasAviso)==='vigente'?'Ver':'Renovar'}</Button>}]} /><EjemploPanel/><p className="mt-3 text-xs text-primary">Las fechas se descargan a las pantallas de planta; la validación funciona sin conexión.</p><p className="mt-2 text-xs text-muted-foreground">Fecha de referencia de la simulación: {fechaCO(HOY_DEMO)}</p></section>:
- tab==='Controles de turno'?<section className="panel-surface mt-5 p-5"><div className="mb-4 flex flex-wrap items-end gap-3"><label className="field-label">Fecha<input type="date" className="panel-input" value={fecha} onChange={e=>setFecha(e.target.value)}/></label><label className="field-label">Operario<select className="panel-input" value={operarioFiltro} onChange={e=>setOperarioFiltro(e.target.value)}><option value="">Todos</option>{s.personal.map(o=><option key={o.id} value={o.id}>{o.nombre}</option>)}</select></label><label className="flex min-h-12 items-center gap-2"><input type="checkbox" checked={observaciones} onChange={e=>setObservaciones(e.target.checked)}/>Con observaciones</label></div><Tabla data={REGISTROS_BPM.filter(r=>(!fecha||r.firmadoEn.startsWith(fecha))&&(!operarioFiltro||r.operarioId===operarioFiltro)&&(!observaciones||r.respuestas.some(x=>x.observacion)))} onSelect={r=>setRegistroId(r.id)} cols={[{key:'firmadoEn',label:'Fecha',render:r=>`${fechaCO(r.firmadoEn)} ${r.firmadoEn.slice(11,16)}`},{key:'turno',label:'Turno'},{key:'operarioId',label:'Operario',render:r=>s.personal.find(o=>o.id===r.operarioId)?.nombre},{key:'respuestas',label:'Puntos cumplidos',render:r=>`${r.respuestas.filter(x=>x.cumple).length}/${r.respuestas.length}`},{key:'respuestas',label:'Observaciones',render:r=>r.respuestas.filter(x=>x.observacion).map(x=>x.observacion).join(' · ')||'Sin observaciones'},{key:'id',label:'Estado',render:()=><EstadoChip>Firmado</EstadoChip>},{key:'dispositivoId',label:'Dispositivo'}]}/><EjemploPanel/></section>:
- <div className="mt-5 grid items-start gap-5 lg:grid-cols-[180px_minmax(0,1fr)]"><aside className="catalog-index"><h3 className="section-eyebrow">VERSIONES DE CHECKLIST</h3>{s.plantillas.slice().reverse().map(p=><Button key={p.id} variant="ghost" className="w-full justify-start" onClick={()=>setPlantilla(structuredClone(p))}>v{p.version} · {p.version===actual?.version?'Vigente':'Archivada'}</Button>)}</aside><section className="panel-surface p-5 space-y-5"><h2>Plantilla de checklist · v{plantilla?.version}</h2>{plantilla&&<>{GRUPOS_BPM.map(grupo=><div key={grupo} className="space-y-3"><h3 className="section-eyebrow">{grupo.toUpperCase()}</h3>{plantilla.items.filter(i=>i.grupo===grupo).map(item=>{const indice=plantilla.items.findIndex(i=>i.id===item.id);return <div key={item.id} className="border-b pb-3"><input aria-label={`Punto ${item.id}`} className="panel-input w-full" value={item.texto} onChange={e=>setPlantilla({...plantilla,items:plantilla.items.map(i=>i.id===item.id?{...i,texto:e.target.value}:i)})}/><div className="flex flex-wrap items-center justify-between gap-2"><label className="flex min-h-12 items-center gap-2 text-xs"><input type="checkbox" checked={item.observacionObligatoriaSiFalla} onChange={e=>setPlantilla({...plantilla,items:plantilla.items.map(i=>i.id===item.id?{...i,observacionObligatoriaSiFalla:e.target.checked}:i)})}/>Observación obligatoria si no cumple</label><div className="flex">{[-1,1].map(delta=><Button key={delta} size="icon" variant="ghost" aria-label={delta<0?'Subir punto':'Bajar punto'} disabled={indice+delta<0||indice+delta>=plantilla.items.length} onClick={()=>{const items=[...plantilla.items];const otro=items[indice+delta];if(!otro)return;items[indice+delta]=item;items[indice]=otro;setPlantilla({...plantilla,items});}}>{delta<0?<ArrowUp/>:<ArrowDown/>}</Button>)}<Button size="icon" variant="ghost" aria-label="Quitar punto" onClick={()=>setPlantilla({...plantilla,items:plantilla.items.filter(i=>i.id!==item.id)})}><Trash2/></Button></div></div></div>;})}<Button variant="outline" onClick={()=>setPlantilla({...plantilla,items:[...plantilla.items,{id:crypto.randomUUID(),grupo,texto:'',observacionObligatoriaSiFalla:true}]})}><Plus/>Agregar punto</Button></div>)}<MotivoForm label="Publicar como nueva versión" onSubmit={d=>{try{s.publicarPlantilla(plantilla,d.motivo);setPlantilla(structuredClone(useCuarta.getState().plantillas.at(-1)));toast.success('Nueva versión BPM publicada');}catch(e){toast.error(e instanceof Error?e.message:'Revisa la plantilla');}}}/></>}<EjemploPanel/></section></div>}
- </div>
- <DrawerCuarta open={!!operario} onClose={()=>setSelected(null)} title={operario?.nombre??'Operario'}>{operario&&<><div className="flex items-center gap-3"><span className="user-avatar">{operario.id.slice(0,2)}</span><div><b>{ROLES_PERSONAL[operario.rol]}</b><p className="font-mono text-xs text-muted-foreground">{operario.id}</p></div><VigenciaChip estado={vigenciaOperario(operario,HOY_DEMO,s.diasAviso)}/></div>{(['certificado_medico','capacitacion_bpm'] as const).map(tipo=>{const d=documentoActivo(operario,tipo);const porcentaje=d?Math.max(0,Math.min(100,100*diasHasta(d.venceEn,HOY_DEMO)/Math.max(1,diasHasta(d.venceEn,d.emitidoEn)))):0;return <section key={tipo} className="border-b pb-5 space-y-3"><h3 className="section-eyebrow">{tipo==='certificado_medico'?'CERTIFICADO MÉDICO DE APTITUD':'CAPACITACIÓN EN BPM'}</h3><DocumentoChip {...(d?{doc:d}:{})} diasAviso={s.diasAviso}/>{d&&<><p className="text-sm">{tipo==='certificado_medico'?'Apto para manipular alimentos':`${d.horas} horas · ${d.entidad}`}</p><p className="text-xs text-muted-foreground">Emisión {fechaCO(d.emitidoEn)} · Vence {fechaCO(d.venceEn)}</p><progress className="w-full accent-primary" value={porcentaje} max={100}/><Button variant="outline" className="w-full whitespace-normal" onClick={()=>{if(d.archivoUrl)window.open(d.archivoUrl,'_blank','noopener,noreferrer');else toast.info('Archivo de ejemplo · no contiene un documento real');}}><FileText/>{d.archivoNombre} · Ver</Button>{vigenciaDocumento(d,HOY_DEMO,s.diasAviso)==='por_vencer'&&<Notice>Vence en {diasHasta(d.venceEn,HOY_DEMO)} días. El operario verá un aviso al iniciar sesión.</Notice>}</>}</section>;})}<Button variant="outline" className="w-full" onClick={()=>setRenovar(true)}><Upload/>Cargar renovación</Button><h3 className="section-eyebrow">HISTORIAL DOCUMENTAL</h3>{operario.documentos.slice().reverse().map(d=><p key={d.id} className="text-xs border-b pb-2">{fechaCO(d.emitidoEn)} · {d.tipo==='certificado_medico'?'Certificado médico':'Capacitación BPM'} · Carga demo</p>)}<h3 className="section-eyebrow">POLÍTICA DE PLANTA</h3><label className="field-label">Avisar con N días de anticipación<select className="panel-input" value={dias} onChange={e=>setDias(Number(e.target.value))}>{[7,15,30,60].map(n=><option key={n}>{n}</option>)}</select></label><ToggleCuarta label="Bloquear registros cuando el documento esté vencido" checked={bloquear} onChange={setBloquear}/><EstadoChip tono="warn">Por validar</EstadoChip><p className="text-xs text-muted-foreground">Si está activo, un supervisor puede autorizar una excepción con motivo. Política simulada; no se aplica a las estaciones en esta fase.</p><MotivoForm onSubmit={d=>{s.politica(dias,bloquear,d.motivo);toast.success('Política de planta guardada');}}/><EjemploPanel/></>}</DrawerCuarta>
- <DrawerCuarta open={!!registroBPM} onClose={()=>setRegistroId(null)} title={`Control de turno ${registroBPM?.id??''}`}>{registroBPM&&<><EstadoChip>Firmado · v{registroBPM.plantillaVersion}</EstadoChip>{registroBPM.respuestas.map(r=>{const item=s.plantillas.find(p=>p.version===registroBPM.plantillaVersion)?.items.find(i=>i.id===r.itemId);return <div key={r.itemId} className={`border-b pb-3 space-y-2 ${item?.grupo==='Salud'&&r.observacion?'bg-danger/8 p-3 rounded-lg':''}`}><h3>{item?.texto}</h3><EstadoChip tono={r.cumple?'ok':'warn'}>{r.cumple?'Cumple':'No cumple'}</EstadoChip>{r.observacion&&<p className="text-sm">{r.observacion}</p>}</div>;})}<Notice>Firma demo · {s.personal.find(o=>o.id===registroBPM.operarioId)?.nombre} · {fechaCO(registroBPM.firmadoEn)} {registroBPM.firmadoEn.slice(11,16)} · {registroBPM.dispositivoId}</Notice></>}</DrawerCuarta>
- <Dialog open={registro} onOpenChange={setRegistro}><DialogContent className="cuarta-dialog bg-surface"><DialogTitle>Registrar operario</DialogTitle><DialogDescription>Registro de ejemplo sin documentos iniciales.</DialogDescription><form className="space-y-4" onSubmit={e=>{e.preventDefault();if(!nombre.trim())return;s.registrar({id:`OP-${Date.now()}`,nombre:nombre.trim(),rol,documentos:[]});setRegistro(false);setNombre('');toast.success('Operario registrado');}}><label className="field-label">Nombre<input required className="panel-input" value={nombre} onChange={e=>setNombre(e.target.value)}/></label><label className="field-label">Rol<select className="panel-input" value={rol} onChange={e=>{const value=e.target.value;const encontrado=Object.keys(ROLES_PERSONAL).find(r=>r===value);if(encontrado==='operario'||encontrado==='supervisor'||encontrado==='encargada_limpieza'||encontrado==='ingeniera'||encontrado==='administrador')setRol(encontrado);}}>{Object.entries(ROLES_PERSONAL).map(([key,label])=><option key={key} value={key}>{label}</option>)}</select></label><Button type="submit" className="w-full min-h-12">Registrar</Button></form></DialogContent></Dialog>
- {renovar&&operario&&<Renovacion operario={operario} onClose={()=>setRenovar(false)}/>}
- </PanelLayout>;
+  const s = useCuarta();
+  const [tab, setTab] = useState("Operarios");
+  const [search, setSearch] = useState("");
+  const [filtro, setFiltro] = useState("Todos");
+  const [selected, setSelected] = useState<string | null>(null);
+  const [renovar, setRenovar] = useState(false);
+  const [registro, setRegistro] = useState(false);
+  const [nombre, setNombre] = useState("");
+  const [rol, setRol] = useState<RolPersonal>("operario");
+  const [dias, setDias] = useState(s.diasAviso);
+  const [bloquear, setBloquear] = useState(s.bloquear);
+  const [fecha, setFecha] = useState("");
+  const [operarioFiltro, setOperarioFiltro] = useState("");
+  const [observaciones, setObservaciones] = useState(false);
+  const [registroId, setRegistroId] = useState<string | null>(null);
+  const [plantilla, setPlantilla] = useState(() =>
+    structuredClone(s.plantillas.at(-1) ?? s.plantillas[0]),
+  );
+  const operario = s.personal.find((o) => o.id === selected);
+  const registroBPM = REGISTROS_BPM.find((r) => r.id === registroId);
+  const actual = s.plantillas.at(-1);
+  const docs = s.personal.flatMap((o) =>
+    o.documentos.map((d) => ({ doc: d, estado: vigenciaDocumento(d, HOY_DEMO, s.diasAviso) })),
+  );
+  const filters: Record<string, string> = {
+    Vigentes: "vigente",
+    "Por vencer": "por_vencer",
+    Vencidos: "vencido",
+    "Sin documento": "sin_documento",
+  };
+  const filtered = s.personal.filter(
+    (o) =>
+      `${o.nombre} ${o.id}`.toLowerCase().includes(search.toLowerCase()) &&
+      (filtro === "Todos" || vigenciaOperario(o, HOY_DEMO, s.diasAviso) === filters[filtro]),
+  );
+  const docCell = (o: OperarioPersonal, tipo: TipoDocumentoPersonal) => {
+    const d = documentoActivo(o, tipo);
+    return (
+      <div className="space-y-2">
+        {d && (
+          <>
+            <b>{fechaCO(d.venceEn)}</b>
+            <small className="block text-muted-foreground">
+              {tipo === "capacitacion_bpm"
+                ? `${d.horas} h · ${d.entidad}`
+                : `${Math.max(0, diasHasta(d.venceEn, HOY_DEMO))} días restantes`}
+            </small>
+          </>
+        )}
+        <DocumentoChip {...(d ? { doc: d } : {})} diasAviso={s.diasAviso} />
+      </div>
+    );
+  };
+  return (
+    <PanelLayout
+      title="Personal y BPM"
+      subtitle="Vigencia de certificados y controles de buenas prácticas de manufactura"
+      active="/panel/personal"
+      action={
+        <Button className="min-h-12" onClick={() => setRegistro(true)}>
+          <Plus size={20} />
+          Registrar operario
+        </Button>
+      }
+    >
+      <div className="cuarta-scope">
+        <KPIs
+          items={[
+            { label: "Operarios activos", value: s.personal.length, icon: <Users /> },
+            {
+              label: "Documentos vigentes",
+              value: docs.filter((d) => d.estado === "vigente").length,
+              icon: <FileCheck />,
+            },
+            {
+              label: "Por vencer (30 días)",
+              value: docs.filter((d) => d.estado === "por_vencer").length,
+              icon: <CalendarClock />,
+            },
+            {
+              label: "Vencidos o sin documento",
+              value: s.personal.filter((o) =>
+                ["vencido", "sin_documento"].includes(vigenciaOperario(o, HOY_DEMO, s.diasAviso)),
+              ).length,
+              icon: <CircleAlert />,
+              danger: true,
+            },
+          ]}
+        />
+        <TabsPanel
+          tabs={["Operarios", "Controles de turno", "Plantillas de checklist"]}
+          value={tab}
+          onChange={setTab}
+        />
+        {tab === "Operarios" ? (
+          <section className="panel-surface mt-5 p-5">
+            <Buscador value={search} onChange={setSearch} placeholder="Buscar operario…" />
+            <div className="my-4 flex flex-wrap gap-2">
+              {["Todos", "Vigentes", "Por vencer", "Vencidos", "Sin documento"].map((f) => (
+                <Button
+                  key={f}
+                  variant={f === filtro ? "secondary" : "ghost"}
+                  className={f === filtro ? "bg-primary-soft text-primary" : ""}
+                  onClick={() => setFiltro(f)}
+                >
+                  {f}
+                </Button>
+              ))}
+            </div>
+            <Tabla
+              data={filtered}
+              onSelect={(o) => setSelected(o.id)}
+              cols={[
+                {
+                  key: "nombre",
+                  label: "Operario",
+                  render: (o) => (
+                    <span className="flex items-center gap-2">
+                      <span className="user-avatar">{o.id.slice(0, 2)}</span>
+                      <span>
+                        {o.nombre}
+                        <small className="block font-mono text-muted-foreground">{o.id}</small>
+                      </span>
+                    </span>
+                  ),
+                },
+                { key: "rol", label: "Rol", render: (o) => ROLES_PERSONAL[o.rol] },
+                {
+                  key: "documentos",
+                  label: "Certificado médico de aptitud",
+                  render: (o) => docCell(o, "certificado_medico"),
+                },
+                {
+                  key: "id",
+                  label: "Capacitación BPM",
+                  render: (o) => docCell(o, "capacitacion_bpm"),
+                },
+                {
+                  key: "rol",
+                  label: "Estado general",
+                  render: (o) => (
+                    <VigenciaChip estado={vigenciaOperario(o, HOY_DEMO, s.diasAviso)} />
+                  ),
+                },
+                {
+                  key: "id",
+                  label: "Acción",
+                  render: (o) => (
+                    <Button variant="link" onClick={() => setSelected(o.id)}>
+                      {vigenciaOperario(o, HOY_DEMO, s.diasAviso) === "vigente" ? "Ver" : "Renovar"}
+                    </Button>
+                  ),
+                },
+              ]}
+            />
+            <EjemploPanel />
+            <p className="mt-3 text-xs text-primary">
+              Las fechas se descargan a las pantallas de planta; la validación funciona sin
+              conexión.
+            </p>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Fecha de referencia de la simulación: {fechaCO(HOY_DEMO)}
+            </p>
+          </section>
+        ) : tab === "Controles de turno" ? (
+          <section className="panel-surface mt-5 p-5">
+            <div className="mb-4 flex flex-wrap items-end gap-3">
+              <label className="field-label">
+                Fecha
+                <input
+                  type="date"
+                  className="panel-input"
+                  value={fecha}
+                  onChange={(e) => setFecha(e.target.value)}
+                />
+              </label>
+              <label className="field-label">
+                Operario
+                <select
+                  className="panel-input"
+                  value={operarioFiltro}
+                  onChange={(e) => setOperarioFiltro(e.target.value)}
+                >
+                  <option value="">Todos</option>
+                  {s.personal.map((o) => (
+                    <option key={o.id} value={o.id}>
+                      {o.nombre}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="flex min-h-12 items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={observaciones}
+                  onChange={(e) => setObservaciones(e.target.checked)}
+                />
+                Con observaciones
+              </label>
+            </div>
+            <Tabla
+              data={REGISTROS_BPM.filter(
+                (r) =>
+                  (!fecha || r.firmadoEn.startsWith(fecha)) &&
+                  (!operarioFiltro || r.operarioId === operarioFiltro) &&
+                  (!observaciones || r.respuestas.some((x) => x.observacion)),
+              )}
+              onSelect={(r) => setRegistroId(r.id)}
+              cols={[
+                {
+                  key: "firmadoEn",
+                  label: "Fecha",
+                  render: (r) => `${fechaCO(r.firmadoEn)} ${r.firmadoEn.slice(11, 16)}`,
+                },
+                { key: "turno", label: "Turno" },
+                {
+                  key: "operarioId",
+                  label: "Operario",
+                  render: (r) => s.personal.find((o) => o.id === r.operarioId)?.nombre,
+                },
+                {
+                  key: "respuestas",
+                  label: "Puntos cumplidos",
+                  render: (r) =>
+                    `${r.respuestas.filter((x) => x.cumple).length}/${r.respuestas.length}`,
+                },
+                {
+                  key: "respuestas",
+                  label: "Observaciones",
+                  render: (r) =>
+                    r.respuestas
+                      .filter((x) => x.observacion)
+                      .map((x) => x.observacion)
+                      .join(" · ") || "Sin observaciones",
+                },
+                { key: "id", label: "Estado", render: () => <EstadoChip>Firmado</EstadoChip> },
+                { key: "dispositivoId", label: "Dispositivo" },
+              ]}
+            />
+            <EjemploPanel />
+          </section>
+        ) : (
+          <div className="mt-5 grid items-start gap-5 lg:grid-cols-[180px_minmax(0,1fr)]">
+            <aside className="catalog-index">
+              <h3 className="section-eyebrow">VERSIONES DE CHECKLIST</h3>
+              {s.plantillas
+                .slice()
+                .reverse()
+                .map((p) => (
+                  <Button
+                    key={p.id}
+                    variant="ghost"
+                    className="w-full justify-start"
+                    onClick={() => setPlantilla(structuredClone(p))}
+                  >
+                    v{p.version} · {p.version === actual?.version ? "Vigente" : "Archivada"}
+                  </Button>
+                ))}
+            </aside>
+            <section className="panel-surface p-5 space-y-5">
+              <h2>Plantilla de checklist · v{plantilla?.version}</h2>
+              {plantilla && (
+                <>
+                  {GRUPOS_BPM.map((grupo) => (
+                    <div key={grupo} className="space-y-3">
+                      <h3 className="section-eyebrow">{grupo.toUpperCase()}</h3>
+                      {plantilla.items
+                        .filter((i) => i.grupo === grupo)
+                        .map((item) => {
+                          const indice = plantilla.items.findIndex((i) => i.id === item.id);
+                          return (
+                            <div key={item.id} className="border-b pb-3">
+                              <input
+                                aria-label={`Punto ${item.id}`}
+                                className="panel-input w-full"
+                                value={item.texto}
+                                onChange={(e) =>
+                                  setPlantilla({
+                                    ...plantilla,
+                                    items: plantilla.items.map((i) =>
+                                      i.id === item.id ? { ...i, texto: e.target.value } : i,
+                                    ),
+                                  })
+                                }
+                              />
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                <label className="flex min-h-12 items-center gap-2 text-xs">
+                                  <input
+                                    type="checkbox"
+                                    checked={item.observacionObligatoriaSiFalla}
+                                    onChange={(e) =>
+                                      setPlantilla({
+                                        ...plantilla,
+                                        items: plantilla.items.map((i) =>
+                                          i.id === item.id
+                                            ? {
+                                                ...i,
+                                                observacionObligatoriaSiFalla: e.target.checked,
+                                              }
+                                            : i,
+                                        ),
+                                      })
+                                    }
+                                  />
+                                  Observación obligatoria si no cumple
+                                </label>
+                                <div className="flex">
+                                  {[-1, 1].map((delta) => (
+                                    <Button
+                                      key={delta}
+                                      size="icon"
+                                      variant="ghost"
+                                      aria-label={delta < 0 ? "Subir punto" : "Bajar punto"}
+                                      disabled={
+                                        indice + delta < 0 ||
+                                        indice + delta >= plantilla.items.length
+                                      }
+                                      onClick={() => {
+                                        const items = [...plantilla.items];
+                                        const otro = items[indice + delta];
+                                        if (!otro) return;
+                                        items[indice + delta] = item;
+                                        items[indice] = otro;
+                                        setPlantilla({ ...plantilla, items });
+                                      }}
+                                    >
+                                      {delta < 0 ? <ArrowUp /> : <ArrowDown />}
+                                    </Button>
+                                  ))}
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    aria-label="Quitar punto"
+                                    onClick={() =>
+                                      setPlantilla({
+                                        ...plantilla,
+                                        items: plantilla.items.filter((i) => i.id !== item.id),
+                                      })
+                                    }
+                                  >
+                                    <Trash2 />
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      <Button
+                        variant="outline"
+                        onClick={() =>
+                          setPlantilla({
+                            ...plantilla,
+                            items: [
+                              ...plantilla.items,
+                              {
+                                id: crypto.randomUUID(),
+                                grupo,
+                                texto: "",
+                                observacionObligatoriaSiFalla: true,
+                              },
+                            ],
+                          })
+                        }
+                      >
+                        <Plus />
+                        Agregar punto
+                      </Button>
+                    </div>
+                  ))}
+                  <MotivoForm
+                    label="Publicar como nueva versión"
+                    onSubmit={(d) => {
+                      try {
+                        s.publicarPlantilla(plantilla, d.motivo);
+                        setPlantilla(structuredClone(useCuarta.getState().plantillas.at(-1)));
+                        toast.success("Nueva versión BPM publicada");
+                      } catch (e) {
+                        toast.error(e instanceof Error ? e.message : "Revisa la plantilla");
+                      }
+                    }}
+                  />
+                </>
+              )}
+              <EjemploPanel />
+            </section>
+          </div>
+        )}
+      </div>
+      <DrawerCuarta
+        open={!!operario}
+        onClose={() => setSelected(null)}
+        title={operario?.nombre ?? "Operario"}
+      >
+        {operario && (
+          <>
+            <div className="flex items-center gap-3">
+              <span className="user-avatar">{operario.id.slice(0, 2)}</span>
+              <div>
+                <b>{ROLES_PERSONAL[operario.rol]}</b>
+                <p className="font-mono text-xs text-muted-foreground">{operario.id}</p>
+              </div>
+              <VigenciaChip estado={vigenciaOperario(operario, HOY_DEMO, s.diasAviso)} />
+            </div>
+            {(["certificado_medico", "capacitacion_bpm"] as const).map((tipo) => {
+              const d = documentoActivo(operario, tipo);
+              const porcentaje = d
+                ? Math.max(
+                    0,
+                    Math.min(
+                      100,
+                      (100 * diasHasta(d.venceEn, HOY_DEMO)) /
+                        Math.max(1, diasHasta(d.venceEn, d.emitidoEn)),
+                    ),
+                  )
+                : 0;
+              return (
+                <section key={tipo} className="border-b pb-5 space-y-3">
+                  <h3 className="section-eyebrow">
+                    {tipo === "certificado_medico"
+                      ? "CERTIFICADO MÉDICO DE APTITUD"
+                      : "CAPACITACIÓN EN BPM"}
+                  </h3>
+                  <DocumentoChip {...(d ? { doc: d } : {})} diasAviso={s.diasAviso} />
+                  {d && (
+                    <>
+                      <p className="text-sm">
+                        {tipo === "certificado_medico"
+                          ? "Apto para manipular alimentos"
+                          : `${d.horas} horas · ${d.entidad}`}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Emisión {fechaCO(d.emitidoEn)} · Vence {fechaCO(d.venceEn)}
+                      </p>
+                      <progress className="w-full accent-primary" value={porcentaje} max={100} />
+                      <Button
+                        variant="outline"
+                        className="w-full whitespace-normal"
+                        onClick={() => {
+                          if (d.archivoUrl)
+                            window.open(d.archivoUrl, "_blank", "noopener,noreferrer");
+                          else toast.info("Archivo de ejemplo · no contiene un documento real");
+                        }}
+                      >
+                        <FileText />
+                        {d.archivoNombre} · Ver
+                      </Button>
+                      {vigenciaDocumento(d, HOY_DEMO, s.diasAviso) === "por_vencer" && (
+                        <Notice>
+                          Vence en {diasHasta(d.venceEn, HOY_DEMO)} días. El operario verá un aviso
+                          al iniciar sesión.
+                        </Notice>
+                      )}
+                    </>
+                  )}
+                </section>
+              );
+            })}
+            <Button variant="outline" className="w-full" onClick={() => setRenovar(true)}>
+              <Upload />
+              Cargar renovación
+            </Button>
+            <h3 className="section-eyebrow">HISTORIAL DOCUMENTAL</h3>
+            {operario.documentos
+              .slice()
+              .reverse()
+              .map((d) => (
+                <p key={d.id} className="text-xs border-b pb-2">
+                  {fechaCO(d.emitidoEn)} ·{" "}
+                  {d.tipo === "certificado_medico" ? "Certificado médico" : "Capacitación BPM"} ·
+                  Carga demo
+                </p>
+              ))}
+            <h3 className="section-eyebrow">POLÍTICA DE PLANTA</h3>
+            <label className="field-label">
+              Avisar con N días de anticipación
+              <select
+                className="panel-input"
+                value={dias}
+                onChange={(e) => setDias(Number(e.target.value))}
+              >
+                {[7, 15, 30, 60].map((n) => (
+                  <option key={n}>{n}</option>
+                ))}
+              </select>
+            </label>
+            <ToggleCuarta
+              label="Bloquear registros cuando el documento esté vencido"
+              checked={bloquear}
+              onChange={setBloquear}
+            />
+            <EstadoChip tono="warn">Por validar</EstadoChip>
+            <p className="text-xs text-muted-foreground">
+              Si está activo, un supervisor puede autorizar una excepción con motivo. Política
+              simulada; no se aplica a las estaciones en esta fase.
+            </p>
+            <MotivoForm
+              onSubmit={(d) => {
+                s.politica(dias, bloquear, d.motivo);
+                toast.success("Política de planta guardada");
+              }}
+            />
+            <EjemploPanel />
+          </>
+        )}
+      </DrawerCuarta>
+      <DrawerCuarta
+        open={!!registroBPM}
+        onClose={() => setRegistroId(null)}
+        title={`Control de turno ${registroBPM?.id ?? ""}`}
+      >
+        {registroBPM && (
+          <>
+            <EstadoChip>Firmado · v{registroBPM.plantillaVersion}</EstadoChip>
+            {registroBPM.respuestas.map((r) => {
+              const item = s.plantillas
+                .find((p) => p.version === registroBPM.plantillaVersion)
+                ?.items.find((i) => i.id === r.itemId);
+              return (
+                <div
+                  key={r.itemId}
+                  className={`border-b pb-3 space-y-2 ${item?.grupo === "Salud" && r.observacion ? "bg-danger/8 p-3 rounded-lg" : ""}`}
+                >
+                  <h3>{item?.texto}</h3>
+                  <EstadoChip tono={r.cumple ? "ok" : "warn"}>
+                    {r.cumple ? "Cumple" : "No cumple"}
+                  </EstadoChip>
+                  {r.observacion && <p className="text-sm">{r.observacion}</p>}
+                </div>
+              );
+            })}
+            <Notice>
+              Firma demo · {s.personal.find((o) => o.id === registroBPM.operarioId)?.nombre} ·{" "}
+              {fechaCO(registroBPM.firmadoEn)} {registroBPM.firmadoEn.slice(11, 16)} ·{" "}
+              {registroBPM.dispositivoId}
+            </Notice>
+          </>
+        )}
+      </DrawerCuarta>
+      <Dialog open={registro} onOpenChange={setRegistro}>
+        <DialogContent className="cuarta-dialog bg-surface">
+          <DialogTitle>Registrar operario</DialogTitle>
+          <DialogDescription>Registro de ejemplo sin documentos iniciales.</DialogDescription>
+          <form
+            className="space-y-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!nombre.trim()) return;
+              s.registrar({ id: `OP-${Date.now()}`, nombre: nombre.trim(), rol, documentos: [] });
+              setRegistro(false);
+              setNombre("");
+              toast.success("Operario registrado");
+            }}
+          >
+            <label className="field-label">
+              Nombre
+              <input
+                required
+                className="panel-input"
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+              />
+            </label>
+            <label className="field-label">
+              Rol
+              <select
+                className="panel-input"
+                value={rol}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  const encontrado = Object.keys(ROLES_PERSONAL).find((r) => r === value);
+                  if (
+                    encontrado === "operario" ||
+                    encontrado === "supervisor" ||
+                    encontrado === "encargada_limpieza" ||
+                    encontrado === "ingeniera" ||
+                    encontrado === "administrador"
+                  )
+                    setRol(encontrado);
+                }}
+              >
+                {Object.entries(ROLES_PERSONAL).map(([key, label]) => (
+                  <option key={key} value={key}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <Button type="submit" className="w-full min-h-12">
+              Registrar
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+      {renovar && operario && <Renovacion operario={operario} onClose={() => setRenovar(false)} />}
+    </PanelLayout>
+  );
 }
