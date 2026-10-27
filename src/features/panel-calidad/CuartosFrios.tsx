@@ -42,6 +42,7 @@ export function CuartosFrios() {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState(INITIAL[0]);
   const auditar = useCalidad((s) => s.auditar);
+  const lectura = useModoLectura("cuartosFrios");
   const room = rooms.find((r) => r.id === sel) ?? INITIAL[0];
   if (!room) return null;
   const range = room.max - room.min;

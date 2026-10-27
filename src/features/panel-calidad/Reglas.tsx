@@ -18,6 +18,7 @@ const ACORDEONES = [
 ];
 export function Reglas() {
   const { productos, guardarProducto } = useCalidad();
+  const lectura = useModoLectura("reglas");
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("Todos");
   const [selected, setSelected] = useState("RGL-088");
