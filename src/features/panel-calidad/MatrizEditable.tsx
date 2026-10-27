@@ -36,7 +36,7 @@ export function MatrizEditable({ onNivel, soloLectura = false }: { onNivel: (n: 
   return <>
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div><h2>Nivel de limpieza exigido al cambiar de producto</h2><p className="text-xs text-muted-foreground mt-2">Categoría previa vs. siguiente · N0 mismo producto automático</p></div>
-      <div className="flex flex-wrap items-center gap-2"><EstadoChip>{borrador ? `Borrador sobre v${vigente.version}` : `Matriz v${vigente.version} activa`}</EstadoChip><Button variant="outline" className="min-h-12" onClick={() => borrador ? salir() : setBorrador(vigente.celdas.map((c) => ({ ...c })))}><Pencil size={20} />{borrador ? "Salir de edición" : "Editar matriz"}</Button></div>
+      <div className="flex flex-wrap items-center gap-2"><EstadoChip>{borrador ? `Borrador sobre v${vigente.version}` : `Matriz v${vigente.version} activa`}</EstadoChip>{!soloLectura && <Button variant="outline" className="min-h-12" onClick={() => borrador ? salir() : setBorrador(vigente.celdas.map((c) => ({ ...c })))}><Pencil size={20} />{borrador ? "Salir de edición" : "Editar matriz"}</Button>}</div>
     </div>
     {borrador && <p className="version-notice mt-3" role="status">Modo edición · los cambios se aplican desde la nueva versión y no afectan lotes ya producidos</p>}
     <p className="matrix-axis">PRODUCTO A PROCESAR (HACIA) →</p>
