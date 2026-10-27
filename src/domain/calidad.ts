@@ -123,3 +123,21 @@ export interface ContenedorCalidad {
   retornable: boolean;
   version: number;
 }
+export interface ConflictoSync {
+  id: string;
+  evento: string;
+  dispositivo: string;
+  operario: string;
+  hora: string;
+  motivo: string;
+  estado: "Pendiente" | "Aplicado con ajuste" | "Descartado";
+}
+export interface PesajeManual {
+  id: string;
+  lote: string;
+  operario: string;
+  motivo: string;
+  autorizo: string;
+  peso: string;
+  estado: "Pendiente" | "Revisado";
+}
