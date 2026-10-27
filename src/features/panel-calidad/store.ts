@@ -121,7 +121,7 @@ export const useCalidad = create<CalidadState>((set, get) => ({
         {
           id: `EVT-${Date.now()}`,
           fecha: new Date().toISOString().slice(0, 16).replace("T", " "),
-          usuario: "Luisa Gómez",
+          usuario: useSesionPanel.getState().usuario?.nombre ?? "Luisa Gómez",
           dispositivo: "Panel web · PC-CAL-01",
           entidad,
           campo,
