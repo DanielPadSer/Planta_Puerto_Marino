@@ -18,6 +18,7 @@ import { Route as PanelDispositivosRouteImport } from './routes/panel.dispositiv
 import { Route as PanelHistorialRouteImport } from './routes/panel.historial'
 import { Route as PanelLimpiezaRouteImport } from './routes/panel.limpieza'
 import { Route as PanelLoginRouteImport } from './routes/panel.login'
+import { Route as PanelModeloDatosRouteImport } from './routes/panel.modelo-datos'
 import { Route as PanelPersonalRouteImport } from './routes/panel.personal'
 import { Route as PanelReglasRouteImport } from './routes/panel.reglas'
 import { Route as PanelReportesRouteImport } from './routes/panel.reportes'
@@ -71,6 +72,11 @@ const PanelLimpiezaRoute = PanelLimpiezaRouteImport.update({
 const PanelLoginRoute = PanelLoginRouteImport.update({
   id: '/panel/login',
   path: '/panel/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PanelModeloDatosRoute = PanelModeloDatosRouteImport.update({
+  id: '/panel/modelo-datos',
+  path: '/panel/modelo-datos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PanelPersonalRoute = PanelPersonalRouteImport.update({
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/panel/historial': typeof PanelHistorialRoute
   '/panel/limpieza': typeof PanelLimpiezaRoute
   '/panel/login': typeof PanelLoginRoute
+  '/panel/modelo-datos': typeof PanelModeloDatosRoute
   '/panel/personal': typeof PanelPersonalRoute
   '/panel/reglas': typeof PanelReglasRoute
   '/panel/reportes': typeof PanelReportesRoute
@@ -149,6 +156,7 @@ export interface FileRoutesByTo {
   '/panel/historial': typeof PanelHistorialRoute
   '/panel/limpieza': typeof PanelLimpiezaRoute
   '/panel/login': typeof PanelLoginRoute
+  '/panel/modelo-datos': typeof PanelModeloDatosRoute
   '/panel/personal': typeof PanelPersonalRoute
   '/panel/reglas': typeof PanelReglasRoute
   '/panel/reportes': typeof PanelReportesRoute
@@ -170,6 +178,7 @@ export interface FileRoutesById {
   '/panel/historial': typeof PanelHistorialRoute
   '/panel/limpieza': typeof PanelLimpiezaRoute
   '/panel/login': typeof PanelLoginRoute
+  '/panel/modelo-datos': typeof PanelModeloDatosRoute
   '/panel/personal': typeof PanelPersonalRoute
   '/panel/reglas': typeof PanelReglasRoute
   '/panel/reportes': typeof PanelReportesRoute
@@ -192,6 +201,7 @@ export interface FileRouteTypes {
     | '/panel/historial'
     | '/panel/limpieza'
     | '/panel/login'
+    | '/panel/modelo-datos'
     | '/panel/personal'
     | '/panel/reglas'
     | '/panel/reportes'
@@ -211,6 +221,7 @@ export interface FileRouteTypes {
     | '/panel/historial'
     | '/panel/limpieza'
     | '/panel/login'
+    | '/panel/modelo-datos'
     | '/panel/personal'
     | '/panel/reglas'
     | '/panel/reportes'
@@ -231,6 +242,7 @@ export interface FileRouteTypes {
     | '/panel/historial'
     | '/panel/limpieza'
     | '/panel/login'
+    | '/panel/modelo-datos'
     | '/panel/personal'
     | '/panel/reglas'
     | '/panel/reportes'
@@ -252,6 +264,7 @@ export interface RootRouteChildren {
   PanelHistorialRoute: typeof PanelHistorialRoute
   PanelLimpiezaRoute: typeof PanelLimpiezaRoute
   PanelLoginRoute: typeof PanelLoginRoute
+  PanelModeloDatosRoute: typeof PanelModeloDatosRoute
   PanelPersonalRoute: typeof PanelPersonalRoute
   PanelReglasRoute: typeof PanelReglasRoute
   PanelReportesRoute: typeof PanelReportesRoute
@@ -324,6 +337,13 @@ declare module '@tanstack/react-router' {
       path: '/panel/login'
       fullPath: '/panel/login'
       preLoaderRoute: typeof PanelLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/panel/modelo-datos': {
+      id: '/panel/modelo-datos'
+      path: '/panel/modelo-datos'
+      fullPath: '/panel/modelo-datos'
+      preLoaderRoute: typeof PanelModeloDatosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/panel/personal': {
@@ -415,6 +435,7 @@ const rootRouteChildren: RootRouteChildren = {
   PanelHistorialRoute: PanelHistorialRoute,
   PanelLimpiezaRoute: PanelLimpiezaRoute,
   PanelLoginRoute: PanelLoginRoute,
+  PanelModeloDatosRoute: PanelModeloDatosRoute,
   PanelPersonalRoute: PanelPersonalRoute,
   PanelReglasRoute: PanelReglasRoute,
   PanelReportesRoute: PanelReportesRoute,
