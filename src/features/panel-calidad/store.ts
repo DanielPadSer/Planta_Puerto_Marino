@@ -9,7 +9,52 @@ import {
   type EventoCalidad,
   type Dispositivo,
   type ContenedorCalidad,
+  type ConflictoSync,
+  type PesajeManual,
 } from "@/domain/calidad";
+import { useSesionPanel } from "@/features/auth/sesionPanel";
+
+const CONFLICTOS_INICIAL: ConflictoSync[] = [
+  {
+    id: "SYN-101",
+    evento: "Pesaje LT-0250 duplicado",
+    dispositivo: "Tablet Recepción 01",
+    operario: "Carlos Mendoza",
+    hora: "27/10/2026 06:41",
+    motivo: "El dispositivo reintentó el envío sin conexión y el consecutivo ya existía",
+    estado: "Pendiente",
+  },
+  {
+    id: "SYN-102",
+    evento: "Registro de temperatura CF-2 fuera de orden",
+    dispositivo: "Tablet CF-2",
+    operario: "Luisa Gómez",
+    hora: "27/10/2026 12:10",
+    motivo: "Reloj del dispositivo desfasado 14 minutos",
+    estado: "Pendiente",
+  },
+];
+
+const PESAJES_INICIAL: PesajeManual[] = [
+  {
+    id: "PES-4820",
+    lote: "LT-0250",
+    operario: "Carlos Mendoza",
+    motivo: "Báscula sin comunicación serial",
+    autorizo: "Luisa Gómez · PIN individual",
+    peso: "22,10 kg",
+    estado: "Pendiente",
+  },
+  {
+    id: "PES-4824",
+    lote: "LT-0253",
+    operario: "Marta Pinzón",
+    motivo: "Contenedor sin tara registrada",
+    autorizo: "Luisa Gómez · PIN individual",
+    peso: "18,40 kg",
+    estado: "Pendiente",
+  },
+];
 interface SesionPanel {
   activa: boolean;
   entrar: () => void;
