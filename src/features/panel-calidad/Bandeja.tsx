@@ -12,9 +12,13 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { PanelLayout } from "@/app/PanelLayout";
 import { useCalidad } from "./store";
 import { AVISOS } from "@/mocks/calidad";
+import { BotonRestringido, usePuede, useRol } from "@/ui/permisos";
+import { ejecutarEscritura } from "@/mocks/servicios";
+import { ErrorPermiso } from "@/domain/permisos";
 import {
   KPIs,
   Tabla,

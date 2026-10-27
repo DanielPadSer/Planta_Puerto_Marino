@@ -19,10 +19,13 @@ import { Route as PanelHistorialRouteImport } from './routes/panel.historial'
 import { Route as PanelLimpiezaRouteImport } from './routes/panel.limpieza'
 import { Route as PanelLoginRouteImport } from './routes/panel.login'
 import { Route as PanelModeloDatosRouteImport } from './routes/panel.modelo-datos'
+import { Route as PanelPermisosRouteImport } from './routes/panel.permisos'
 import { Route as PanelPersonalRouteImport } from './routes/panel.personal'
 import { Route as PanelReglasRouteImport } from './routes/panel.reglas'
 import { Route as PanelReportesRouteImport } from './routes/panel.reportes'
+import { Route as PanelSinAccesoRouteImport } from './routes/panel.sin-acceso'
 import { Route as PanelTrazabilidadRouteImport } from './routes/panel.trazabilidad'
+import { Route as PanelUsuariosRouteImport } from './routes/panel.usuarios'
 import { Route as PinEstacionRouteImport } from './routes/pin.$estacion'
 import { Route as PlantaIndexRouteImport } from './routes/planta.index'
 import { Route as PlantaZonaRouteImport } from './routes/planta.$zona'
@@ -79,6 +82,11 @@ const PanelModeloDatosRoute = PanelModeloDatosRouteImport.update({
   path: '/panel/modelo-datos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PanelPermisosRoute = PanelPermisosRouteImport.update({
+  id: '/panel/permisos',
+  path: '/panel/permisos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PanelPersonalRoute = PanelPersonalRouteImport.update({
   id: '/panel/personal',
   path: '/panel/personal',
@@ -94,9 +102,19 @@ const PanelReportesRoute = PanelReportesRouteImport.update({
   path: '/panel/reportes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PanelSinAccesoRoute = PanelSinAccesoRouteImport.update({
+  id: '/panel/sin-acceso',
+  path: '/panel/sin-acceso',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PanelTrazabilidadRoute = PanelTrazabilidadRouteImport.update({
   id: '/panel/trazabilidad',
   path: '/panel/trazabilidad',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PanelUsuariosRoute = PanelUsuariosRouteImport.update({
+  id: '/panel/usuarios',
+  path: '/panel/usuarios',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PinEstacionRoute = PinEstacionRouteImport.update({
@@ -137,10 +155,13 @@ export interface FileRoutesByFullPath {
   '/panel/limpieza': typeof PanelLimpiezaRoute
   '/panel/login': typeof PanelLoginRoute
   '/panel/modelo-datos': typeof PanelModeloDatosRoute
+  '/panel/permisos': typeof PanelPermisosRoute
   '/panel/personal': typeof PanelPersonalRoute
   '/panel/reglas': typeof PanelReglasRoute
   '/panel/reportes': typeof PanelReportesRoute
+  '/panel/sin-acceso': typeof PanelSinAccesoRoute
   '/panel/trazabilidad': typeof PanelTrazabilidadRoute
+  '/panel/usuarios': typeof PanelUsuariosRoute
   '/pin/$estacion': typeof PinEstacionRoute
   '/planta/$zona': typeof PlantaZonaRoute
   '/planta/': typeof PlantaIndexRoute
@@ -157,10 +178,13 @@ export interface FileRoutesByTo {
   '/panel/limpieza': typeof PanelLimpiezaRoute
   '/panel/login': typeof PanelLoginRoute
   '/panel/modelo-datos': typeof PanelModeloDatosRoute
+  '/panel/permisos': typeof PanelPermisosRoute
   '/panel/personal': typeof PanelPersonalRoute
   '/panel/reglas': typeof PanelReglasRoute
   '/panel/reportes': typeof PanelReportesRoute
+  '/panel/sin-acceso': typeof PanelSinAccesoRoute
   '/panel/trazabilidad': typeof PanelTrazabilidadRoute
+  '/panel/usuarios': typeof PanelUsuariosRoute
   '/pin/$estacion': typeof PinEstacionRoute
   '/planta/$zona': typeof PlantaZonaRoute
   '/planta': typeof PlantaIndexRoute
@@ -179,10 +203,13 @@ export interface FileRoutesById {
   '/panel/limpieza': typeof PanelLimpiezaRoute
   '/panel/login': typeof PanelLoginRoute
   '/panel/modelo-datos': typeof PanelModeloDatosRoute
+  '/panel/permisos': typeof PanelPermisosRoute
   '/panel/personal': typeof PanelPersonalRoute
   '/panel/reglas': typeof PanelReglasRoute
   '/panel/reportes': typeof PanelReportesRoute
+  '/panel/sin-acceso': typeof PanelSinAccesoRoute
   '/panel/trazabilidad': typeof PanelTrazabilidadRoute
+  '/panel/usuarios': typeof PanelUsuariosRoute
   '/pin/$estacion': typeof PinEstacionRoute
   '/planta/$zona': typeof PlantaZonaRoute
   '/planta/': typeof PlantaIndexRoute
@@ -202,10 +229,13 @@ export interface FileRouteTypes {
     | '/panel/limpieza'
     | '/panel/login'
     | '/panel/modelo-datos'
+    | '/panel/permisos'
     | '/panel/personal'
     | '/panel/reglas'
     | '/panel/reportes'
+    | '/panel/sin-acceso'
     | '/panel/trazabilidad'
+    | '/panel/usuarios'
     | '/pin/$estacion'
     | '/planta/$zona'
     | '/planta/'
@@ -222,10 +252,13 @@ export interface FileRouteTypes {
     | '/panel/limpieza'
     | '/panel/login'
     | '/panel/modelo-datos'
+    | '/panel/permisos'
     | '/panel/personal'
     | '/panel/reglas'
     | '/panel/reportes'
+    | '/panel/sin-acceso'
     | '/panel/trazabilidad'
+    | '/panel/usuarios'
     | '/pin/$estacion'
     | '/planta/$zona'
     | '/planta'
@@ -243,10 +276,13 @@ export interface FileRouteTypes {
     | '/panel/limpieza'
     | '/panel/login'
     | '/panel/modelo-datos'
+    | '/panel/permisos'
     | '/panel/personal'
     | '/panel/reglas'
     | '/panel/reportes'
+    | '/panel/sin-acceso'
     | '/panel/trazabilidad'
+    | '/panel/usuarios'
     | '/pin/$estacion'
     | '/planta/$zona'
     | '/planta/'
@@ -265,10 +301,13 @@ export interface RootRouteChildren {
   PanelLimpiezaRoute: typeof PanelLimpiezaRoute
   PanelLoginRoute: typeof PanelLoginRoute
   PanelModeloDatosRoute: typeof PanelModeloDatosRoute
+  PanelPermisosRoute: typeof PanelPermisosRoute
   PanelPersonalRoute: typeof PanelPersonalRoute
   PanelReglasRoute: typeof PanelReglasRoute
   PanelReportesRoute: typeof PanelReportesRoute
+  PanelSinAccesoRoute: typeof PanelSinAccesoRoute
   PanelTrazabilidadRoute: typeof PanelTrazabilidadRoute
+  PanelUsuariosRoute: typeof PanelUsuariosRoute
   PinEstacionRoute: typeof PinEstacionRoute
   PanelCatalogosAlergenosRoute: typeof PanelCatalogosAlergenosRoute
   PanelCatalogosAlergenosPasoPasoRoute: typeof PanelCatalogosAlergenosPasoPasoRoute
@@ -346,6 +385,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PanelModeloDatosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/panel/permisos': {
+      id: '/panel/permisos'
+      path: '/panel/permisos'
+      fullPath: '/panel/permisos'
+      preLoaderRoute: typeof PanelPermisosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/panel/personal': {
       id: '/panel/personal'
       path: '/panel/personal'
@@ -367,11 +413,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PanelReportesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/panel/sin-acceso': {
+      id: '/panel/sin-acceso'
+      path: '/panel/sin-acceso'
+      fullPath: '/panel/sin-acceso'
+      preLoaderRoute: typeof PanelSinAccesoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/panel/trazabilidad': {
       id: '/panel/trazabilidad'
       path: '/panel/trazabilidad'
       fullPath: '/panel/trazabilidad'
       preLoaderRoute: typeof PanelTrazabilidadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/panel/usuarios': {
+      id: '/panel/usuarios'
+      path: '/panel/usuarios'
+      fullPath: '/panel/usuarios'
+      preLoaderRoute: typeof PanelUsuariosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pin/$estacion': {
@@ -436,10 +496,13 @@ const rootRouteChildren: RootRouteChildren = {
   PanelLimpiezaRoute: PanelLimpiezaRoute,
   PanelLoginRoute: PanelLoginRoute,
   PanelModeloDatosRoute: PanelModeloDatosRoute,
+  PanelPermisosRoute: PanelPermisosRoute,
   PanelPersonalRoute: PanelPersonalRoute,
   PanelReglasRoute: PanelReglasRoute,
   PanelReportesRoute: PanelReportesRoute,
+  PanelSinAccesoRoute: PanelSinAccesoRoute,
   PanelTrazabilidadRoute: PanelTrazabilidadRoute,
+  PanelUsuariosRoute: PanelUsuariosRoute,
   PinEstacionRoute: PinEstacionRoute,
   PanelCatalogosAlergenosRoute: PanelCatalogosAlergenosRoute,
   PanelCatalogosAlergenosPasoPasoRoute: PanelCatalogosAlergenosPasoPasoRoute,
