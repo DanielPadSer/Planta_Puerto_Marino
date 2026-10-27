@@ -36,15 +36,48 @@ export interface DefTabla {
 type C<T extends Tipo, N extends boolean> = { tipo: T; nulo: N; sql: string; ref?: string; unico?: boolean; pk?: boolean; comun?: "captura" | "catalogo" };
 
 export const pk = (sql = "uuid"): C<"uuid", false> => ({ tipo: "uuid", nulo: false, sql, pk: true });
-export const txt = <N extends boolean = false>(largo: number, nulo?: N): C<"texto", N> => ({ tipo: "texto", nulo: (nulo ?? false) as N, sql: `varchar(${largo})` });
-export const largo = <N extends boolean = false>(nulo?: N): C<"texto", N> => ({ tipo: "texto", nulo: (nulo ?? false) as N, sql: "text" });
-export const ent = <N extends boolean = false>(nulo?: N, sql = "int"): C<"entero", N> => ({ tipo: "entero", nulo: (nulo ?? false) as N, sql });
-export const dec = <N extends boolean = false>(precision: string, nulo?: N): C<"decimal", N> => ({ tipo: "decimal", nulo: (nulo ?? false) as N, sql: `decimal(${precision})` });
+export function txt(largo: number): C<"texto", false>;
+export function txt(largo: number, nulo: true): C<"texto", true>;
+export function txt(largo: number, nulo = false): Campo {
+  return { tipo: "texto", nulo, sql: `varchar(${largo})` };
+}
+export function largo(): C<"texto", false>;
+export function largo(nulo: true): C<"texto", true>;
+export function largo(nulo = false): Campo {
+  return { tipo: "texto", nulo, sql: "text" };
+}
+export function ent(): C<"entero", false>;
+export function ent(nulo: boolean, sql: string): C<"entero", false>;
+export function ent(nulo: true, sql?: string): C<"entero", true>;
+export function ent(nulo = false, sql = "int"): Campo {
+  return { tipo: "entero", nulo, sql };
+}
+export function dec(precision: string): C<"decimal", false>;
+export function dec(precision: string, nulo: true): C<"decimal", true>;
+export function dec(precision: string, nulo = false): Campo {
+  return { tipo: "decimal", nulo, sql: `decimal(${precision})` };
+}
 export const bool = (): C<"bool", false> => ({ tipo: "bool", nulo: false, sql: "boolean" });
-export const fecha = <N extends boolean = false>(nulo?: N): C<"fecha", N> => ({ tipo: "fecha", nulo: (nulo ?? false) as N, sql: "date" });
-export const ts = <N extends boolean = false>(nulo?: N): C<"fechahora", N> => ({ tipo: "fechahora", nulo: (nulo ?? false) as N, sql: "timestamptz" });
-export const json = <N extends boolean = false>(nulo?: N): C<"json", N> => ({ tipo: "json", nulo: (nulo ?? false) as N, sql: "jsonb" });
-export const fk = <N extends boolean = false>(ref: string, nulo?: N): C<"uuid", N> => ({ tipo: "uuid", nulo: (nulo ?? false) as N, sql: "uuid", ref });
+export function fecha(): C<"fecha", false>;
+export function fecha(nulo: true): C<"fecha", true>;
+export function fecha(nulo = false): Campo {
+  return { tipo: "fecha", nulo, sql: "date" };
+}
+export function ts(): C<"fechahora", false>;
+export function ts(nulo: true): C<"fechahora", true>;
+export function ts(nulo = false): Campo {
+  return { tipo: "fechahora", nulo, sql: "timestamptz" };
+}
+export function json(): C<"json", false>;
+export function json(nulo: true): C<"json", true>;
+export function json(nulo = false): Campo {
+  return { tipo: "json", nulo, sql: "jsonb" };
+}
+export function fk(ref: string): C<"uuid", false>;
+export function fk(ref: string, nulo: true): C<"uuid", true>;
+export function fk(ref: string, nulo = false): Campo {
+  return { tipo: "uuid", nulo, sql: "uuid", ref };
+}
 export const uq = <X extends Campo>(c: X): X => ({ ...c, unico: true });
 
 /** «7 campos comunes de captura»: quién, dónde, cuándo y estado de sincronización. */
