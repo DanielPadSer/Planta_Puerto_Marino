@@ -78,6 +78,8 @@ function CodigoBarras({ codigo }: { codigo: string }) {
 export function Alergenos({ paso = 1 }: { paso?: number }) {
   const s = useCuarta();
   const navigate = useNavigate();
+  const lectura = useModoLectura("catalogos.alergenos");
+  const puedePublicar = usePuede("editar", "catalogos.alergenos");
   const eventos = useCalidad((v) => v.eventos);
   const [draft, setDraft] = useState<Alergeno | null>(null);
   const [search, setSearch] = useState("");
