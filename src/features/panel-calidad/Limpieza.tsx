@@ -93,26 +93,28 @@ export function Limpieza() {
           className="size-5 accent-primary"
         />
       </label>
-      <MotivoForm
-        label="Guardar nueva versión del POE"
-        onSubmit={(d) => {
-          if (ppm <= 0 || contacto <= 0 || pasos.some((p) => !p.trim())) {
-            toast.error("Completa los pasos y las mediciones.");
-            return;
-          }
-          auditar(
-            "Procedimiento N2",
-            "Parámetros",
-            `v${version}`,
-            JSON.stringify({ pasos, ppm, contacto, fin, aplica }),
-            d.motivo,
-            version + 1,
-          );
-          setVersion(version + 1);
-          toast.success(`POE v${version + 1} guardado`);
-        }}
-      />{" "}
-    </>
+      {!lectura && (
+        <MotivoForm
+          label="Guardar nueva versión del POE"
+          onSubmit={(d) => {
+            if (ppm <= 0 || contacto <= 0 || pasos.some((p) => !p.trim())) {
+              toast.error("Completa los pasos y las mediciones.");
+              return;
+            }
+            auditar(
+              "Procedimiento N2",
+              "Parámetros",
+              `v${version}`,
+              JSON.stringify({ pasos, ppm, contacto, fin, aplica }),
+              d.motivo,
+              version + 1,
+            );
+            setVersion(version + 1);
+            toast.success(`POE v${version + 1} guardado`);
+          }}
+        />
+      )}{" "}
+    </fieldset>
   );
   return (
     <PanelLayout
