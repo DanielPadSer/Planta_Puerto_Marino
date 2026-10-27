@@ -391,35 +391,67 @@ export function Bandeja() {
                 Operario: Carlos Mendoza · Tablet Recepción 01
               </p>
               {lote.estado === "Cuarentena" ? (
-                <>
-                  <MotivoForm
-                    key={`${lote.id}-${rechazar}`}
-                    rechazo={rechazar}
-                    danger={rechazar}
-                    label={rechazar ? "Rechazar y registrar destino" : "Liberar lote"}
-                    onSubmit={(d) => {
-                      const error = decidir(lote.id, d.motivo, online, rechazar, d.destino ?? "");
-                      if (error) toast.error(error);
-                      else
-                        toast.success(
-                          `Lote ${lote.id} ${rechazar ? "rechazado" : "liberado"} · decisión registrada`,
-                        );
-                    }}
-                  >
-                    <p className="connection-warning">
-                      <CircleAlert size={20} />
-                      Liberar un lote exige conexión
+                puedeFirmarCuarentenas ? (
+                  <>
+                    <MotivoForm
+                      key={`${lote.id}-${rechazar}`}
+                      rechazo={rechazar}
+                      danger={rechazar}
+                      label={rechazar ? "Rechazar y registrar destino" : "Liberar lote"}
+                      onSubmit={(d) => {
+                        try {
+                          const error = ejecutarEscritura(rol, "firmar", "bandeja.cuarentenas", () =>
+                            decidir(lote.id, d.motivo, online, rechazar, d.destino ?? ""),
+                          );
+                          if (error) toast.error(error);
+                          else
+                            toast.success(
+                              `Lote ${lote.id} ${rechazar ? "rechazado" : "liberado"} · decisión registrada`,
+                            );
+                        } catch (e) {
+                          toast.error(e instanceof ErrorPermiso ? e.message : "No fue posible decidir.");
+                        }
+                      }}
+                    >
+                      <p className="connection-warning">
+                        <CircleAlert size={20} />
+                        Liberar un lote exige conexión
+                      </p>
+                    </MotivoForm>
+                    <Button
+                      variant="outline"
+                      className="mt-2 w-full min-h-12 text-danger border-danger/30"
+                      onClick={() => setRechazar(!rechazar)}
+                    >
+                      {rechazar ? <Check size={20} /> : <X size={20} />}{" "}
+                      {rechazar ? "Volver a liberación" : "Rechazar y registrar destino"}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <p className="detail-box">
+                      Pendiente de decisión de la ingeniera de alimentos. Tu rol puede consultar el
+                      estado, pero no liberar ni rechazar lotes.
                     </p>
-                  </MotivoForm>
-                  <Button
-                    variant="outline"
-                    className="mt-2 w-full min-h-12 text-danger border-danger/30"
-                    onClick={() => setRechazar(!rechazar)}
-                  >
-                    {rechazar ? <Check size={20} /> : <X size={20} />}{" "}
-                    {rechazar ? "Volver a liberación" : "Rechazar y registrar destino"}
-                  </Button>
-                </>
+                    <div className="mt-3 space-y-2">
+                      <BotonRestringido
+                        accion="firmar"
+                        recurso="bandeja.cuarentenas"
+                        className="w-full min-h-12"
+                      >
+                        Liberar lote
+                      </BotonRestringido>
+                      <BotonRestringido
+                        accion="firmar"
+                        recurso="bandeja.cuarentenas"
+                        variant="outline"
+                        className="w-full min-h-12 text-danger border-danger/30"
+                      >
+                        Rechazar y registrar destino
+                      </BotonRestringido>
+                    </div>
+                  </>
+                )
               ) : (
                 <p className="detail-box text-ok">
                   Decisión registrada en el historial. Se conserva la regla v{lote.version}.
