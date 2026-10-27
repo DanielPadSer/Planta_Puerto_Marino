@@ -7,6 +7,7 @@ import { PanelLayout } from "@/app/PanelLayout";
 import { useCalidad } from "./store";
 import type { ProductoRegla } from "@/domain/calidad";
 import { Buscador, TabsPanel, Tabla, EstadoChip, MotivoForm, EjemploPanel, Drawer } from "./ui";
+import { BannerSoloLectura, useModoLectura } from "@/ui/permisos";
 const ACORDEONES = [
   "Recepción",
   "Cocción",

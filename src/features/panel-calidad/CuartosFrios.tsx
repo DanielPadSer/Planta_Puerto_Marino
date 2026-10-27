@@ -6,6 +6,7 @@ import { PanelLayout } from "@/app/PanelLayout";
 import { TabsPanel, EstadoChip, Tabla, Drawer, MotivoForm, EjemploPanel } from "./ui";
 import { useCalidad } from "./store";
 import { TemperaturaChart } from "./TemperaturaChart";
+import { BannerSoloLectura, useModoLectura } from "@/ui/permisos";
 const INITIAL = [
   {
     id: "CF-1",
