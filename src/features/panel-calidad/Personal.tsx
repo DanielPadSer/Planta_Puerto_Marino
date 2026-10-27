@@ -413,8 +413,9 @@ export function Personal() {
             </aside>
             <section className="panel-surface p-5 space-y-5">
               <h2>Plantilla de checklist · v{plantilla?.version}</h2>
+              {!puedePlantillas && <BannerSoloLectura recurso="personal.plantillas" />}
               {plantilla && (
-                <>
+                <fieldset disabled={!puedePlantillas} className="contents">
                   {GRUPOS_BPM.map((grupo) => (
                     <div key={grupo} className="space-y-3">
                       <h3 className="section-eyebrow">{grupo.toUpperCase()}</h3>
