@@ -27,3 +27,4 @@
 - Allergen wizard steps use a single validated dynamic leaf route and session draft state; navigation changes the URL without losing edits.
 - Barcode rendering and PDF/Excel libraries load only inside browser effects or actions; this avoids browser-only work during SSR and defers export costs.
 - The data model (65 tables + SaldoLote view) lives isolated in src/modelo: one declarative schema derives TS row types, Dexie indexes (separate "puerto-marino-modelo" DB), PostgreSQL SQL and integrity checks; only the /panel/modelo-datos route and one nav entry touch the rest of the app, so it can be removed cleanly.
+- El control de acceso del panel vive en src/domain/permisos.ts (matriz PERMISOS + banderas CONFIG_PERMISOS mutables); la sesión de rol en src/features/auth/sesionPanel.ts se hidrata desde sessionStorage solo en cliente (hidratar()) para no romper SSR, y los componentes de permiso están en src/ui/permisos.

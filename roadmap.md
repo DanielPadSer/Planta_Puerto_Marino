@@ -28,12 +28,12 @@
 - [x] Base local separada, datos de ejemplo cruzados, trazabilidad, integridad y SQL.
 - [x] Pantalla "Modelo de datos" en el panel y 17 pruebas.
 # Quinta fase · Control de acceso por rol en el panel
-- [ ] Matriz PERMISOS + banderas + funciones puras y pruebas (src/domain/permisos.ts).
-- [ ] Sesión de panel con rol (sessionStorage) y login con 3 usuarios demo + acceso rápido DEV.
-- [ ] Componentes de permiso: Puede, BotonRestringido, BannerSoloLectura, RutaProtegida, hooks.
-- [ ] PanelLayout: sidebar por rol, insignia de rol, selector DEV, sección ADMINISTRACIÓN.
-- [ ] Bandeja: pestañas Conflictos de sincronización y Pesajes manuales; decisión solo con firma.
-- [ ] Pantallas: lectura/edición por rol (Reglas, Limpieza, Monitoreo, Dispositivos, Personal, Catálogos, Alérgenos).
-- [ ] Rutas nuevas: /panel/sin-acceso, /panel/usuarios, /panel/permisos.
-- [ ] Servicios simulados con assertPuede (403) y registro en Historial.
-- [ ] Pruebas Vitest y verificación en navegador.
+- [x] Matriz PERMISOS + banderas + funciones puras y pruebas (src/domain/permisos.ts).
+- [x] Sesión de panel con rol (sessionStorage) y login con 3 usuarios demo + acceso rápido DEV.
+- [x] Componentes de permiso: Puede, BotonRestringido, BannerSoloLectura, RutaProtegida, hooks.
+- [x] PanelLayout: sidebar por rol, insignia de rol, selector DEV, sección ADMINISTRACIÓN.
+- [x] Bandeja: pestañas Conflictos de sincronización y Pesajes manuales; decisión solo con firma.
+- [x] Pantallas: lectura/edición por rol (Reglas, Limpieza, Monitoreo, Dispositivos, Personal, Catálogos, Alérgenos).
+- [x] Rutas nuevas: /panel/sin-acceso, /panel/usuarios, /panel/permisos.
+- [x] Servicios simulados con assertPuede (403) y registro en Historial.
+- [x] Pruebas Vitest y verificación en navegador.
