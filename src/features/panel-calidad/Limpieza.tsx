@@ -172,6 +172,37 @@ export function Limpieza() {
                     </EstadoChip>
                   ),
                 },
+                {
+                  key: "nombre",
+                  label: "Acciones",
+                  render: (e) => (
+                    <span className="flex flex-wrap gap-2">
+                      {puedeEstadoEquipos && e.estado !== "Fuera de servicio" && (
+                        <Button
+                          variant="outline"
+                          className="min-h-12"
+                          onClick={() =>
+                            toast.success(`${e.nombre} marcado como fuera de servicio · simulado`)
+                          }
+                        >
+                          Fuera de servicio
+                        </Button>
+                      )}
+                      {e.estado !== "Liberado" && (
+                        <BotonRestringido
+                          accion="firmar"
+                          recurso="bandeja.limpiezas"
+                          className="min-h-12"
+                          onClick={() =>
+                            toast.success(`${e.nombre} liberado por la ingeniera · simulado`)
+                          }
+                        >
+                          Liberar equipo
+                        </BotonRestringido>
+                      )}
+                    </span>
+                  ),
+                },
               ]}
             />
           ) : (
