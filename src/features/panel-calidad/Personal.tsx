@@ -653,12 +653,15 @@ export function Personal() {
               Si está activo, un supervisor puede autorizar una excepción con motivo. Política
               simulada; no se aplica a las estaciones en esta fase.
             </p>
-            <MotivoForm
-              onSubmit={(d) => {
-                s.politica(dias, bloquear, d.motivo);
-                toast.success("Política de planta guardada");
-              }}
-            />
+            {!lectura && (
+              <MotivoForm
+                onSubmit={(d) => {
+                  s.politica(dias, bloquear, d.motivo);
+                  toast.success("Política de planta guardada");
+                }}
+              />
+            )}
+            </fieldset>
             <EjemploPanel />
           </>
         )}
