@@ -90,6 +90,8 @@ export function Bandeja() {
               "Limpiezas por verificar",
               "No conformidades",
               "Bloqueados",
+              "Conflictos de sincronización",
+              "Pesajes manuales",
               "Avisos",
             ]}
             value={tab}
