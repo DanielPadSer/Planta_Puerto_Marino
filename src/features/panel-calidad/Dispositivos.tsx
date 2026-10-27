@@ -51,20 +51,23 @@ export function Dispositivos() {
       subtitle="Registro y control del hardware que se usa en la planta"
       active="/panel/dispositivos"
       action={
-        <Button
-          onClick={() => {
-            setWizard(true);
-            setStep(0);
-            setTested(false);
-            setNombre("");
-            setModelo("");
-          }}
-        >
-          <Plus size={20} />
-          Registrar dispositivo
-        </Button>
+        puedeRegistrar ? (
+          <Button
+            onClick={() => {
+              setWizard(true);
+              setStep(0);
+              setTested(false);
+              setNombre("");
+              setModelo("");
+            }}
+          >
+            <Plus size={20} />
+            Registrar dispositivo
+          </Button>
+        ) : undefined
       }
     >
+      <BannerSoloLectura recurso="dispositivos.registro" />
       <KPIs
         items={[
           {
