@@ -21,7 +21,6 @@ import {
   KeyRound,
   TableProperties,
 } from "lucide-react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useCalidad } from "@/features/panel-calidad/store";
 import { useConexion } from "@/features/panel-calidad/ui";
@@ -69,7 +68,7 @@ export function PanelLayout({
   children: ReactNode;
   action?: ReactNode;
 }) {
-  const { usuario, hidratada, hidratar, salir, cambiarRol } = useSesionPanel();
+  const { usuario, hidratada, hidratar, salir } = useSesionPanel();
   const navigate = useNavigate();
   const online = useConexion();
   const [collapsed, setCollapsed] = useState(false);
