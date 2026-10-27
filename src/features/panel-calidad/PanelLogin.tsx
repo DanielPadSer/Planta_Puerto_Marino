@@ -74,12 +74,12 @@ export function PanelLogin() {
         <form
           className="space-y-5"
           onSubmit={handleSubmit((d) => {
-            if (!validarAcceso(d.usuario, d.clave)) {
+            const encontrado = validarAccesoPanel(d.usuario, d.clave);
+            if (!encontrado) {
               setError("Usuario o contraseña incorrectos.");
               return;
             }
-            entrar();
-            navigate({ to: "/panel/bandeja" });
+            entrarComo(encontrado);
           })}
         >
           <label className="field-label">
