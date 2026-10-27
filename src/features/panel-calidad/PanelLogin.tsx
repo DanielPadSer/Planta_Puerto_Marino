@@ -17,8 +17,13 @@ import {
 import { motion, useReducedMotion } from "framer-motion";
 import { Logo } from "@/ui/logo";
 import { Button } from "@/components/ui/button";
-import { validarAcceso, DEMO_USUARIO, DEMO_CLAVE } from "@/domain/calidad";
-import { usePanelSesion } from "./store";
+import {
+  validarAccesoPanel,
+  buscarUsuarioDemo,
+  USUARIOS_DEMO_PANEL,
+  DEMO_CLAVE_PANEL,
+} from "@/domain/calidad";
+import { useSesionPanel } from "@/features/auth/sesionPanel";
 import maqueta from "@/assets/maqueta-planta.png.asset.json";
 const schema = z.object({
   usuario: z.string().min(1, "Ingresa tu usuario o correo"),
