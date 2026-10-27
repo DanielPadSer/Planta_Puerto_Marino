@@ -141,8 +141,26 @@ export function PanelLogin() {
           </p>
         </div>
         <p className="mt-4 text-xs text-muted-foreground">
-          Usuario demo precargado · contraseña: {DEMO_CLAVE}
+          Usuario demo precargado · contraseña: {DEMO_CLAVE_PANEL}
         </p>
+        {import.meta.env.DEV && (
+          <div className="login-quick-access">
+            <h2>Acceso rápido de demostración</h2>
+            <div className="login-quick-grid">
+              {USUARIOS_DEMO_PANEL.map((u) => (
+                <Button
+                  key={u.rol}
+                  type="button"
+                  variant="outline"
+                  className="min-h-12"
+                  onClick={() => entrarComo(u)}
+                >
+                  {u.etiqueta}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
       </motion.div>
       <div className="login-map-side">
         <div className="login-map-caption">
