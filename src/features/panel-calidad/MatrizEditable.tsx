@@ -12,7 +12,7 @@ import { EstadoChip, EjemploPanel } from "./ui";
 import { cn } from "@/lib/utils";
 const descripciones: Record<NivelMatriz, string> = { N0:"Sin limpieza · automático", N1:"Superficial · retiro de residuos", N2:"Profunda · detergente, desinfección con concentración y tiempo de contacto", N3:"Profunda + prueba ATP o de alérgeno · sin excepción" };
 const nombre = (id: string) => cats.find((c) => c.id === id)?.nombre ?? id;
-export function MatrizEditable({ onNivel }: { onNivel: (n: string) => void }) {
+export function MatrizEditable({ onNivel, soloLectura = false }: { onNivel: (n: string) => void; soloLectura?: boolean }) {
   const matrices = useCalidad((s) => s.matrices);
   const guardar = useCalidad((s) => s.guardarMatriz);
   const vigente = matrices.at(-1);
