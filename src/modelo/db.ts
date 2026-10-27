@@ -9,7 +9,9 @@ export function indicesDexie(): Record<string, string> {
     NOMBRES.filter((n) => definicion(n).clase !== "V").map((n) => {
       const campos = Object.entries(definicion(n).campos);
       const unicos = campos.filter(([, c]) => c.unico && !c.nulo).map(([k]) => `&${k}`);
-      const indices = campos.filter(([, c]) => (c.ref && !c.comun) || (c.unico && c.nulo) || c.comun === undefined && ["estado", "codigo", "fecha", "tipo"].includes("")).map(([k]) => k);
+      const indices = campos
+        .filter(([k, c]) => (c.ref && !c.comun) || (c.unico && c.nulo) || (!c.unico && ["estado", "tipo", "fecha"].includes(k)))
+        .map(([k]) => k);
       return [n, ["id", ...unicos, ...indices.filter((k) => !unicos.includes(`&${k}`))].join(", ")];
     }),
   );
