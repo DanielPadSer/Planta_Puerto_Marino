@@ -479,6 +479,84 @@ export function Bandeja() {
           Ver avisos <ChevronRight size={20} />
         </Button>
       </div>
+      <Dialog
+        open={!!conflictoSel}
+        onOpenChange={(o) => {
+          if (!o) setConflictoSel(null);
+        }}
+      >
+        <DialogContent className="cuarta-dialog bg-surface">
+          <DialogTitle>
+            {accionConflicto === "ajuste" ? "Aplicar con ajuste" : "Descartar evento"} ·{" "}
+            {conflictoSel}
+          </DialogTitle>
+          <DialogDescription>
+            La resolución queda en el historial con tu usuario y rol.
+          </DialogDescription>
+          <MotivoForm
+            danger={accionConflicto === "descartar"}
+            label={accionConflicto === "ajuste" ? "Aplicar ajuste" : "Confirmar descarte"}
+            onSubmit={(d) => {
+              if (!conflictoSel) return;
+              try {
+                const error = ejecutarEscritura(rol, "firmar", "bandeja.conflictosSync", () =>
+                  resolverConflicto(conflictoSel, accionConflicto, ajuste, d.motivo),
+                );
+                if (error) {
+                  toast.error(error);
+                  return;
+                }
+                toast.success("Conflicto resuelto y registrado");
+                setConflictoSel(null);
+              } catch (e) {
+                toast.error(e instanceof ErrorPermiso ? e.message : "No fue posible resolver.");
+              }
+            }}
+          >
+            {accionConflicto === "ajuste" && (
+              <label className="field-label">
+                Ajuste aplicado <span className="text-danger">* obligatorio</span>
+                <input
+                  className="panel-input"
+                  value={ajuste}
+                  onChange={(e) => setAjuste(e.target.value)}
+                  placeholder="Ej. se conserva el primer pesaje y se anula el duplicado"
+                />
+              </label>
+            )}
+          </MotivoForm>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={!!pesajeSel}
+        onOpenChange={(o) => {
+          if (!o) setPesajeSel(null);
+        }}
+      >
+        <DialogContent className="cuarta-dialog bg-surface">
+          <DialogTitle>Marcar pesaje como revisado · {pesajeSel}</DialogTitle>
+          <DialogDescription>Revisión del supervisor con motivo obligatorio.</DialogDescription>
+          <MotivoForm
+            label="Confirmar revisión"
+            onSubmit={(d) => {
+              if (!pesajeSel) return;
+              try {
+                const error = ejecutarEscritura(rol, "firmar", "bandeja.pesajesManuales", () =>
+                  revisarPesaje(pesajeSel, d.motivo),
+                );
+                if (error) {
+                  toast.error(error);
+                  return;
+                }
+                toast.success("Pesaje marcado como revisado");
+                setPesajeSel(null);
+              } catch (e) {
+                toast.error(e instanceof ErrorPermiso ? e.message : "No fue posible revisar.");
+              }
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </PanelLayout>
   );
 }
