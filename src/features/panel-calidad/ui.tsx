@@ -144,7 +144,7 @@ export function Tabla<T extends { id: string }>({
   selected?: string | undefined;
   rowClassName?: (row: T) => string;
 }) {
-  const initial = cols[0]?.key ?? "id";
+  const initial = (cols[0]?.key ?? "id") as keyof T;
   const { rows, sort, toggle } = useSortableTable(data, initial);
   return (
     <div className="panel-table-wrap">
@@ -153,11 +153,11 @@ export function Tabla<T extends { id: string }>({
           <tr>
             {cols.map((c) => (
               <th key={String(c.key)}>
-                <Button variant="ghost" onClick={() => toggle(c.key)} className="table-sort">
+                <Button variant="ghost" onClick={() => toggle(c.key as keyof T)} className="table-sort">
                   {c.label}
                   <ArrowUpDown
                     size={20}
-                    className={sort.key === c.key ? "text-primary" : "opacity-30"}
+                    className={sort.key === (c.key as keyof T) ? "text-primary" : "opacity-30"}
                   />
                 </Button>
               </th>
@@ -182,12 +182,12 @@ export function Tabla<T extends { id: string }>({
                         onSelect(row);
                       }}
                     >
-                      {c.render ? c.render(row) : String(row[c.key])}
+                      {c.render ? c.render(row) : String(row[c.key as keyof T])}
                     </Button>
                   ) : c.render ? (
                     c.render(row)
                   ) : (
-                    String(row[c.key])
+                    String(row[c.key as keyof T])
                   )}
                 </td>
               ))}
