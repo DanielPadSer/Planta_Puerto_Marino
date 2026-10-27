@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { Check, Pencil, PenLine } from "lucide-react";
 import { PanelLayout } from "@/app/PanelLayout";
 import { EstadoChip, ReadonlyNote } from "./ui";

@@ -71,7 +71,7 @@ export function PanelLayout({
   children: ReactNode;
   action?: ReactNode;
 }) {
-  const { usuario, salir, cambiarRol } = useSesionPanel();
+  const { usuario, hidratada, hidratar, salir, cambiarRol } = useSesionPanel();
   const navigate = useNavigate();
   const online = useConexion();
   const [collapsed, setCollapsed] = useState(false);
@@ -85,9 +85,12 @@ export function PanelLayout({
   const count =
     rol === "ingeniera" ? cuarentenas + 2 + 4 : rol === "supervisor" ? conflictos + pesajes : 6;
   useEffect(() => {
-    if (!usuario) navigate({ to: "/panel/login", replace: true });
-  }, [usuario, navigate]);
-  if (!usuario) return <div className="min-h-screen bg-background" />;
+    hidratar();
+  }, [hidratar]);
+  useEffect(() => {
+    if (hidratada && !usuario) navigate({ to: "/panel/login", replace: true });
+  }, [hidratada, usuario, navigate]);
+  if (!hidratada || !usuario) return <div className="min-h-screen bg-background" />;
   const items = panelNav.filter((i) => !i.recurso || puede(rol, "ver", i.recurso));
   const itemsAdmin = navAdmin.filter((i) => i.recurso && puede(rol, "ver", i.recurso));
   const verUsuarios = puede(rol, "ver", "usuarios.pin") && !puede(rol, "ver", "usuarios.gestion");
