@@ -243,20 +243,22 @@ export function Catalogos({ initial = "Contenedores y tara" }: { initial?: strin
               Medir ahora con la báscula
             </Button>
             <p className="version-notice">Las pesadas históricas conservan la tara original.</p>
-            <MotivoForm
-              label="Guardar nueva versión"
-              onSubmit={(d) => {
-                if (draft.tara <= 0 || !draft.nombre.trim()) {
-                  toast.error("Completa nombre y tara mayor que cero.");
-                  return;
-                }
-                guardarTara(draft, d.motivo);
-                setDraft(null);
-                toast.success("Tara versionada y guardada");
-              }}
-            />
+            {!lectura && (
+              <MotivoForm
+                label="Guardar nueva versión"
+                onSubmit={(d) => {
+                  if (draft.tara <= 0 || !draft.nombre.trim()) {
+                    toast.error("Completa nombre y tara mayor que cero.");
+                    return;
+                  }
+                  guardarTara(draft, d.motivo);
+                  setDraft(null);
+                  toast.success("Tara versionada y guardada");
+                }}
+              />
+            )}
             <EjemploPanel />
-          </>
+          </fieldset>
         )}
       </Drawer>
     </PanelLayout>
