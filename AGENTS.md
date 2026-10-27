@@ -26,3 +26,4 @@
 - Personal/BPM and allergens use a dedicated local Zustand store with immutable snapshots and append events to the shared quality audit; this keeps simulated module data isolated without a backend.
 - Allergen wizard steps use a single validated dynamic leaf route and session draft state; navigation changes the URL without losing edits.
 - Barcode rendering and PDF/Excel libraries load only inside browser effects or actions; this avoids browser-only work during SSR and defers export costs.
+- The data model (65 tables + SaldoLote view) lives isolated in src/modelo: one declarative schema derives TS row types, Dexie indexes (separate "puerto-marino-modelo" DB), PostgreSQL SQL and integrity checks; only the /panel/modelo-datos route and one nav entry touch the rest of the app, so it can be removed cleanly.

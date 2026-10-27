@@ -153,12 +153,12 @@ function Nodo({ n, nivel = 0 }: { n: NodoLote; nivel?: number }) {
       {n.recepcion && (
         <p className="text-sm text-muted-foreground">
           Recepción <b className="font-mono">{n.recepcion.codigo}</b> · {n.proveedor?.nombre} · lote proveedor {n.linea?.lote_proveedor} · {n.linea?.temperatura_c} °C ·{" "}
-          {n.pesajes.map((p) => `${p.neto_kg} kg ${p.origen === "manual" ? "(manual autorizado)" : "(báscula estable)"}`).join(" + ")}
+          {n.pesajes.map((p) => `${p.neto_kg.toLocaleString("es-CO")} kg ${p.origen === "manual" ? "(manual autorizado)" : "(báscula estable)"}`).join(" + ")}
         </p>
       )}
       {n.controles.map((c) => (
         <p key={c.id} className="text-sm">
-          Control de {c.tipo_control} · regla v{c.version_regla} · final {c.temp_final_c} °C{c.temp_centro_c !== null ? ` · centro ${c.temp_centro_c} °C` : ""} ·{" "}
+          Control de {c.tipo_control === "coccion" ? "cocción" : c.tipo_control} · regla v{c.version_regla} · final {c.temp_final_c} °C{c.temp_centro_c !== null ? ` · centro ${c.temp_centro_c} °C` : ""} ·{" "}
           <EstadoChip tono={c.resultado === "conforme" ? "ok" : "danger"}>{c.resultado.replace("_", " ")}</EstadoChip>
         </p>
       ))}
