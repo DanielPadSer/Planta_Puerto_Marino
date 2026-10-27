@@ -149,6 +149,113 @@ export function Bandeja() {
                 ]}
               />
             </>
+          ) : tab === "Conflictos de sincronización" ? (
+            <>
+              <p className="table-note">
+                Eventos que llegaron en conflicto desde los dispositivos · los resuelve el
+                supervisor
+              </p>
+              <Tabla
+                data={conflictos.filter((c) =>
+                  `${c.evento} ${c.dispositivo} ${c.operario}`.toLowerCase().includes(search.toLowerCase()),
+                )}
+                cols={[
+                  { key: "id", label: "Registro" },
+                  { key: "evento", label: "Evento" },
+                  { key: "dispositivo", label: "Dispositivo" },
+                  { key: "operario", label: "Operario" },
+                  { key: "hora", label: "Hora" },
+                  { key: "motivo", label: "Motivo del conflicto" },
+                  {
+                    key: "estado",
+                    label: "Estado",
+                    render: (c) => (
+                      <EstadoChip tono={c.estado === "Pendiente" ? "warn" : "ok"}>{c.estado}</EstadoChip>
+                    ),
+                  },
+                  {
+                    key: "evento",
+                    label: "Acciones",
+                    render: (c) =>
+                      c.estado === "Pendiente" ? (
+                        <span className="flex flex-wrap gap-2">
+                          <BotonRestringido
+                            accion="firmar"
+                            recurso="bandeja.conflictosSync"
+                            className="min-h-12"
+                            onClick={() => {
+                              setConflictoSel(c.id);
+                              setAccionConflicto("ajuste");
+                              setAjuste("");
+                            }}
+                          >
+                            Aplicar con ajuste y motivo
+                          </BotonRestringido>
+                          <BotonRestringido
+                            accion="firmar"
+                            recurso="bandeja.conflictosSync"
+                            variant="outline"
+                            className="min-h-12 text-danger border-danger/30"
+                            onClick={() => {
+                              setConflictoSel(c.id);
+                              setAccionConflicto("descartar");
+                            }}
+                          >
+                            Descartar
+                          </BotonRestringido>
+                        </span>
+                      ) : (
+                        <small className="text-muted-foreground">Resuelto · en historial</small>
+                      ),
+                  },
+                ]}
+              />
+            </>
+          ) : tab === "Pesajes manuales" ? (
+            <>
+              <p className="table-note">
+                Pesajes digitados a mano con autorización por PIN · el supervisor los marca como
+                revisados
+              </p>
+              <Tabla
+                data={pesajesManuales.filter((p) =>
+                  `${p.lote} ${p.operario} ${p.motivo}`.toLowerCase().includes(search.toLowerCase()),
+                )}
+                cols={[
+                  { key: "id", label: "ID pesaje" },
+                  { key: "lote", label: "Lote", render: (p) => <code>{p.lote}</code> },
+                  { key: "peso", label: "Peso" },
+                  { key: "operario", label: "Operario" },
+                  { key: "motivo", label: "Motivo" },
+                  { key: "autorizo", label: "Autorizó" },
+                  {
+                    key: "estado",
+                    label: "Estado",
+                    render: (p) => (
+                      <EstadoChip tono={p.estado === "Pendiente" ? "warn" : "ok"}>{p.estado}</EstadoChip>
+                    ),
+                  },
+                  {
+                    key: "lote",
+                    label: "Acción",
+                    render: (p) =>
+                      p.estado === "Pendiente" ? (
+                        <BotonRestringido
+                          accion="firmar"
+                          recurso="bandeja.pesajesManuales"
+                          variant="outline"
+                          className="min-h-12"
+                          onClick={() => setPesajeSel(p.id)}
+                        >
+                          Marcar como revisado
+                        </BotonRestringido>
+                      ) : (
+                        <small className="text-muted-foreground">Revisado · en historial</small>
+                      ),
+                  },
+                ]}
+              />
+            </>
           ) : tab === "Avisos" ? (
             <Tabla
               data={[...AVISOS, ...avisosDocumentales].filter((a) =>
