@@ -143,7 +143,7 @@ export function Dispositivos() {
         title={draft?.nombre ?? "Dispositivo"}
       >
         {draft && (
-          <>
+          <fieldset disabled={!puedeRegistrar} className="contents">
             <h3 className="section-eyebrow">IDENTIDAD</h3>
             <label className="field-label">
               Nombre
