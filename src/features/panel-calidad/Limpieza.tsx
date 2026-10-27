@@ -28,8 +28,10 @@ export function Limpieza() {
   const [fin, setFin] = useState(true);
   const [aplica, setAplica] = useState(false);
   const auditar = useCalidad((s) => s.auditar);
+  const lectura = useModoLectura("limpieza.matriz");
+  const puedeEstadoEquipos = usePuede("editar", "equipos.estado");
   const poe = (
-    <>
+    <fieldset disabled={lectura} className="contents">
       <div className="flex gap-2">
         <EstadoChip tono="primary">v{version} · vigente</EstadoChip>
         <EstadoChip tono="warn">Parámetro N2</EstadoChip>
