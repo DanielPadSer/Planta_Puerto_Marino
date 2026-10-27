@@ -38,15 +38,21 @@ export function PanelLogin() {
   const [visible, setVisible] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const entrar = usePanelSesion((s) => s.entrar);
+  const entrar = useSesionPanel((s) => s.entrar);
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<LoginDatos>({
     resolver: zodResolver(schema),
-    defaultValues: { usuario: DEMO_USUARIO, clave: DEMO_CLAVE, mantener: false },
+    defaultValues: { usuario: USUARIOS_DEMO_PANEL[0]?.usuario ?? "", clave: DEMO_CLAVE_PANEL, mantener: false },
   });
+  const escrito = buscarUsuarioDemo(watch("usuario") ?? "");
+  const entrarComo = (u: (typeof USUARIOS_DEMO_PANEL)[number]) => {
+    entrar({ usuario: u.usuario, nombre: u.nombre, rol: u.rol });
+    navigate({ to: "/panel/bandeja" });
+  };
   return (
     <div className="panel-login">
       <motion.div className="login-form-side" initial={quieto ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
