@@ -1,5 +1,5 @@
 /** Capa B: base local propia del modelo; separada de la base "puerto-marino" existente. */
-import Dexie from "dexie";
+import Dexie, { type Table } from "dexie";
 import { NOMBRES, definicion, type Datos, type NombreTabla } from "./esquema";
 import { filas } from "./consultas";
 
@@ -34,8 +34,9 @@ export async function cargarEnNavegador(d: Datos): Promise<number> {
   const db = getModeloDb();
   if (!db) return 0;
   let total = 0;
-  await db.transaction("rw", db.tables, async () => {
-    for (const t of db.tables) {
+  const tablas: Table[] = db.tables;
+  await (db as Dexie).transaction("rw", tablas, async () => {
+    for (const t of tablas) {
       await t.clear();
       const datos = filas(d, t.name as NombreTabla);
       await t.bulkPut(datos);
@@ -53,7 +54,8 @@ export async function contarEnNavegador(): Promise<Record<string, number>> {
 export async function vaciarNavegador(): Promise<void> {
   const db = getModeloDb();
   if (!db) return;
-  await db.transaction("rw", db.tables, async () => {
-    for (const t of db.tables) await t.clear();
+  const tablas: Table[] = db.tables;
+  await (db as Dexie).transaction("rw", tablas, async () => {
+    for (const t of tablas) await t.clear();
   });
 }

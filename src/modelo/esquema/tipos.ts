@@ -47,8 +47,8 @@ export function largo(nulo = false): Campo {
   return { tipo: "texto", nulo, sql: "text" };
 }
 export function ent(): C<"entero", false>;
-export function ent(nulo: boolean, sql: string): C<"entero", false>;
 export function ent(nulo: true, sql?: string): C<"entero", true>;
+export function ent(nulo: false, sql: string): C<"entero", false>;
 export function ent(nulo = false, sql = "int"): Campo {
   return { tipo: "entero", nulo, sql };
 }
