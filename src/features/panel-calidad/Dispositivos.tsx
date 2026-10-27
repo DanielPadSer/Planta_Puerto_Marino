@@ -225,18 +225,24 @@ export function Dispositivos() {
                 <option key={p}>{p}</option>
               ))}
             </select>
-            <MotivoForm
-              onSubmit={(d) => {
-                if (!draft.nombre.trim()) {
-                  toast.error("Ingresa el nombre del dispositivo");
-                  return;
-                }
-                editarDispositivo(draft, d.motivo + ` · Periférico: ${periferico}`);
-                setDraft(null);
-                toast.success("Dispositivo actualizado");
-              }}
-            />
-          </>
+            {puedeRegistrar ? (
+              <MotivoForm
+                onSubmit={(d) => {
+                  if (!draft.nombre.trim()) {
+                    toast.error("Ingresa el nombre del dispositivo");
+                    return;
+                  }
+                  editarDispositivo(draft, d.motivo + ` · Periférico: ${periferico}`);
+                  setDraft(null);
+                  toast.success("Dispositivo actualizado");
+                }}
+              />
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Solo el administrador registra, edita o revoca dispositivos.
+              </p>
+            )}
+          </fieldset>
         )}
       </Drawer>
       <Dialog open={wizard} onOpenChange={setWizard}>
