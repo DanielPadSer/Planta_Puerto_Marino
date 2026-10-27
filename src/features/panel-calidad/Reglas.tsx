@@ -35,7 +35,7 @@ export function Reglas() {
         (filter === "Por validar" && p.estado === "Por validar")),
   );
   const detail = edit && (
-    <>
+    <fieldset disabled={lectura} className="contents">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2>{edit.nombre}</h2>
