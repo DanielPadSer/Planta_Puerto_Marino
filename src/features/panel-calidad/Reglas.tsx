@@ -186,20 +186,22 @@ export function Reglas() {
         Los cambios crean una nueva versión; los lotes ya producidos conservan la versión con que se
         aprobaron.
       </div>
-      <MotivoForm
-        label="Guardar como nueva versión"
-        onSubmit={(d) => {
-          if (edit.temperatura <= 0 || edit.tiempo <= 0 || edit.vida <= 0) {
-            toast.error("Los parámetros deben ser mayores que cero.");
-            return;
-          }
-          guardarProducto(edit, d.motivo);
-          setDraft(null);
-          toast.success(`Nueva versión v${(p?.version ?? 0) + 1} guardada`);
-        }}
-      />
+      {!lectura && (
+        <MotivoForm
+          label="Guardar como nueva versión"
+          onSubmit={(d) => {
+            if (edit.temperatura <= 0 || edit.tiempo <= 0 || edit.vida <= 0) {
+              toast.error("Los parámetros deben ser mayores que cero.");
+              return;
+            }
+            guardarProducto(edit, d.motivo);
+            setDraft(null);
+            toast.success(`Nueva versión v${(p?.version ?? 0) + 1} guardada`);
+          }}
+        />
+      )}
       <EjemploPanel />
-    </>
+    </fieldset>
   );
   return (
     <PanelLayout
@@ -217,6 +219,7 @@ export function Reglas() {
         </Button>
       }
     >
+      <BannerSoloLectura recurso="reglas" />
       <div className="rules-grid">
         <section className="panel-surface p-5">
           <Buscador value={search} onChange={setSearch} placeholder="Buscar producto…" />
