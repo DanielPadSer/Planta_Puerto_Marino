@@ -219,24 +219,6 @@ export function PanelLayout({
           </div>
           <div className="topbar-actions">
             <span className={cn("rol-badge", `rol-badge-${rol}`)}>{ETIQUETA_ROL[rol]}</span>
-            {import.meta.env.DEV && (
-              <select
-                aria-label="Cambiar rol de demostración"
-                className="panel-input rol-switch"
-                value={rol}
-                onChange={(e) => {
-                  const siguiente = e.target.value as RolPanel;
-                  cambiarRol(siguiente);
-                  toast.info(`Viendo el panel como ${ETIQUETA_ROL[siguiente]}`);
-                }}
-              >
-                {ROLES_CAMBIO.map((r) => (
-                  <option key={r} value={r}>
-                    {ETIQUETA_ROL[r]}
-                  </option>
-                ))}
-              </select>
-            )}
             <span className={cn("online-pill", online ? "text-ok" : "text-warn")}>
               <span className={cn("size-2 rounded-full", online ? "bg-ok" : "bg-warn")} />
               {online ? "En línea · Sincronizado" : "Sin conexión · 0 pendientes"}
