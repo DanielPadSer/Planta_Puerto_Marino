@@ -9,6 +9,7 @@ import {
 import { TabsPanel, EstadoChip, MotivoForm, EjemploPanel, Tabla, Drawer } from "./ui";
 import { useCalidad } from "./store";
 import { MatrizEditable } from "./MatrizEditable";
+import { BannerSoloLectura, BotonRestringido, useModoLectura, usePuede } from "@/ui/permisos";
 const EQUIPOS = [
   { id: "EQ-01", nombre: "Marmita 1", estado: "Liberado" },
   { id: "EQ-02", nombre: "Marmita 2", estado: "Usado" },

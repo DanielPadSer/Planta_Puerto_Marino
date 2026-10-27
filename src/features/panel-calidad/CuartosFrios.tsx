@@ -52,18 +52,21 @@ export function CuartosFrios() {
       subtitle="Temperaturas, registros y condiciones de almacenamiento de los cuartos fríos"
       active="/panel/cuartos-frios"
       action={
-        <Button
-          variant="outline"
-          onClick={() => {
-            setDraft(room);
-            setOpen(true);
-          }}
-        >
-          <Settings2 size={20} />
-          Configurar cuarto
-        </Button>
+        lectura ? undefined : (
+          <Button
+            variant="outline"
+            onClick={() => {
+              setDraft(room);
+              setOpen(true);
+            }}
+          >
+            <Settings2 size={20} />
+            Configurar cuarto
+          </Button>
+        )
       }
     >
+      <BannerSoloLectura recurso="cuartosFrios" />
       <TabsPanel
         tabs={["Registros y temperaturas", "Sensores IoT · próximamente"]}
         disabled={["Sensores IoT · próximamente"]}
