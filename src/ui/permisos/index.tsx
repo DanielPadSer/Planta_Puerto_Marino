@@ -1,4 +1,4 @@
-import { useId, type ReactNode } from "react";
+import { useEffect, useId, type ReactNode } from "react";
 import { Navigate } from "@tanstack/react-router";
 import { LockKeyhole } from "lucide-react";
 import { Button } from "@/components/ui/button";
