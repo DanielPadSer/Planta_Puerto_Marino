@@ -35,6 +35,7 @@ import {
   type TipoDocumentoPersonal,
 } from "@/domain/cuartaFase";
 import { HOY_DEMO, REGISTROS_BPM } from "@/mocks/cuartaFase";
+import { BannerSoloLectura, useModoLectura, usePuede } from "@/ui/permisos";
 function Renovacion({ operario, onClose }: { operario: OperarioPersonal; onClose: () => void }) {
   const renovar = useCuarta((s) => s.renovar);
   const [archivo, setArchivo] = useState<File | null>(null);

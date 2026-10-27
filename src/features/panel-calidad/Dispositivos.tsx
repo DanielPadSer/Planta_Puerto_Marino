@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/compone
 import { PanelLayout } from "@/app/PanelLayout";
 import { KPIs, Buscador, TabsPanel, Tabla, EstadoChip, Drawer, MotivoForm } from "./ui";
 import { useCalidad } from "./store";
+import { BannerSoloLectura, usePuede } from "@/ui/permisos";
 import type { Dispositivo } from "@/domain/calidad";
 const tipos = [
   "Todos",

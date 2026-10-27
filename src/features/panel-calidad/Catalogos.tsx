@@ -8,6 +8,7 @@ import { useCalidad } from "./store";
 import { Tabla, Buscador, EstadoChip, Drawer, MotivoForm, EjemploPanel } from "./ui";
 import type { ContenedorCalidad } from "@/domain/calidad";
 import { CATEGORIAS_SANITARIAS } from "@/domain/matriz";
+import { BannerSoloLectura, useModoLectura, usePuede } from "@/ui/permisos";
 const catalogs = [
   "Contenedores y tara",
   "Categorías sanitarias",
