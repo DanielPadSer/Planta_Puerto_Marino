@@ -899,22 +899,29 @@ export function Alergenos({ paso = 1 }: { paso?: number }) {
                     onChange={(e) => setMotivoFinal(e.target.value)}
                   />
                 </label>
-                <Button
-                  disabled={
-                    motivoFinal.trim().length < 5 ||
-                    s.perfiles.some((p) => p.estadoFicha !== "validado")
-                  }
-                  className="w-full h-auto min-h-12 whitespace-normal"
-                  onClick={() => {
-                    const a = s.alergenos.find((x) => x.id === "ALG-004");
-                    if (!a) return;
-                    const error = s.publicarNormativa(motivoFinal);
-                    if (error) { toast.error(error); return; }
-                    toast.success(`Versión normativa v${a.version + 1} publicada · simulación`);
-                  }}
-                >
-                  Finalizar y publicar versión normativa en planta
-                </Button>
+                {puedePublicar ? (
+                  <Button
+                    disabled={
+                      motivoFinal.trim().length < 5 ||
+                      s.perfiles.some((p) => p.estadoFicha !== "validado")
+                    }
+                    className="w-full h-auto min-h-12 whitespace-normal"
+                    onClick={() => {
+                      const a = s.alergenos.find((x) => x.id === "ALG-004");
+                      if (!a) return;
+                      const error = s.publicarNormativa(motivoFinal);
+                      if (error) { toast.error(error); return; }
+                      toast.success(`Versión normativa v${a.version + 1} publicada · simulación`);
+                    }}
+                  >
+                    Finalizar y publicar versión normativa en planta
+                  </Button>
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    Publicar una versión normativa requiere permiso de edición de alérgenos
+                    (ingeniera de alimentos o administrador).
+                  </p>
+                )}
                 {s.perfiles.some((p) => p.estadoFicha !== "validado") && (
                   <p className="text-xs text-danger">
                     Resuelve los perfiles pendientes antes de publicar.
