@@ -202,6 +202,7 @@ export function Alergenos({ paso = 1 }: { paso?: number }) {
       active="/panel/catalogos/alergenos"
     >
       <div className="cuarta-scope allergen-flow">
+        <BannerSoloLectura recurso="catalogos.alergenos" />
         <KPIs
           items={[
             {
