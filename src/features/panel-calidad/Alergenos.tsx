@@ -872,13 +872,15 @@ export function Alergenos({ paso = 1 }: { paso?: number }) {
                     </p>
                   ),
                 )}
-                <Button
+                <BotonRestringido
+                  accion="firmar"
+                  recurso="trazabilidad.bloqueo"
                   variant="outline"
                   className="w-full whitespace-normal text-danger border-danger/30"
                   onClick={() => setConfirm(true)}
                 >
                   Retener lotes afectados en cuarentena
-                </Button>
+                </BotonRestringido>
                 <div className="flex flex-wrap gap-2">
                   <Button variant="outline" onClick={() => void exportar("pdf")}>
                     <Download />
