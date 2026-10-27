@@ -32,16 +32,25 @@ function guardar(u: UsuarioPanel | null) {
 
 interface SesionPanelState {
   usuario: UsuarioPanel | null;
+  hidratada: boolean;
+  hidratar: () => void;
   entrar: (u: UsuarioPanel) => void;
   salir: () => void;
   cambiarRol: (rol: RolPanel) => void;
 }
 
 export const useSesionPanel = create<SesionPanelState>((set, get) => ({
-  usuario: typeof window === "undefined" ? null : leer(),
+  // Siempre null en el primer render para que SSR y cliente coincidan;
+  // la sesión se recupera en el efecto hidratar() tras el montaje.
+  usuario: null,
+  hidratada: false,
+  hidratar: () => {
+    if (get().hidratada) return;
+    set({ usuario: leer(), hidratada: true });
+  },
   entrar: (u) => {
     guardar(u);
-    set({ usuario: u });
+    set({ usuario: u, hidratada: true });
   },
   salir: () => {
     guardar(null);

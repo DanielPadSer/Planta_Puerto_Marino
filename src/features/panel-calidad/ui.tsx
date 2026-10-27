@@ -127,7 +127,7 @@ export function KPIs({
   );
 }
 export interface Col<T> {
-  key: keyof T;
+  key: keyof T | (string & {}); // permite columnas calculadas como "acciones"
   label: string;
   render?: (row: T) => ReactNode;
 }
