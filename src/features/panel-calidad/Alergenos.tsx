@@ -1019,19 +1019,21 @@ export function Alergenos({ paso = 1 }: { paso?: number }) {
             >
               Desactivar alérgeno
             </Button>
-            <MotivoForm
-              key={draft.id}
-              label="Guardar como nueva versión"
-              onSubmit={(d) => {
-                try {
-                  s.guardarAlergeno(draft, d.motivo);
-                  setDraft(null);
-                  toast.success("Alérgeno versionado y auditado");
-                } catch (e) {
-                  toast.error(e instanceof Error ? e.message : "Revisa los campos");
-                }
-              }}
-            />
+            {!lectura && (
+              <MotivoForm
+                key={draft.id}
+                label="Guardar como nueva versión"
+                onSubmit={(d) => {
+                  try {
+                    s.guardarAlergeno(draft, d.motivo);
+                    setDraft(null);
+                    toast.success("Alérgeno versionado y auditado");
+                  } catch (e) {
+                    toast.error(e instanceof Error ? e.message : "Revisa los campos");
+                  }
+                }}
+              />
+            )}
             <EjemploPanel />
           </>
         )}
