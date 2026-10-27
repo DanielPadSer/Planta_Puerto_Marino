@@ -134,8 +134,8 @@ export function Permisos() {
               </thead>
               <tbody>
                 {GRUPOS.map((g) => (
-                  <>
-                    <tr key={g.nombre}>
+                  <Fragment key={g.nombre}>
+                    <tr>
                       <td colSpan={4} className="bg-muted/60 font-bold text-xs uppercase tracking-wide">
                         {g.nombre}
                       </td>
@@ -148,7 +148,7 @@ export function Permisos() {
                         ))}
                       </tr>
                     ))}
-                  </>
+                  </Fragment>
                 ))}
               </tbody>
             </table>

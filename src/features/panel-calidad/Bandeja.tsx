@@ -174,7 +174,7 @@ export function Bandeja() {
                     ),
                   },
                   {
-                    key: "evento",
+                    key: "acciones",
                     label: "Acciones",
                     render: (c) =>
                       c.estado === "Pendiente" ? (
@@ -236,7 +236,7 @@ export function Bandeja() {
                     ),
                   },
                   {
-                    key: "lote",
+                    key: "acciones",
                     label: "Acción",
                     render: (p) =>
                       p.estado === "Pendiente" ? (
