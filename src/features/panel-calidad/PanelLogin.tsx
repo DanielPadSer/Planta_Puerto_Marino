@@ -57,7 +57,7 @@ export function PanelLogin() {
     <div className="panel-login">
       <motion.div className="login-form-side" initial={quieto ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
         <div className="login-role">
-          <span>● ROL: INGENIERÍA DE ALIMENTOS</span>
+          <span>● ROL: {(escrito?.etiqueta ?? "Por identificar").toUpperCase()}</span>
           <Link to="/">Cambiar acceso →</Link>
         </div>
         <Link to="/" className="login-brand">
