@@ -35,14 +35,15 @@ export async function cargarEnNavegador(d: Datos): Promise<number> {
   if (!db) return 0;
   let total = 0;
   const tablas: Table[] = db.tables;
-  await (db as Dexie).transaction("rw", tablas, async () => {
+  const tarea = async (): Promise<void> => {
     for (const t of tablas) {
       await t.clear();
-      const datos = filas(d, t.name as NombreTabla);
+      const datos: object[] = filas(d, t.name as NombreTabla);
       await t.bulkPut(datos);
       total += datos.length;
     }
-  });
+  };
+  await (db as Dexie).transaction("rw", tablas, tarea);
   return total;
 }
 export async function contarEnNavegador(): Promise<Record<string, number>> {
