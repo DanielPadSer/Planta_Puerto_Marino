@@ -50,18 +50,24 @@ export function Catalogos({ initial = "Contenedores y tara" }: { initial?: strin
       subtitle="Datos base y parámetros compartidos de la planta"
       active="/panel/catalogos"
       action={
-        <Button
-          variant="outline"
-          onClick={() => {
-            const c = contenedores[0];
-            if (c) setDraft({ ...c });
-          }}
-        >
-          <Scale size={20} />
-          Editar tara
-        </Button>
+        lectura ? undefined : (
+          <Button
+            variant="outline"
+            onClick={() => {
+              const c = contenedores[0];
+              if (c) setDraft({ ...c });
+            }}
+          >
+            <Scale size={20} />
+            Editar tara
+          </Button>
+        )
       }
     >
+      <BannerSoloLectura recurso="catalogos.tecnicos" />
+      {catalog === "Proveedores" && !puedeProveedores && (
+        <BannerSoloLectura recurso="catalogos.proveedoresSedes" />
+      )}
       <div className="catalogs-grid">
         <aside className="catalog-index">
           <h3 className="section-eyebrow">CATÁLOGOS MAESTROS</h3>
