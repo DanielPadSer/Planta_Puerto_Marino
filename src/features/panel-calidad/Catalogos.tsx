@@ -202,7 +202,7 @@ export function Catalogos({ initial = "Contenedores y tara" }: { initial?: strin
         title={draft?.nombre ?? "Contenedor"}
       >
         {draft && (
-          <>
+          <fieldset disabled={lectura} className="contents">
             <EstadoChip>Validada v{draft.version}</EstadoChip>
             <label className="field-label">
               Nombre del contenedor
