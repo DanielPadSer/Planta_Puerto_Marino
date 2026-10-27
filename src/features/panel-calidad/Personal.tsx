@@ -208,13 +208,16 @@ export function Personal() {
       subtitle="Vigencia de certificados y controles de buenas prácticas de manufactura"
       active="/panel/personal"
       action={
-        <Button className="min-h-12" onClick={() => setRegistro(true)}>
-          <Plus size={20} />
-          Registrar operario
-        </Button>
+        lectura ? undefined : (
+          <Button className="min-h-12" onClick={() => setRegistro(true)}>
+            <Plus size={20} />
+            Registrar operario
+          </Button>
+        )
       }
     >
       <div className="cuarta-scope">
+        <BannerSoloLectura recurso="personal.operarios" />
         <KPIs
           items={[
             { label: "Operarios activos", value: s.personal.length, icon: <Users /> },
@@ -606,10 +609,12 @@ export function Personal() {
                 </section>
               );
             })}
-            <Button variant="outline" className="w-full" onClick={() => setRenovar(true)}>
-              <Upload />
-              Cargar renovación
-            </Button>
+            {!lectura && (
+              <Button variant="outline" className="w-full" onClick={() => setRenovar(true)}>
+                <Upload />
+                Cargar renovación
+              </Button>
+            )}
             <h3 className="section-eyebrow">HISTORIAL DOCUMENTAL</h3>
             {operario.documentos
               .slice()
