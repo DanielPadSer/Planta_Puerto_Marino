@@ -28,8 +28,8 @@ class ModeloDB extends Dexie {
     this.version(1).stores(indicesDexie());
   }
 }
-let instancia: ModeloDB | null = null;
-export function getModeloDb(): ModeloDB | null {
+let instancia: Dexie | null = null;
+export function getModeloDb(): Dexie | null {
   if (typeof indexedDB === "undefined") return null;
   instancia ??= new ModeloDB();
   return instancia;
