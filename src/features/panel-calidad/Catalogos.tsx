@@ -39,6 +39,8 @@ const generic: Record<string, { id: string; nombre: string; estado: string }[]> 
 };
 export function Catalogos({ initial = "Contenedores y tara" }: { initial?: string }) {
   const { contenedores, guardarTara } = useCalidad();
+  const lectura = useModoLectura("catalogos.tecnicos");
+  const puedeProveedores = usePuede("editar", "catalogos.proveedoresSedes");
   const [catalog, setCatalog] = useState(initial);
   const [search, setSearch] = useState("");
   const [draft, setDraft] = useState<ContenedorCalidad | null>(null);

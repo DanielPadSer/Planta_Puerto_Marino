@@ -28,6 +28,7 @@ const tipos = [
 ];
 export function Dispositivos() {
   const { dispositivos, editarDispositivo, agregarDispositivo } = useCalidad();
+  const puedeRegistrar = usePuede("editar", "dispositivos.registro");
   const [tab, setTab] = useState("Todos");
   const [search, setSearch] = useState("");
   const [draft, setDraft] = useState<Dispositivo | null>(null);

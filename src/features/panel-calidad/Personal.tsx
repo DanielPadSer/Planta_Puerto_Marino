@@ -148,6 +148,8 @@ function Renovacion({ operario, onClose }: { operario: OperarioPersonal; onClose
 }
 export function Personal() {
   const s = useCuarta();
+  const lectura = useModoLectura("personal.operarios");
+  const puedePlantillas = usePuede("editar", "personal.plantillas");
   const [tab, setTab] = useState("Operarios");
   const [search, setSearch] = useState("");
   const [filtro, setFiltro] = useState("Todos");
