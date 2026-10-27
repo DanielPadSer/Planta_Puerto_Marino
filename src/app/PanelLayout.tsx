@@ -17,6 +17,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   ChevronRight,
+  Database,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePanelSesion, useCalidad } from "@/features/panel-calidad/store";
@@ -34,6 +35,7 @@ export const panelNav = [
   { name: "Trazabilidad", path: "/panel/trazabilidad", icon: Network },
   { name: "Reportes", path: "/panel/reportes", icon: ChartNoAxesColumn },
   { name: "Historial de cambios", path: "/panel/historial", icon: History },
+  { name: "Modelo de datos", path: "/panel/modelo-datos", icon: Database },
 ] as const;
 export function PanelLayout({
   title,

@@ -23,4 +23,7 @@
 - [x] Cuartos fríos, dispositivos y asistente.
 - [x] Catálogos, trazabilidad, reportes e historial.
 - [x] Placeholders de Personal/BPM y Alérgenos.
-- [x] Pruebas y revisión visual, listado de dependencias y limitación de Router/Start.
+- [x] Pruebas y revisión visual, listado de dependencias y limitación de Router/Start.# Modelo de datos por capas
+- [x] Esquema declarativo de 65 tablas y vista SaldoLote, tipos derivados.
+- [x] Base local separada, datos de ejemplo cruzados, trazabilidad, integridad y SQL.
+- [x] Pantalla "Modelo de datos" en el panel y 17 pruebas.
