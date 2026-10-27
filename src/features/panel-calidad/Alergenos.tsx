@@ -31,6 +31,7 @@ import { KPIs, Tabla, Buscador, EstadoChip, MotivoForm, EjemploPanel } from "./u
 import { DrawerCuarta, ToggleCuarta, Notice } from "./cuartaUi";
 import { useCuarta, auditarCuarta } from "./cuartaStore";
 import { useCalidad } from "./store";
+import { BannerSoloLectura, BotonRestringido, useModoLectura, usePuede } from "@/ui/permisos";
 import {
   leyendaContiene,
   alergenosDeReceta,
