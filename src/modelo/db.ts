@@ -22,16 +22,13 @@ export function indicesDexie(): Record<string, string> {
   );
 }
 
-class ModeloDB extends Dexie {
-  constructor() {
-    super("puerto-marino-modelo");
-    this.version(1).stores(indicesDexie());
-  }
-}
 let instancia: Dexie | null = null;
 export function getModeloDb(): Dexie | null {
   if (typeof indexedDB === "undefined") return null;
-  instancia ??= new ModeloDB();
+  if (!instancia) {
+    instancia = new Dexie("puerto-marino-modelo");
+    instancia.version(1).stores(indicesDexie());
+  }
   return instancia;
 }
 
