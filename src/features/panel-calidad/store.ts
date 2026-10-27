@@ -184,4 +184,34 @@ export const useCalidad = create<CalidadState>((set, get) => ({
     set((s) => ({ contenedores: s.contenedores.map((x) => (x.id === c.id ? nuevo : x)) }));
     get().auditar(c.nombre, "Tara", `${previo.tara} kg`, `${c.tara} kg`, motivo, nuevo.version);
   },
+  conflictos: CONFLICTOS_INICIAL,
+  pesajesManuales: PESAJES_INICIAL,
+  resolverConflicto: (id, accion, ajuste, motivo) => {
+    if (!motivo.trim()) return "El motivo es obligatorio.";
+    if (accion === "ajuste" && !ajuste.trim()) return "Describe el ajuste aplicado.";
+    const c = get().conflictos.find((x) => x.id === id);
+    if (!c || c.estado !== "Pendiente") return "El conflicto ya fue resuelto.";
+    const estado = accion === "ajuste" ? "Aplicado con ajuste" : "Descartado";
+    set((s) => ({
+      conflictos: s.conflictos.map((x) => (x.id === id ? { ...x, estado } : x)),
+    }));
+    get().auditar(
+      `Conflicto ${id}`,
+      "Estado",
+      c.estado,
+      estado,
+      motivo + (accion === "ajuste" ? ` · Ajuste: ${ajuste}` : ""),
+    );
+    return null;
+  },
+  revisarPesaje: (id, motivo) => {
+    if (!motivo.trim()) return "El motivo es obligatorio.";
+    const p = get().pesajesManuales.find((x) => x.id === id);
+    if (!p || p.estado !== "Pendiente") return "El pesaje ya fue revisado.";
+    set((s) => ({
+      pesajesManuales: s.pesajesManuales.map((x) => (x.id === id ? { ...x, estado: "Revisado" } : x)),
+    }));
+    get().auditar(`Pesaje manual ${id}`, "Estado", p.estado, "Revisado", motivo);
+    return null;
+  },
 }));
