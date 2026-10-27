@@ -44,6 +44,9 @@ export function Puede({
 
 export function RutaProtegida({ recurso, children }: { recurso: Recurso; children: ReactNode }) {
   const rol = useRol();
+  const hidratada = useSesionPanel((s) => s.hidratada);
+  // Espera a que la sesión se recupere de sessionStorage antes de decidir.
+  if (!hidratada) return null;
   if (!puede(rol, "ver", recurso)) return <Navigate to="/panel/sin-acceso" replace />;
   return <>{children}</>;
 }
