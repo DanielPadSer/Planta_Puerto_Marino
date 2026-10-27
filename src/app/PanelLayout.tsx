@@ -21,7 +21,6 @@ import {
   KeyRound,
   TableProperties,
 } from "lucide-react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useCalidad } from "@/features/panel-calidad/store";
 import { useConexion } from "@/features/panel-calidad/ui";
@@ -56,8 +55,6 @@ const navAdmin: ItemNav[] = [
   { name: "Permisos por rol", path: "/panel/permisos", icon: TableProperties, recurso: "usuarios.gestion" },
 ];
 
-const ROLES_CAMBIO: RolPanel[] = ["ingeniera", "supervisor", "administrador"];
-
 export function PanelLayout({
   title,
   subtitle,
@@ -71,7 +68,7 @@ export function PanelLayout({
   children: ReactNode;
   action?: ReactNode;
 }) {
-  const { usuario, hidratada, hidratar, salir, cambiarRol } = useSesionPanel();
+  const { usuario, hidratada, hidratar, salir } = useSesionPanel();
   const navigate = useNavigate();
   const online = useConexion();
   const [collapsed, setCollapsed] = useState(false);
@@ -221,24 +218,6 @@ export function PanelLayout({
           </div>
           <div className="topbar-actions">
             <span className={cn("rol-badge", `rol-badge-${rol}`)}>{ETIQUETA_ROL[rol]}</span>
-            {import.meta.env.DEV && (
-              <select
-                aria-label="Cambiar rol de demostración"
-                className="panel-input rol-switch"
-                value={rol}
-                onChange={(e) => {
-                  const siguiente = e.target.value as RolPanel;
-                  cambiarRol(siguiente);
-                  toast.info(`Viendo el panel como ${ETIQUETA_ROL[siguiente]}`);
-                }}
-              >
-                {ROLES_CAMBIO.map((r) => (
-                  <option key={r} value={r}>
-                    {ETIQUETA_ROL[r]}
-                  </option>
-                ))}
-              </select>
-            )}
             <span className={cn("online-pill", online ? "text-ok" : "text-warn")}>
               <span className={cn("size-2 rounded-full", online ? "bg-ok" : "bg-warn")} />
               {online ? "En línea · Sincronizado" : "Sin conexión · 0 pendientes"}
