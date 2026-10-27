@@ -93,6 +93,10 @@ interface CalidadState {
   editarDispositivo: (d: Dispositivo, motivo: string) => void;
   agregarDispositivo: (d: Dispositivo) => void;
   guardarTara: (c: ContenedorCalidad, motivo: string) => void;
+  conflictos: ConflictoSync[];
+  pesajesManuales: PesajeManual[];
+  resolverConflicto: (id: string, accion: "ajuste" | "descartar", ajuste: string, motivo: string) => string | null;
+  revisarPesaje: (id: string, motivo: string) => string | null;
 }
 export const useCalidad = create<CalidadState>((set, get) => ({
   matrices: [MATRIZ_INICIAL],
