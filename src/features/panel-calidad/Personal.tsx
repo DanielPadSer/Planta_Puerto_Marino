@@ -630,6 +630,7 @@ export function Personal() {
                 </p>
               ))}
             <h3 className="section-eyebrow">POLÍTICA DE PLANTA</h3>
+            <fieldset disabled={lectura} className="contents">
             <label className="field-label">
               Avisar con N días de anticipación
               <select
