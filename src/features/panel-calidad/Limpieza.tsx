@@ -122,12 +122,15 @@ export function Limpieza() {
       subtitle="Matriz de cambio de producto, procedimientos y equipos controlados"
       active="/panel/limpieza"
       action={
-        <Button onClick={() => setOpen(true)}>
-          <Plus size={20} />
-          Editar procedimiento
-        </Button>
+        lectura ? undefined : (
+          <Button onClick={() => setOpen(true)}>
+            <Plus size={20} />
+            Editar procedimiento
+          </Button>
+        )
       }
     >
+      <BannerSoloLectura recurso="limpieza.matriz" />
       <TabsPanel
         tabs={["Matriz de cambio", "Procedimientos (POE)", "Equipos", "Registros de limpieza"]}
         value={tab}
