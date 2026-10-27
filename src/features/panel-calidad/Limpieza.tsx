@@ -9,6 +9,7 @@ import {
 import { TabsPanel, EstadoChip, MotivoForm, EjemploPanel, Tabla, Drawer } from "./ui";
 import { useCalidad } from "./store";
 import { MatrizEditable } from "./MatrizEditable";
+import { BannerSoloLectura, BotonRestringido, useModoLectura, usePuede } from "@/ui/permisos";
 const EQUIPOS = [
   { id: "EQ-01", nombre: "Marmita 1", estado: "Liberado" },
   { id: "EQ-02", nombre: "Marmita 2", estado: "Usado" },
@@ -27,8 +28,10 @@ export function Limpieza() {
   const [fin, setFin] = useState(true);
   const [aplica, setAplica] = useState(false);
   const auditar = useCalidad((s) => s.auditar);
+  const lectura = useModoLectura("limpieza.matriz");
+  const puedeEstadoEquipos = usePuede("editar", "equipos.estado");
   const poe = (
-    <>
+    <fieldset disabled={lectura} className="contents">
       <div className="flex gap-2">
         <EstadoChip tono="primary">v{version} · vigente</EstadoChip>
         <EstadoChip tono="warn">Parámetro N2</EstadoChip>
@@ -90,26 +93,28 @@ export function Limpieza() {
           className="size-5 accent-primary"
         />
       </label>
-      <MotivoForm
-        label="Guardar nueva versión del POE"
-        onSubmit={(d) => {
-          if (ppm <= 0 || contacto <= 0 || pasos.some((p) => !p.trim())) {
-            toast.error("Completa los pasos y las mediciones.");
-            return;
-          }
-          auditar(
-            "Procedimiento N2",
-            "Parámetros",
-            `v${version}`,
-            JSON.stringify({ pasos, ppm, contacto, fin, aplica }),
-            d.motivo,
-            version + 1,
-          );
-          setVersion(version + 1);
-          toast.success(`POE v${version + 1} guardado`);
-        }}
-      />{" "}
-    </>
+      {!lectura && (
+        <MotivoForm
+          label="Guardar nueva versión del POE"
+          onSubmit={(d) => {
+            if (ppm <= 0 || contacto <= 0 || pasos.some((p) => !p.trim())) {
+              toast.error("Completa los pasos y las mediciones.");
+              return;
+            }
+            auditar(
+              "Procedimiento N2",
+              "Parámetros",
+              `v${version}`,
+              JSON.stringify({ pasos, ppm, contacto, fin, aplica }),
+              d.motivo,
+              version + 1,
+            );
+            setVersion(version + 1);
+            toast.success(`POE v${version + 1} guardado`);
+          }}
+        />
+      )}{" "}
+    </fieldset>
   );
   return (
     <PanelLayout
@@ -117,12 +122,15 @@ export function Limpieza() {
       subtitle="Matriz de cambio de producto, procedimientos y equipos controlados"
       active="/panel/limpieza"
       action={
-        <Button onClick={() => setOpen(true)}>
-          <Plus size={20} />
-          Editar procedimiento
-        </Button>
+        lectura ? undefined : (
+          <Button onClick={() => setOpen(true)}>
+            <Plus size={20} />
+            Editar procedimiento
+          </Button>
+        )
       }
     >
+      <BannerSoloLectura recurso="limpieza.matriz" />
       <TabsPanel
         tabs={["Matriz de cambio", "Procedimientos (POE)", "Equipos", "Registros de limpieza"]}
         value={tab}
@@ -131,7 +139,7 @@ export function Limpieza() {
       <div className="cleaning-grid">
         <section className="panel-surface p-5">
           {tab === "Matriz de cambio" ? (
-            <MatrizEditable onNivel={(n) => setNivel(n === "N3" ? "N2" : n)} />
+            <MatrizEditable onNivel={(n) => setNivel(n === "N3" ? "N2" : n)} soloLectura={lectura} />
           ) : tab === "Procedimientos (POE)" ? (
             <Tabla
               data={[
@@ -162,6 +170,37 @@ export function Limpieza() {
                     <EstadoChip tono={e.estado === "Liberado" ? "ok" : "warn"}>
                       {e.estado}
                     </EstadoChip>
+                  ),
+                },
+                {
+                  key: "nombre",
+                  label: "Acciones",
+                  render: (e) => (
+                    <span className="flex flex-wrap gap-2">
+                      {puedeEstadoEquipos && e.estado !== "Fuera de servicio" && (
+                        <Button
+                          variant="outline"
+                          className="min-h-12"
+                          onClick={() =>
+                            toast.success(`${e.nombre} marcado como fuera de servicio · simulado`)
+                          }
+                        >
+                          Fuera de servicio
+                        </Button>
+                      )}
+                      {e.estado !== "Liberado" && (
+                        <BotonRestringido
+                          accion="firmar"
+                          recurso="bandeja.limpiezas"
+                          className="min-h-12"
+                          onClick={() =>
+                            toast.success(`${e.nombre} liberado por la ingeniera · simulado`)
+                          }
+                        >
+                          Liberar equipo
+                        </BotonRestringido>
+                      )}
+                    </span>
                   ),
                 },
               ]}

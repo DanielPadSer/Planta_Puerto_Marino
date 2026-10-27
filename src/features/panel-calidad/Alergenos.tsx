@@ -31,6 +31,7 @@ import { KPIs, Tabla, Buscador, EstadoChip, MotivoForm, EjemploPanel } from "./u
 import { DrawerCuarta, ToggleCuarta, Notice } from "./cuartaUi";
 import { useCuarta, auditarCuarta } from "./cuartaStore";
 import { useCalidad } from "./store";
+import { BannerSoloLectura, BotonRestringido, useModoLectura, usePuede } from "@/ui/permisos";
 import {
   leyendaContiene,
   alergenosDeReceta,
@@ -77,6 +78,8 @@ function CodigoBarras({ codigo }: { codigo: string }) {
 export function Alergenos({ paso = 1 }: { paso?: number }) {
   const s = useCuarta();
   const navigate = useNavigate();
+  const lectura = useModoLectura("catalogos.alergenos");
+  const puedePublicar = usePuede("editar", "catalogos.alergenos");
   const eventos = useCalidad((v) => v.eventos);
   const [draft, setDraft] = useState<Alergeno | null>(null);
   const [search, setSearch] = useState("");
@@ -199,6 +202,7 @@ export function Alergenos({ paso = 1 }: { paso?: number }) {
       active="/panel/catalogos/alergenos"
     >
       <div className="cuarta-scope allergen-flow">
+        <BannerSoloLectura recurso="catalogos.alergenos" />
         <KPIs
           items={[
             {
@@ -868,13 +872,15 @@ export function Alergenos({ paso = 1 }: { paso?: number }) {
                     </p>
                   ),
                 )}
-                <Button
+                <BotonRestringido
+                  accion="firmar"
+                  recurso="trazabilidad.bloqueo"
                   variant="outline"
                   className="w-full whitespace-normal text-danger border-danger/30"
                   onClick={() => setConfirm(true)}
                 >
                   Retener lotes afectados en cuarentena
-                </Button>
+                </BotonRestringido>
                 <div className="flex flex-wrap gap-2">
                   <Button variant="outline" onClick={() => void exportar("pdf")}>
                     <Download />
@@ -893,22 +899,29 @@ export function Alergenos({ paso = 1 }: { paso?: number }) {
                     onChange={(e) => setMotivoFinal(e.target.value)}
                   />
                 </label>
-                <Button
-                  disabled={
-                    motivoFinal.trim().length < 5 ||
-                    s.perfiles.some((p) => p.estadoFicha !== "validado")
-                  }
-                  className="w-full h-auto min-h-12 whitespace-normal"
-                  onClick={() => {
-                    const a = s.alergenos.find((x) => x.id === "ALG-004");
-                    if (!a) return;
-                    const error = s.publicarNormativa(motivoFinal);
-                    if (error) { toast.error(error); return; }
-                    toast.success(`Versión normativa v${a.version + 1} publicada · simulación`);
-                  }}
-                >
-                  Finalizar y publicar versión normativa en planta
-                </Button>
+                {puedePublicar ? (
+                  <Button
+                    disabled={
+                      motivoFinal.trim().length < 5 ||
+                      s.perfiles.some((p) => p.estadoFicha !== "validado")
+                    }
+                    className="w-full h-auto min-h-12 whitespace-normal"
+                    onClick={() => {
+                      const a = s.alergenos.find((x) => x.id === "ALG-004");
+                      if (!a) return;
+                      const error = s.publicarNormativa(motivoFinal);
+                      if (error) { toast.error(error); return; }
+                      toast.success(`Versión normativa v${a.version + 1} publicada · simulación`);
+                    }}
+                  >
+                    Finalizar y publicar versión normativa en planta
+                  </Button>
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    Publicar una versión normativa requiere permiso de edición de alérgenos
+                    (ingeniera de alimentos o administrador).
+                  </p>
+                )}
                 {s.perfiles.some((p) => p.estadoFicha !== "validado") && (
                   <p className="text-xs text-danger">
                     Resuelve los perfiles pendientes antes de publicar.
@@ -1006,19 +1019,21 @@ export function Alergenos({ paso = 1 }: { paso?: number }) {
             >
               Desactivar alérgeno
             </Button>
-            <MotivoForm
-              key={draft.id}
-              label="Guardar como nueva versión"
-              onSubmit={(d) => {
-                try {
-                  s.guardarAlergeno(draft, d.motivo);
-                  setDraft(null);
-                  toast.success("Alérgeno versionado y auditado");
-                } catch (e) {
-                  toast.error(e instanceof Error ? e.message : "Revisa los campos");
-                }
-              }}
-            />
+            {!lectura && (
+              <MotivoForm
+                key={draft.id}
+                label="Guardar como nueva versión"
+                onSubmit={(d) => {
+                  try {
+                    s.guardarAlergeno(draft, d.motivo);
+                    setDraft(null);
+                    toast.success("Alérgeno versionado y auditado");
+                  } catch (e) {
+                    toast.error(e instanceof Error ? e.message : "Revisa los campos");
+                  }
+                }}
+              />
+            )}
             <EjemploPanel />
           </>
         )}

@@ -17,8 +17,13 @@ import {
 import { motion, useReducedMotion } from "framer-motion";
 import { Logo } from "@/ui/logo";
 import { Button } from "@/components/ui/button";
-import { validarAcceso, DEMO_USUARIO, DEMO_CLAVE } from "@/domain/calidad";
-import { usePanelSesion } from "./store";
+import {
+  validarAccesoPanel,
+  buscarUsuarioDemo,
+  USUARIOS_DEMO_PANEL,
+  DEMO_CLAVE_PANEL,
+} from "@/domain/calidad";
+import { useSesionPanel } from "@/features/auth/sesionPanel";
 import maqueta from "@/assets/maqueta-planta.png.asset.json";
 const schema = z.object({
   usuario: z.string().min(1, "Ingresa tu usuario o correo"),
@@ -33,20 +38,26 @@ export function PanelLogin() {
   const [visible, setVisible] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const entrar = usePanelSesion((s) => s.entrar);
+  const entrar = useSesionPanel((s) => s.entrar);
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<LoginDatos>({
     resolver: zodResolver(schema),
-    defaultValues: { usuario: DEMO_USUARIO, clave: DEMO_CLAVE, mantener: false },
+    defaultValues: { usuario: USUARIOS_DEMO_PANEL[0]?.usuario ?? "", clave: DEMO_CLAVE_PANEL, mantener: false },
   });
+  const escrito = buscarUsuarioDemo(watch("usuario") ?? "");
+  const entrarComo = (u: (typeof USUARIOS_DEMO_PANEL)[number]) => {
+    entrar({ usuario: u.usuario, nombre: u.nombre, rol: u.rol });
+    navigate({ to: "/panel/bandeja" });
+  };
   return (
     <div className="panel-login">
       <motion.div className="login-form-side" initial={quieto ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
         <div className="login-role">
-          <span>● ROL: INGENIERÍA DE ALIMENTOS</span>
+          <span>● ROL: {(escrito?.etiqueta ?? "Por identificar").toUpperCase()}</span>
           <Link to="/">Cambiar acceso →</Link>
         </div>
         <Link to="/" className="login-brand">
@@ -63,12 +74,12 @@ export function PanelLogin() {
         <form
           className="space-y-5"
           onSubmit={handleSubmit((d) => {
-            if (!validarAcceso(d.usuario, d.clave)) {
+            const encontrado = validarAccesoPanel(d.usuario, d.clave);
+            if (!encontrado) {
               setError("Usuario o contraseña incorrectos.");
               return;
             }
-            entrar();
-            navigate({ to: "/panel/bandeja" });
+            entrarComo(encontrado);
           })}
         >
           <label className="field-label">
@@ -130,8 +141,26 @@ export function PanelLogin() {
           </p>
         </div>
         <p className="mt-4 text-xs text-muted-foreground">
-          Usuario demo precargado · contraseña: {DEMO_CLAVE}
+          Usuario demo precargado · contraseña: {DEMO_CLAVE_PANEL}
         </p>
+        {import.meta.env.DEV && (
+          <div className="login-quick-access">
+            <h2>Acceso rápido de demostración</h2>
+            <div className="login-quick-grid">
+              {USUARIOS_DEMO_PANEL.map((u) => (
+                <Button
+                  key={u.rol}
+                  type="button"
+                  variant="outline"
+                  className="min-h-12"
+                  onClick={() => entrarComo(u)}
+                >
+                  {u.etiqueta}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
       </motion.div>
       <div className="login-map-side">
         <div className="login-map-caption">

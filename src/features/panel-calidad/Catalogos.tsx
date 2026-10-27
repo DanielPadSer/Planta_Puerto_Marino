@@ -8,6 +8,7 @@ import { useCalidad } from "./store";
 import { Tabla, Buscador, EstadoChip, Drawer, MotivoForm, EjemploPanel } from "./ui";
 import type { ContenedorCalidad } from "@/domain/calidad";
 import { CATEGORIAS_SANITARIAS } from "@/domain/matriz";
+import { BannerSoloLectura, useModoLectura, usePuede } from "@/ui/permisos";
 const catalogs = [
   "Contenedores y tara",
   "Categorías sanitarias",
@@ -38,6 +39,8 @@ const generic: Record<string, { id: string; nombre: string; estado: string }[]> 
 };
 export function Catalogos({ initial = "Contenedores y tara" }: { initial?: string }) {
   const { contenedores, guardarTara } = useCalidad();
+  const lectura = useModoLectura("catalogos.tecnicos");
+  const puedeProveedores = usePuede("editar", "catalogos.proveedoresSedes");
   const [catalog, setCatalog] = useState(initial);
   const [search, setSearch] = useState("");
   const [draft, setDraft] = useState<ContenedorCalidad | null>(null);
@@ -47,18 +50,24 @@ export function Catalogos({ initial = "Contenedores y tara" }: { initial?: strin
       subtitle="Datos base y parámetros compartidos de la planta"
       active="/panel/catalogos"
       action={
-        <Button
-          variant="outline"
-          onClick={() => {
-            const c = contenedores[0];
-            if (c) setDraft({ ...c });
-          }}
-        >
-          <Scale size={20} />
-          Editar tara
-        </Button>
+        lectura ? undefined : (
+          <Button
+            variant="outline"
+            onClick={() => {
+              const c = contenedores[0];
+              if (c) setDraft({ ...c });
+            }}
+          >
+            <Scale size={20} />
+            Editar tara
+          </Button>
+        )
       }
     >
+      <BannerSoloLectura recurso="catalogos.tecnicos" />
+      {catalog === "Proveedores" && !puedeProveedores && (
+        <BannerSoloLectura recurso="catalogos.proveedoresSedes" />
+      )}
       <div className="catalogs-grid">
         <aside className="catalog-index">
           <h3 className="section-eyebrow">CATÁLOGOS MAESTROS</h3>
@@ -193,7 +202,7 @@ export function Catalogos({ initial = "Contenedores y tara" }: { initial?: strin
         title={draft?.nombre ?? "Contenedor"}
       >
         {draft && (
-          <>
+          <fieldset disabled={lectura} className="contents">
             <EstadoChip>Validada v{draft.version}</EstadoChip>
             <label className="field-label">
               Nombre del contenedor
@@ -234,20 +243,22 @@ export function Catalogos({ initial = "Contenedores y tara" }: { initial?: strin
               Medir ahora con la báscula
             </Button>
             <p className="version-notice">Las pesadas históricas conservan la tara original.</p>
-            <MotivoForm
-              label="Guardar nueva versión"
-              onSubmit={(d) => {
-                if (draft.tara <= 0 || !draft.nombre.trim()) {
-                  toast.error("Completa nombre y tara mayor que cero.");
-                  return;
-                }
-                guardarTara(draft, d.motivo);
-                setDraft(null);
-                toast.success("Tara versionada y guardada");
-              }}
-            />
+            {!lectura && (
+              <MotivoForm
+                label="Guardar nueva versión"
+                onSubmit={(d) => {
+                  if (draft.tara <= 0 || !draft.nombre.trim()) {
+                    toast.error("Completa nombre y tara mayor que cero.");
+                    return;
+                  }
+                  guardarTara(draft, d.motivo);
+                  setDraft(null);
+                  toast.success("Tara versionada y guardada");
+                }}
+              />
+            )}
             <EjemploPanel />
-          </>
+          </fieldset>
         )}
       </Drawer>
     </PanelLayout>

@@ -18,25 +18,46 @@ import {
   PanelLeftOpen,
   ChevronRight,
   Database,
+  KeyRound,
+  TableProperties,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { usePanelSesion, useCalidad } from "@/features/panel-calidad/store";
+import { useCalidad } from "@/features/panel-calidad/store";
 import { useConexion } from "@/features/panel-calidad/ui";
+import { useSesionPanel } from "@/features/auth/sesionPanel";
+import { puede, ETIQUETA_ROL, type Recurso, type RolPanel } from "@/domain/permisos";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/ui/logo";
-export const panelNav = [
-  { name: "Bandeja", path: "/panel/bandeja", icon: Inbox },
-  { name: "Reglas por producto", path: "/panel/reglas", icon: FileSliders },
-  { name: "Limpieza y equipos", path: "/panel/limpieza", icon: ShieldCheck },
-  { name: "Monitoreo", path: "/panel/cuartos-frios", icon: Refrigerator },
-  { name: "Dispositivos y equipos", path: "/panel/dispositivos", icon: Monitor },
-  { name: "Personal y BPM", path: "/panel/personal", icon: Users },
-  { name: "Catálogos", path: "/panel/catalogos", icon: ListTree },
-  { name: "Trazabilidad", path: "/panel/trazabilidad", icon: Network },
-  { name: "Reportes", path: "/panel/reportes", icon: ChartNoAxesColumn },
-  { name: "Historial de cambios", path: "/panel/historial", icon: History },
-  { name: "Modelo de datos", path: "/panel/modelo-datos", icon: Database },
-] as const;
+
+interface ItemNav {
+  name: string;
+  path: string;
+  icon: typeof Inbox;
+  recurso: Recurso | null; // null = visible para todos los roles del panel
+}
+
+export const panelNav: ItemNav[] = [
+  { name: "Bandeja", path: "/panel/bandeja", icon: Inbox, recurso: null },
+  { name: "Reglas por producto", path: "/panel/reglas", icon: FileSliders, recurso: "reglas" },
+  { name: "Limpieza y equipos", path: "/panel/limpieza", icon: ShieldCheck, recurso: "limpieza.matriz" },
+  { name: "Monitoreo", path: "/panel/cuartos-frios", icon: Refrigerator, recurso: "cuartosFrios" },
+  { name: "Dispositivos y equipos", path: "/panel/dispositivos", icon: Monitor, recurso: "dispositivos.registro" },
+  { name: "Personal y BPM", path: "/panel/personal", icon: Users, recurso: "personal.operarios" },
+  { name: "Catálogos", path: "/panel/catalogos", icon: ListTree, recurso: "catalogos.tecnicos" },
+  { name: "Trazabilidad", path: "/panel/trazabilidad", icon: Network, recurso: "trazabilidad" },
+  { name: "Reportes", path: "/panel/reportes", icon: ChartNoAxesColumn, recurso: "reportes" },
+  { name: "Historial de cambios", path: "/panel/historial", icon: History, recurso: "historial" },
+  { name: "Modelo de datos", path: "/panel/modelo-datos", icon: Database, recurso: null },
+];
+
+const navAdmin: ItemNav[] = [
+  { name: "Usuarios y roles", path: "/panel/usuarios", icon: Users, recurso: "usuarios.gestion" },
+  { name: "Permisos por rol", path: "/panel/permisos", icon: TableProperties, recurso: "usuarios.gestion" },
+];
+
+const ROLES_CAMBIO: RolPanel[] = ["ingeniera", "supervisor", "administrador"];
+
 export function PanelLayout({
   title,
   subtitle,
@@ -50,17 +71,86 @@ export function PanelLayout({
   children: ReactNode;
   action?: ReactNode;
 }) {
-  const { activa, salir } = usePanelSesion();
+  const { usuario, hidratada, hidratar, salir, cambiarRol } = useSesionPanel();
   const navigate = useNavigate();
   const online = useConexion();
   const [collapsed, setCollapsed] = useState(false);
   const [catalogos, setCatalogos] = useState(active.includes("catalogos"));
   const [notifications, setNotifications] = useState(false);
-  const count = useCalidad((s) => s.lotes.filter((l) => l.estado === "Cuarentena").length) + 6;
+  const cuarentenas = useCalidad((s) => s.lotes.filter((l) => l.estado === "Cuarentena").length);
+  const conflictos = useCalidad((s) => s.conflictos.filter((c) => c.estado === "Pendiente").length);
+  const pesajes = useCalidad((s) => s.pesajesManuales.filter((p) => p.estado === "Pendiente").length);
+  const rol: RolPanel = usuario?.rol ?? "ingeniera";
+  // El contador de la Bandeja cuenta solo lo accionable por el rol.
+  const count =
+    rol === "ingeniera" ? cuarentenas + 2 + 4 : rol === "supervisor" ? conflictos + pesajes : 6;
   useEffect(() => {
-    if (!activa) navigate({ to: "/panel/login", replace: true });
-  }, [activa, navigate]);
-  if (!activa) return <div className="min-h-screen bg-background" />;
+    hidratar();
+  }, [hidratar]);
+  useEffect(() => {
+    if (hidratada && !usuario) navigate({ to: "/panel/login", replace: true });
+  }, [hidratada, usuario, navigate]);
+  if (!hidratada || !usuario) return <div className="min-h-screen bg-background" />;
+  const items = panelNav.filter((i) => !i.recurso || puede(rol, "ver", i.recurso));
+  const itemsAdmin = navAdmin.filter((i) => i.recurso && puede(rol, "ver", i.recurso));
+  const verUsuarios = puede(rol, "ver", "usuarios.pin") && !puede(rol, "ver", "usuarios.gestion");
+  const renderItem = (item: ItemNav) => (
+    <div key={item.path}>
+      <Button
+        asChild
+        variant="ghost"
+        className={cn("quality-nav-item", active === item.path && "nav-active")}
+        title={item.name}
+      >
+        <Link to={item.path}>
+          <item.icon size={20} />
+          {!collapsed && (
+            <>
+              <span>{item.name}</span>
+              {item.path === "/panel/bandeja" && <b className="nav-badge">{count}</b>}
+            </>
+          )}
+        </Link>
+      </Button>
+      {item.path === "/panel/catalogos" && !collapsed && (
+        <>
+          <Button
+            variant="ghost"
+            aria-label="Expandir catálogos"
+            className="catalog-expand"
+            onClick={() => setCatalogos(!catalogos)}
+          >
+            <ChevronDown size={20} />
+          </Button>
+          {catalogos && (
+            <div className="catalog-subnav">
+              {[
+                "Contenedores y tara",
+                "Categorías sanitarias",
+                "Proveedores",
+                "Equipos",
+                "Alérgenos",
+                "Ingredientes",
+                "Productos",
+              ].map((c) => (
+                <Link
+                  key={c}
+                  to={c === "Alérgenos" ? "/panel/catalogos/alergenos" : "/panel/catalogos"}
+                  search={c === "Alérgenos" ? {} : { catalogo: c }}
+                  className={cn(
+                    "catalog-link",
+                    active === "/panel/catalogos/alergenos" && c === "Alérgenos" && "text-primary",
+                  )}
+                >
+                  {c}
+                </Link>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
   return (
     <div className={cn("quality-panel", collapsed && "sidebar-mini")}>
       <aside className="quality-sidebar">
@@ -74,72 +164,26 @@ export function PanelLayout({
           )}
         </Link>
         <nav className="quality-nav">
-          {panelNav.map((item) => (
-            <div key={item.path}>
-              <Button
-                asChild
-                variant="ghost"
-                className={cn("quality-nav-item", active === item.path && "nav-active")}
-                title={item.name}
-              >
-                <Link to={item.path}>
-                  <item.icon size={20} />
-                  {!collapsed && (
-                    <>
-                      <span>{item.name}</span>
-                      {item.path === "/panel/bandeja" && <b className="nav-badge">{count}</b>}
-                    </>
-                  )}
-                </Link>
-              </Button>
-              {item.path === "/panel/catalogos" && !collapsed && (
-                <>
-                  <Button
-                    variant="ghost"
-                    aria-label="Expandir catálogos"
-                    className="catalog-expand"
-                    onClick={() => setCatalogos(!catalogos)}
-                  >
-                    <ChevronDown size={20} />
-                  </Button>
-                  {catalogos && (
-                    <div className="catalog-subnav">
-                      {[
-                        "Contenedores y tara",
-                        "Categorías sanitarias",
-                        "Proveedores",
-                        "Equipos",
-                        "Alérgenos",
-                        "Ingredientes",
-                        "Productos",
-                      ].map((c) => (
-                        <Link
-                          key={c}
-                          to={c === "Alérgenos" ? "/panel/catalogos/alergenos" : "/panel/catalogos"}
-                          search={c === "Alérgenos" ? {} : { catalogo: c }}
-                          className={cn(
-                            "catalog-link",
-                            active === "/panel/catalogos/alergenos" &&
-                              c === "Alérgenos" &&
-                              "text-primary",
-                          )}
-                        >
-                          {c}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          ))}
+          {items.map(renderItem)}
+          {verUsuarios &&
+            renderItem({ name: "Usuarios", path: "/panel/usuarios", icon: KeyRound, recurso: "usuarios.pin" })}
+          {itemsAdmin.length > 0 && (
+            <>
+              {!collapsed && <p className="nav-section">ADMINISTRACIÓN</p>}
+              {itemsAdmin.map(renderItem)}
+            </>
+          )}
         </nav>
         <div className="quality-user">
-          <span className="user-avatar">IA</span>
+          <span className="user-avatar">
+            {usuario.nombre.split(" ").map((p) => p[0]).slice(0, 2).join("")}
+          </span>
           {!collapsed && (
             <div>
-              <strong>Ingeniera de alimentos</strong>
-              <small>Planta Puerto Marino</small>
+              <strong>{usuario.nombre}</strong>
+              <small>
+                <span className={cn("rol-badge", `rol-badge-${rol}`)}>{ETIQUETA_ROL[rol]}</span>
+              </small>
             </div>
           )}
           <Button
@@ -176,6 +220,25 @@ export function PanelLayout({
             <p>{subtitle}</p>
           </div>
           <div className="topbar-actions">
+            <span className={cn("rol-badge", `rol-badge-${rol}`)}>{ETIQUETA_ROL[rol]}</span>
+            {import.meta.env.DEV && (
+              <select
+                aria-label="Cambiar rol de demostración"
+                className="panel-input rol-switch"
+                value={rol}
+                onChange={(e) => {
+                  const siguiente = e.target.value as RolPanel;
+                  cambiarRol(siguiente);
+                  toast.info(`Viendo el panel como ${ETIQUETA_ROL[siguiente]}`);
+                }}
+              >
+                {ROLES_CAMBIO.map((r) => (
+                  <option key={r} value={r}>
+                    {ETIQUETA_ROL[r]}
+                  </option>
+                ))}
+              </select>
+            )}
             <span className={cn("online-pill", online ? "text-ok" : "text-warn")}>
               <span className={cn("size-2 rounded-full", online ? "bg-ok" : "bg-warn")} />
               {online ? "En línea · Sincronizado" : "Sin conexión · 0 pendientes"}

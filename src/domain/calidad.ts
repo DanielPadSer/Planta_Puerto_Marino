@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Rol } from "./types";
+import type { RolPanel } from "./permisos";
 export const motivoSchema = z.object({
   motivo: z.string().trim().min(5, "Escribe un motivo de al menos 5 caracteres"),
   destino: z.string().optional(),
@@ -9,6 +10,42 @@ export const DEMO_USUARIO = "ing.calidad@puertomarino.com";
 export const DEMO_CLAVE = "haccp_calidad2025!";
 export function validarAcceso(usuario: string, clave: string): boolean {
   return usuario.trim().toLowerCase() === DEMO_USUARIO && clave === DEMO_CLAVE;
+}
+export interface UsuarioDemoPanel {
+  usuario: string;
+  nombre: string;
+  rol: RolPanel;
+  etiqueta: string;
+}
+export const DEMO_CLAVE_PANEL = "demo1234";
+export const USUARIOS_DEMO_PANEL: UsuarioDemoPanel[] = [
+  {
+    usuario: "ing.calidad@puertomarino.com",
+    nombre: "Luisa Gómez",
+    rol: "ingeniera",
+    etiqueta: "Ingeniera de alimentos",
+  },
+  {
+    usuario: "supervisor@puertomarino.com",
+    nombre: "Carlos Mendoza",
+    rol: "supervisor",
+    etiqueta: "Supervisor",
+  },
+  {
+    usuario: "admin@puertomarino.com",
+    nombre: "Dirección Puerto Marino",
+    rol: "administrador",
+    etiqueta: "Administrador",
+  },
+];
+export function buscarUsuarioDemo(usuario: string): UsuarioDemoPanel | undefined {
+  const normalizado = usuario.trim().toLowerCase();
+  return USUARIOS_DEMO_PANEL.find((u) => u.usuario === normalizado);
+}
+export function validarAccesoPanel(usuario: string, clave: string): UsuarioDemoPanel | null {
+  const encontrado = buscarUsuarioDemo(usuario);
+  if (!encontrado || clave !== DEMO_CLAVE_PANEL) return null;
+  return encontrado;
 }
 export function validarDecision(
   rol: Rol,
@@ -85,4 +122,22 @@ export interface ContenedorCalidad {
   tara: number;
   retornable: boolean;
   version: number;
+}
+export interface ConflictoSync {
+  id: string;
+  evento: string;
+  dispositivo: string;
+  operario: string;
+  hora: string;
+  motivo: string;
+  estado: "Pendiente" | "Aplicado con ajuste" | "Descartado";
+}
+export interface PesajeManual {
+  id: string;
+  lote: string;
+  operario: string;
+  motivo: string;
+  autorizo: string;
+  peso: string;
+  estado: "Pendiente" | "Revisado";
 }

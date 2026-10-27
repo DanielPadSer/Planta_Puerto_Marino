@@ -6,6 +6,7 @@ import { PanelLayout } from "@/app/PanelLayout";
 import { TabsPanel, EstadoChip, Tabla, Drawer, MotivoForm, EjemploPanel } from "./ui";
 import { useCalidad } from "./store";
 import { TemperaturaChart } from "./TemperaturaChart";
+import { BannerSoloLectura, useModoLectura } from "@/ui/permisos";
 const INITIAL = [
   {
     id: "CF-1",
@@ -41,6 +42,7 @@ export function CuartosFrios() {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState(INITIAL[0]);
   const auditar = useCalidad((s) => s.auditar);
+  const lectura = useModoLectura("cuartosFrios");
   const room = rooms.find((r) => r.id === sel) ?? INITIAL[0];
   if (!room) return null;
   const range = room.max - room.min;
@@ -50,18 +52,21 @@ export function CuartosFrios() {
       subtitle="Temperaturas, registros y condiciones de almacenamiento de los cuartos fríos"
       active="/panel/cuartos-frios"
       action={
-        <Button
-          variant="outline"
-          onClick={() => {
-            setDraft(room);
-            setOpen(true);
-          }}
-        >
-          <Settings2 size={20} />
-          Configurar cuarto
-        </Button>
+        lectura ? undefined : (
+          <Button
+            variant="outline"
+            onClick={() => {
+              setDraft(room);
+              setOpen(true);
+            }}
+          >
+            <Settings2 size={20} />
+            Configurar cuarto
+          </Button>
+        )
       }
     >
+      <BannerSoloLectura recurso="cuartosFrios" />
       <TabsPanel
         tabs={["Registros y temperaturas", "Sensores IoT · próximamente"]}
         disabled={["Sensores IoT · próximamente"]}

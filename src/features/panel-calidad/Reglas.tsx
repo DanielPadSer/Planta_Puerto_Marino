@@ -7,6 +7,7 @@ import { PanelLayout } from "@/app/PanelLayout";
 import { useCalidad } from "./store";
 import type { ProductoRegla } from "@/domain/calidad";
 import { Buscador, TabsPanel, Tabla, EstadoChip, MotivoForm, EjemploPanel, Drawer } from "./ui";
+import { BannerSoloLectura, useModoLectura } from "@/ui/permisos";
 const ACORDEONES = [
   "Recepción",
   "Cocción",
@@ -17,6 +18,7 @@ const ACORDEONES = [
 ];
 export function Reglas() {
   const { productos, guardarProducto } = useCalidad();
+  const lectura = useModoLectura("reglas");
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("Todos");
   const [selected, setSelected] = useState("RGL-088");
@@ -33,7 +35,7 @@ export function Reglas() {
         (filter === "Por validar" && p.estado === "Por validar")),
   );
   const detail = edit && (
-    <>
+    <fieldset disabled={lectura} className="contents">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2>{edit.nombre}</h2>
@@ -184,20 +186,22 @@ export function Reglas() {
         Los cambios crean una nueva versión; los lotes ya producidos conservan la versión con que se
         aprobaron.
       </div>
-      <MotivoForm
-        label="Guardar como nueva versión"
-        onSubmit={(d) => {
-          if (edit.temperatura <= 0 || edit.tiempo <= 0 || edit.vida <= 0) {
-            toast.error("Los parámetros deben ser mayores que cero.");
-            return;
-          }
-          guardarProducto(edit, d.motivo);
-          setDraft(null);
-          toast.success(`Nueva versión v${(p?.version ?? 0) + 1} guardada`);
-        }}
-      />
+      {!lectura && (
+        <MotivoForm
+          label="Guardar como nueva versión"
+          onSubmit={(d) => {
+            if (edit.temperatura <= 0 || edit.tiempo <= 0 || edit.vida <= 0) {
+              toast.error("Los parámetros deben ser mayores que cero.");
+              return;
+            }
+            guardarProducto(edit, d.motivo);
+            setDraft(null);
+            toast.success(`Nueva versión v${(p?.version ?? 0) + 1} guardada`);
+          }}
+        />
+      )}
       <EjemploPanel />
-    </>
+    </fieldset>
   );
   return (
     <PanelLayout
@@ -215,6 +219,7 @@ export function Reglas() {
         </Button>
       }
     >
+      <BannerSoloLectura recurso="reglas" />
       <div className="rules-grid">
         <section className="panel-surface p-5">
           <Buscador value={search} onChange={setSearch} placeholder="Buscar producto…" />

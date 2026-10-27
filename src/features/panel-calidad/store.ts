@@ -9,7 +9,52 @@ import {
   type EventoCalidad,
   type Dispositivo,
   type ContenedorCalidad,
+  type ConflictoSync,
+  type PesajeManual,
 } from "@/domain/calidad";
+import { useSesionPanel } from "@/features/auth/sesionPanel";
+
+const CONFLICTOS_INICIAL: ConflictoSync[] = [
+  {
+    id: "SYN-101",
+    evento: "Pesaje LT-0250 duplicado",
+    dispositivo: "Tablet Recepción 01",
+    operario: "Carlos Mendoza",
+    hora: "27/10/2026 06:41",
+    motivo: "El dispositivo reintentó el envío sin conexión y el consecutivo ya existía",
+    estado: "Pendiente",
+  },
+  {
+    id: "SYN-102",
+    evento: "Registro de temperatura CF-2 fuera de orden",
+    dispositivo: "Tablet CF-2",
+    operario: "Luisa Gómez",
+    hora: "27/10/2026 12:10",
+    motivo: "Reloj del dispositivo desfasado 14 minutos",
+    estado: "Pendiente",
+  },
+];
+
+const PESAJES_INICIAL: PesajeManual[] = [
+  {
+    id: "PES-4820",
+    lote: "LT-0250",
+    operario: "Carlos Mendoza",
+    motivo: "Báscula sin comunicación serial",
+    autorizo: "Luisa Gómez · PIN individual",
+    peso: "22,10 kg",
+    estado: "Pendiente",
+  },
+  {
+    id: "PES-4824",
+    lote: "LT-0253",
+    operario: "Marta Pinzón",
+    motivo: "Contenedor sin tara registrada",
+    autorizo: "Luisa Gómez · PIN individual",
+    peso: "18,40 kg",
+    estado: "Pendiente",
+  },
+];
 interface SesionPanel {
   activa: boolean;
   entrar: () => void;
@@ -48,6 +93,10 @@ interface CalidadState {
   editarDispositivo: (d: Dispositivo, motivo: string) => void;
   agregarDispositivo: (d: Dispositivo) => void;
   guardarTara: (c: ContenedorCalidad, motivo: string) => void;
+  conflictos: ConflictoSync[];
+  pesajesManuales: PesajeManual[];
+  resolverConflicto: (id: string, accion: "ajuste" | "descartar", ajuste: string, motivo: string) => string | null;
+  revisarPesaje: (id: string, motivo: string) => string | null;
 }
 export const useCalidad = create<CalidadState>((set, get) => ({
   matrices: [MATRIZ_INICIAL],
@@ -72,7 +121,7 @@ export const useCalidad = create<CalidadState>((set, get) => ({
         {
           id: `EVT-${Date.now()}`,
           fecha: new Date().toISOString().slice(0, 16).replace("T", " "),
-          usuario: "Luisa Gómez",
+          usuario: useSesionPanel.getState().usuario?.nombre ?? "Luisa Gómez",
           dispositivo: "Panel web · PC-CAL-01",
           entidad,
           campo,
@@ -134,5 +183,35 @@ export const useCalidad = create<CalidadState>((set, get) => ({
     const nuevo = { ...c, version: siguienteVersion(previo.version, motivo) };
     set((s) => ({ contenedores: s.contenedores.map((x) => (x.id === c.id ? nuevo : x)) }));
     get().auditar(c.nombre, "Tara", `${previo.tara} kg`, `${c.tara} kg`, motivo, nuevo.version);
+  },
+  conflictos: CONFLICTOS_INICIAL,
+  pesajesManuales: PESAJES_INICIAL,
+  resolverConflicto: (id, accion, ajuste, motivo) => {
+    if (!motivo.trim()) return "El motivo es obligatorio.";
+    if (accion === "ajuste" && !ajuste.trim()) return "Describe el ajuste aplicado.";
+    const c = get().conflictos.find((x) => x.id === id);
+    if (!c || c.estado !== "Pendiente") return "El conflicto ya fue resuelto.";
+    const estado = accion === "ajuste" ? "Aplicado con ajuste" : "Descartado";
+    set((s) => ({
+      conflictos: s.conflictos.map((x) => (x.id === id ? { ...x, estado } : x)),
+    }));
+    get().auditar(
+      `Conflicto ${id}`,
+      "Estado",
+      c.estado,
+      estado,
+      motivo + (accion === "ajuste" ? ` · Ajuste: ${ajuste}` : ""),
+    );
+    return null;
+  },
+  revisarPesaje: (id, motivo) => {
+    if (!motivo.trim()) return "El motivo es obligatorio.";
+    const p = get().pesajesManuales.find((x) => x.id === id);
+    if (!p || p.estado !== "Pendiente") return "El pesaje ya fue revisado.";
+    set((s) => ({
+      pesajesManuales: s.pesajesManuales.map((x) => (x.id === id ? { ...x, estado: "Revisado" } : x)),
+    }));
+    get().auditar(`Pesaje manual ${id}`, "Estado", p.estado, "Revisado", motivo);
+    return null;
   },
 }));

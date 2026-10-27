@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/compone
 import { PanelLayout } from "@/app/PanelLayout";
 import { KPIs, Buscador, TabsPanel, Tabla, EstadoChip, Drawer, MotivoForm } from "./ui";
 import { useCalidad } from "./store";
+import { BannerSoloLectura, usePuede } from "@/ui/permisos";
 import type { Dispositivo } from "@/domain/calidad";
 const tipos = [
   "Todos",
@@ -27,6 +28,7 @@ const tipos = [
 ];
 export function Dispositivos() {
   const { dispositivos, editarDispositivo, agregarDispositivo } = useCalidad();
+  const puedeRegistrar = usePuede("editar", "dispositivos.registro");
   const [tab, setTab] = useState("Todos");
   const [search, setSearch] = useState("");
   const [draft, setDraft] = useState<Dispositivo | null>(null);
@@ -49,20 +51,23 @@ export function Dispositivos() {
       subtitle="Registro y control del hardware que se usa en la planta"
       active="/panel/dispositivos"
       action={
-        <Button
-          onClick={() => {
-            setWizard(true);
-            setStep(0);
-            setTested(false);
-            setNombre("");
-            setModelo("");
-          }}
-        >
-          <Plus size={20} />
-          Registrar dispositivo
-        </Button>
+        puedeRegistrar ? (
+          <Button
+            onClick={() => {
+              setWizard(true);
+              setStep(0);
+              setTested(false);
+              setNombre("");
+              setModelo("");
+            }}
+          >
+            <Plus size={20} />
+            Registrar dispositivo
+          </Button>
+        ) : undefined
       }
     >
+      <BannerSoloLectura recurso="dispositivos.registro" />
       <KPIs
         items={[
           {
@@ -138,7 +143,7 @@ export function Dispositivos() {
         title={draft?.nombre ?? "Dispositivo"}
       >
         {draft && (
-          <>
+          <fieldset disabled={!puedeRegistrar} className="contents">
             <h3 className="section-eyebrow">IDENTIDAD</h3>
             <label className="field-label">
               Nombre
@@ -220,18 +225,24 @@ export function Dispositivos() {
                 <option key={p}>{p}</option>
               ))}
             </select>
-            <MotivoForm
-              onSubmit={(d) => {
-                if (!draft.nombre.trim()) {
-                  toast.error("Ingresa el nombre del dispositivo");
-                  return;
-                }
-                editarDispositivo(draft, d.motivo + ` · Periférico: ${periferico}`);
-                setDraft(null);
-                toast.success("Dispositivo actualizado");
-              }}
-            />
-          </>
+            {puedeRegistrar ? (
+              <MotivoForm
+                onSubmit={(d) => {
+                  if (!draft.nombre.trim()) {
+                    toast.error("Ingresa el nombre del dispositivo");
+                    return;
+                  }
+                  editarDispositivo(draft, d.motivo + ` · Periférico: ${periferico}`);
+                  setDraft(null);
+                  toast.success("Dispositivo actualizado");
+                }}
+              />
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Solo el administrador registra, edita o revoca dispositivos.
+              </p>
+            )}
+          </fieldset>
         )}
       </Drawer>
       <Dialog open={wizard} onOpenChange={setWizard}>

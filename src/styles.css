@@ -421,3 +421,18 @@
 @media(max-width:1000px) { .allergen-split { grid-template-columns:1fr; }.allergen-footer { left:230px; } }
 @media(max-width:800px) { .allergen-cards,.allergen-label-grid { grid-template-columns:1fr; }.allergen-flow>.kpi-grid { grid-template-columns:1fr; }.allergen-footer { left:90px; right:14px; }.allergen-flow { padding-bottom:220px; }.allergen-steps { grid-template-columns:repeat(2,minmax(0,1fr)); }.allergen-step { flex-direction:row; }.allergen-label-grid>aside { grid-column:auto; } }
 @media(prefers-reduced-motion:reduce) { .cuarta-drawer,.cuarta-dialog { animation:plant-fade 150ms!important; transition:none!important; } }
+/* Quinta fase · control de acceso por rol */
+.rol-badge { display:inline-flex; align-items:center; gap:6px; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; border-radius:999px; padding:5px 10px; white-space:nowrap; }
+.rol-badge-ingeniera { background:var(--primary-soft); color:var(--primary); }
+.rol-badge-supervisor { background:rgba(99,102,241,.12); color:#4F46E5; }
+.rol-badge-administrador { background:rgba(245,165,36,.16); color:#B45309; }
+.rol-switch { min-height:40px; font-size:12px; padding:0 10px; width:auto; }
+.nav-section { font-size:10px; font-weight:700; letter-spacing:.08em; color:var(--muted-foreground); padding:14px 16px 4px; }
+.readonly-banner { display:flex; align-items:center; gap:10px; background:var(--primary-soft); color:var(--primary); border:1px solid color-mix(in srgb, var(--primary) 25%, transparent); border-radius:12px; padding:12px 16px; font-size:13px; margin-bottom:16px; }
+.login-quick-access { margin-top:24px; border-top:1px dashed var(--border); padding-top:16px; }
+.login-quick-access h2 { font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted-foreground); margin-bottom:10px; }
+.login-quick-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+.login-quick-grid button { white-space:normal; height:auto; min-height:48px; font-size:12px; }
+.sin-acceso-card { max-width:520px; margin:60px auto; text-align:center; padding:40px; }
+.perm-matrix td, .perm-matrix th { text-align:center; }
+.perm-matrix td:first-child, .perm-matrix th:first-child { text-align:left; }

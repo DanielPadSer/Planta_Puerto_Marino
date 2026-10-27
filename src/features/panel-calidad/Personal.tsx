@@ -35,6 +35,7 @@ import {
   type TipoDocumentoPersonal,
 } from "@/domain/cuartaFase";
 import { HOY_DEMO, REGISTROS_BPM } from "@/mocks/cuartaFase";
+import { BannerSoloLectura, useModoLectura, usePuede } from "@/ui/permisos";
 function Renovacion({ operario, onClose }: { operario: OperarioPersonal; onClose: () => void }) {
   const renovar = useCuarta((s) => s.renovar);
   const [archivo, setArchivo] = useState<File | null>(null);
@@ -147,6 +148,8 @@ function Renovacion({ operario, onClose }: { operario: OperarioPersonal; onClose
 }
 export function Personal() {
   const s = useCuarta();
+  const lectura = useModoLectura("personal.operarios");
+  const puedePlantillas = usePuede("editar", "personal.plantillas");
   const [tab, setTab] = useState("Operarios");
   const [search, setSearch] = useState("");
   const [filtro, setFiltro] = useState("Todos");
@@ -205,13 +208,16 @@ export function Personal() {
       subtitle="Vigencia de certificados y controles de buenas prácticas de manufactura"
       active="/panel/personal"
       action={
-        <Button className="min-h-12" onClick={() => setRegistro(true)}>
-          <Plus size={20} />
-          Registrar operario
-        </Button>
+        lectura ? undefined : (
+          <Button className="min-h-12" onClick={() => setRegistro(true)}>
+            <Plus size={20} />
+            Registrar operario
+          </Button>
+        )
       }
     >
       <div className="cuarta-scope">
+        <BannerSoloLectura recurso="personal.operarios" />
         <KPIs
           items={[
             { label: "Operarios activos", value: s.personal.length, icon: <Users /> },
@@ -407,8 +413,9 @@ export function Personal() {
             </aside>
             <section className="panel-surface p-5 space-y-5">
               <h2>Plantilla de checklist · v{plantilla?.version}</h2>
+              {!puedePlantillas && <BannerSoloLectura recurso="personal.plantillas" />}
               {plantilla && (
-                <>
+                <fieldset disabled={!puedePlantillas} className="contents">
                   {GRUPOS_BPM.map((grupo) => (
                     <div key={grupo} className="space-y-3">
                       <h3 className="section-eyebrow">{grupo.toUpperCase()}</h3>
@@ -515,19 +522,21 @@ export function Personal() {
                       </Button>
                     </div>
                   ))}
-                  <MotivoForm
-                    label="Publicar como nueva versión"
-                    onSubmit={(d) => {
-                      try {
-                        s.publicarPlantilla(plantilla, d.motivo);
-                        setPlantilla(structuredClone(useCuarta.getState().plantillas.at(-1)));
-                        toast.success("Nueva versión BPM publicada");
-                      } catch (e) {
-                        toast.error(e instanceof Error ? e.message : "Revisa la plantilla");
-                      }
-                    }}
-                  />
-                </>
+                  {puedePlantillas && (
+                    <MotivoForm
+                      label="Publicar como nueva versión"
+                      onSubmit={(d) => {
+                        try {
+                          s.publicarPlantilla(plantilla, d.motivo);
+                          setPlantilla(structuredClone(useCuarta.getState().plantillas.at(-1)));
+                          toast.success("Nueva versión BPM publicada");
+                        } catch (e) {
+                          toast.error(e instanceof Error ? e.message : "Revisa la plantilla");
+                        }
+                      }}
+                    />
+                  )}
+                </fieldset>
               )}
               <EjemploPanel />
             </section>
@@ -603,10 +612,12 @@ export function Personal() {
                 </section>
               );
             })}
-            <Button variant="outline" className="w-full" onClick={() => setRenovar(true)}>
-              <Upload />
-              Cargar renovación
-            </Button>
+            {!lectura && (
+              <Button variant="outline" className="w-full" onClick={() => setRenovar(true)}>
+                <Upload />
+                Cargar renovación
+              </Button>
+            )}
             <h3 className="section-eyebrow">HISTORIAL DOCUMENTAL</h3>
             {operario.documentos
               .slice()
@@ -619,6 +630,7 @@ export function Personal() {
                 </p>
               ))}
             <h3 className="section-eyebrow">POLÍTICA DE PLANTA</h3>
+            <fieldset disabled={lectura} className="contents">
             <label className="field-label">
               Avisar con N días de anticipación
               <select
@@ -641,12 +653,15 @@ export function Personal() {
               Si está activo, un supervisor puede autorizar una excepción con motivo. Política
               simulada; no se aplica a las estaciones en esta fase.
             </p>
-            <MotivoForm
-              onSubmit={(d) => {
-                s.politica(dias, bloquear, d.motivo);
-                toast.success("Política de planta guardada");
-              }}
-            />
+            {!lectura && (
+              <MotivoForm
+                onSubmit={(d) => {
+                  s.politica(dias, bloquear, d.motivo);
+                  toast.success("Política de planta guardada");
+                }}
+              />
+            )}
+            </fieldset>
             <EjemploPanel />
           </>
         )}
