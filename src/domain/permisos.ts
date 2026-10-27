@@ -34,7 +34,7 @@ export type Recurso =
 export const CONFIG_PERMISOS = {
   adminPuedeFirmarCalidad: false,
   ingenieraEditaPlantillasBPM: false,
-} as const;
+};
 
 type MatrizRol = Partial<Record<Recurso, Accion[]>>;
 
