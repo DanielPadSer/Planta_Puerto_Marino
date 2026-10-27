@@ -56,8 +56,6 @@ const navAdmin: ItemNav[] = [
   { name: "Permisos por rol", path: "/panel/permisos", icon: TableProperties, recurso: "usuarios.gestion" },
 ];
 
-const ROLES_CAMBIO: RolPanel[] = ["ingeniera", "supervisor", "administrador"];
-
 export function PanelLayout({
   title,
   subtitle,
