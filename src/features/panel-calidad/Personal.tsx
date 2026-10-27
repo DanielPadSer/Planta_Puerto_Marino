@@ -522,19 +522,21 @@ export function Personal() {
                       </Button>
                     </div>
                   ))}
-                  <MotivoForm
-                    label="Publicar como nueva versión"
-                    onSubmit={(d) => {
-                      try {
-                        s.publicarPlantilla(plantilla, d.motivo);
-                        setPlantilla(structuredClone(useCuarta.getState().plantillas.at(-1)));
-                        toast.success("Nueva versión BPM publicada");
-                      } catch (e) {
-                        toast.error(e instanceof Error ? e.message : "Revisa la plantilla");
-                      }
-                    }}
-                  />
-                </>
+                  {puedePlantillas && (
+                    <MotivoForm
+                      label="Publicar como nueva versión"
+                      onSubmit={(d) => {
+                        try {
+                          s.publicarPlantilla(plantilla, d.motivo);
+                          setPlantilla(structuredClone(useCuarta.getState().plantillas.at(-1)));
+                          toast.success("Nueva versión BPM publicada");
+                        } catch (e) {
+                          toast.error(e instanceof Error ? e.message : "Revisa la plantilla");
+                        }
+                      }}
+                    />
+                  )}
+                </fieldset>
               )}
               <EjemploPanel />
             </section>
