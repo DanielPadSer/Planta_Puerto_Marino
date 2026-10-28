@@ -504,3 +504,11 @@
   .panel-table-cards tr.selected-row td:first-child { box-shadow:none; }
   .panel-table-cards tr.selected-row { box-shadow:inset 3px 0 var(--primary); }
 }
+@media(max-width:767.98px) {
+  .reports-grid,.catalogs-grid { grid-template-columns:minmax(0,1fr)!important; }
+  .report-index,.catalog-index { min-width:0; }
+  .report-index>div { min-width:0!important; flex:1 1 100%!important; }
+  .report-index button,.catalog-index button { white-space:normal; height:auto; }
+  .reports-grid .flex.gap-2:has(>button) { display:grid; grid-template-columns:1fr 1fr; width:100%; }
+  .reports-grid .flex.gap-2:has(>button)>button { min-width:0; white-space:normal; height:auto; min-height:44px; }
+}
