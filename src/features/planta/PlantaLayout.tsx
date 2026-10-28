@@ -14,7 +14,7 @@ export function PlantaLayout() {
     .map((z) => [z.id, { texto: z.estado?.texto ?? "", tono: z.estado?.tono ?? "warn", alerta: z.alerta }])), []);
 
   return (
-    <div className="relative h-screen min-h-[720px] overflow-hidden bg-background">
+    <div className="relative h-screen min-h-[720px] overflow-hidden max-lg:h-dvh max-lg:min-h-0 bg-background">
       <ClientOnly><Suspense fallback={<div className="absolute inset-0 grid place-items-center"><span role="status" aria-label="Cargando maqueta" className="size-10 animate-spin rounded-full border-4 border-primary-soft border-t-primary" /></div>}>
         <Planta3D zona={zona} atenuadas={[]} estados={zona ? {} : estados}
           onSeleccionar={(z) => navigate({ to: "/planta/$zona", params: { zona: z } })} />

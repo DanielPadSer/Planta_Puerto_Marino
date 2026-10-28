@@ -38,7 +38,7 @@ export function PanelRecepcion({ color }: { color: string }) {
         <Seccion n={2} titulo="Báscula" activa extra={<Chip tono="ok">● Báscula conectada</Chip>}>
           <div className="flex items-end justify-between rounded-2xl bg-muted p-4">
             <div>
-              <p className="font-mono text-5xl font-bold tracking-tight">{kg(lectura.kg)} <span className="text-xl text-muted-foreground">kg</span></p>
+              <p className="scale-reading font-mono text-5xl font-bold tracking-tight">{kg(lectura.kg)} <span className="text-xl text-muted-foreground">kg</span></p>
               <p className="mt-1 text-[11px] text-muted-foreground">Lectura en vivo (Báscula de piso #1)</p>
             </div>
             <span className={cn("rounded-full px-3 py-1 font-mono text-[11px] font-bold text-primary-foreground", lectura.estable ? "bg-ok" : "bg-warn")}>

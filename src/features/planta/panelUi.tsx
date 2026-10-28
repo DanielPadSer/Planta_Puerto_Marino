@@ -40,7 +40,7 @@ export function Ejemplo() {
 }
 
 export function Fila({ k, v, mono = true }: { k: string; v: ReactNode; mono?: boolean }) {
-  return <div className="flex items-center justify-between gap-2 py-1 text-xs"><span className="text-muted-foreground">{k}</span><span className={cn("text-right font-semibold", mono && "font-mono")}>{v}</span></div>;
+  return <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5 py-1 text-xs"><span className="min-w-0 text-muted-foreground">{k}</span><span className={cn("ml-auto min-w-0 text-right font-semibold [overflow-wrap:anywhere]", mono && "font-mono")}>{v}</span></div>;
 }
 
 export function Aviso({ tono, children }: { tono: "warn" | "danger" | "ok"; children: ReactNode }) {
@@ -62,7 +62,7 @@ export function PanelCuerpo({ children, accion }: { children: ReactNode; accion:
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-4">{children}</div>
-      <div className="border-t bg-surface p-4">{accion}</div>
+      <div className="zone-action border-t bg-surface p-4">{accion}</div>
     </div>
   );
 }
