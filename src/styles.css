@@ -512,3 +512,4 @@
   .reports-grid .flex.gap-2:has(>button) { display:grid; grid-template-columns:1fr 1fr; width:100%; }
   .reports-grid .flex.gap-2:has(>button)>button { min-width:0; white-space:normal; height:auto; min-height:44px; }
 }
+.reports-grid>*,.catalogs-grid>*{min-width:0;}
