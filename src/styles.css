@@ -585,3 +585,8 @@
   .plant-sheet-grip { display:none; }
 }
 @media(prefers-reduced-motion:reduce) { .zone-panel { transition:none!important; } }
+@media(max-width:767.98px) {
+  .plant-handle { transform:translateX(-50%)!important; width:72px!important; height:48px!important; }
+  .plant-handle svg { transform:rotate(90deg); }
+  .plant-handle .plant-alert-count { transform:none; }
+}
