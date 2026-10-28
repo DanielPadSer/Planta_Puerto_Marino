@@ -16,6 +16,7 @@ import {
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
+  Menu,
   ChevronRight,
   Database,
   KeyRound,
@@ -72,6 +73,7 @@ export function PanelLayout({
   const navigate = useNavigate();
   const online = useConexion();
   const [collapsed, setCollapsed] = useState(false);
+  const [menuMovil, setMenuMovil] = useState(false);
   const [catalogos, setCatalogos] = useState(active.includes("catalogos"));
   const [notifications, setNotifications] = useState(false);
   const cuarentenas = useCalidad((s) => s.lotes.filter((l) => l.estado === "Cuarentena").length);
@@ -87,7 +89,7 @@ export function PanelLayout({
   useEffect(() => {
     if (hidratada && !usuario) navigate({ to: "/panel/login", replace: true });
   }, [hidratada, usuario, navigate]);
-  if (!hidratada || !usuario) return <div className="min-h-screen bg-background" />;
+  if (!hidratada || !usuario) return <div className="min-h-dvh bg-background" />;
   const items = panelNav.filter((i) => !i.recurso || puede(rol, "ver", i.recurso));
   const itemsAdmin = navAdmin.filter((i) => i.recurso && puede(rol, "ver", i.recurso));
   const verUsuarios = puede(rol, "ver", "usuarios.pin") && !puede(rol, "ver", "usuarios.gestion");
@@ -149,8 +151,14 @@ export function PanelLayout({
     </div>
   );
   return (
-    <div className={cn("quality-panel", collapsed && "sidebar-mini")}>
-      <aside className="quality-sidebar">
+    <div className={cn("quality-panel", collapsed && "sidebar-mini")} data-menu-movil={menuMovil}>
+      <div className="quality-overlay" aria-hidden="true" onClick={() => setMenuMovil(false)} />
+      <aside
+        className="quality-sidebar"
+        onClick={(e) => {
+          if ((e.target as HTMLElement).closest("a")) setMenuMovil(false);
+        }}
+      >
         <Link to="/panel/bandeja" className="quality-brand">
           <Logo />
           {!collapsed && (
@@ -204,13 +212,24 @@ export function PanelLayout({
               <Button
                 variant="ghost"
                 size="icon"
+                className="quality-menu-movil"
+                aria-label="Abrir menú"
+                aria-expanded={menuMovil}
+                onClick={() => setMenuMovil(true)}
+              >
+                <Menu size={20} />
+              </Button>
+              <Button
+                className="quality-collapse"
+                variant="ghost"
+                size="icon"
                 aria-label={collapsed ? "Mostrar menú" : "Contraer menú"}
                 onClick={() => setCollapsed(!collapsed)}
               >
                 {collapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
               </Button>
-              <span>Panel de calidad</span>
-              <ChevronRight size={20} />
+              <span className="crumb-parent">Panel de calidad</span>
+              <ChevronRight size={20} className="crumb-parent" />
               <span>{title}</span>
             </div>
             <h1>{title}</h1>
