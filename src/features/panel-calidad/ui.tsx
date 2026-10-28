@@ -147,7 +147,7 @@ export function Tabla<T extends { id: string }>({
   const initial = (cols[0]?.key ?? "id") as keyof T;
   const { rows, sort, toggle } = useSortableTable(data, initial);
   return (
-    <div className="panel-table-wrap">
+    <div className="panel-table-wrap panel-table-cards">
       <table className="panel-table">
         <thead>
           <tr>
@@ -172,7 +172,7 @@ export function Tabla<T extends { id: string }>({
               onClick={() => onSelect?.(row)}
             >
               {cols.map((c, i) => (
-                <td key={String(c.key)}>
+                <td key={String(c.key)} data-label={typeof c.label === "string" ? c.label : undefined}>
                   {i === 0 && onSelect ? (
                     <Button
                       variant="link"
