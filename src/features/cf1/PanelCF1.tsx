@@ -84,7 +84,7 @@ export function PanelCF1({ color }: { color: string }) {
           {lote && (
             <Seccion n={3} titulo="Peso de la báscula" extra={<Chip tono="primary">Meta: {kg(META_KG)} kg</Chip>}>
               <div className="rounded-2xl bg-muted p-4">
-                <p className={cn("font-mono text-4xl font-bold tabular-nums w-full", sinSenal && "opacity-40")}><span className="inline-block min-w-[5ch]">{sinSenal ? "--,-" : kg(capturas.length ? cant : lectura.kg)}</span> <span className="text-xl text-muted-foreground">kg</span></p>
+                <p className={cn("scale-reading font-mono text-4xl font-bold tabular-nums w-full", sinSenal && "opacity-40")}><span className="inline-block min-w-[5ch]">{sinSenal ? "--,-" : kg(capturas.length ? cant : lectura.kg)}</span> <span className="text-xl text-muted-foreground">kg</span></p>
                 <p className="mt-2 text-[11px] text-muted-foreground"><span className={sinSenal ? "text-danger" : "text-ok"}>●</span> Báscula de piso #1 · {sinSenal ? "desconectada" : "conectada"}</p>
                 <div className="mt-2"><Chip tono={sinSenal ? "danger" : lectura.estable ? "ok" : "warn"}>{sinSenal ? "SIN SEÑAL" : lectura.estable ? "ESTABLE ✓" : "ESTABILIZANDO…"}</Chip></div>
               </div>

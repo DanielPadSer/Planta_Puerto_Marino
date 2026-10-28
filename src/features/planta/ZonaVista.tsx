@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Bell, ChevronLeft, ChevronRight, ClipboardList, Layers, ScanLine, Siren } from "lucide-react";
 import type { Zona, ZonaId } from "@/domain/types";
@@ -41,6 +41,12 @@ export function ZonaVista({ zona }: { zona: Zona }) {
   const [tab, setTab] = useState<"registrar" | "flujo" | "lote">("registrar");
   const [info, setInfo] = useState<"pasa" | "registra" | "software">("registra");
   const [dur, setDur] = useState(DURACION);
+  const [minimizado, setMinimizado] = useState(false);
+  const stepper = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = stepper.current?.querySelector<HTMLElement>("[data-activo='true']");
+    el?.scrollIntoView({ inline: "center", block: "nearest", behavior: usaMovimientoReducido() ? "auto" : "smooth" });
+  }, [zona.id]);
 
   useEffect(() => {
     const reducido = usaMovimientoReducido();
@@ -72,22 +78,22 @@ export function ZonaVista({ zona }: { zona: Zona }) {
     <div className="pointer-events-none absolute inset-0 [&>*]:pointer-events-auto">
 
       {/* Barra superior */}
-      <header className="absolute z-40 inset-x-4 top-4 flex items-center gap-2">
+      <header className="zone-topbar absolute z-40 inset-x-4 top-4 flex items-center gap-2">
         <button onClick={salir} aria-label="Volver a la planta" className="glass tap grid place-items-center rounded-full"><ChevronLeft size={20} /></button>
-        <span className="glass flex h-12 items-center gap-2 rounded-full px-4 text-xs">
-          <span className="text-muted-foreground">PLANTA ›</span><span className="size-2 rounded-full" style={{ background: zona.color }} /><b className="whitespace-nowrap">{zona.codigo} {zona.nombre}</b>
+        <span className="zone-crumb glass flex h-12 min-w-0 items-center gap-2 rounded-full px-4 text-xs">
+          <span className="zone-crumb-parent text-muted-foreground">PLANTA ›</span><span className="size-2 shrink-0 rounded-full" style={{ background: zona.color }} /><b className="truncate whitespace-nowrap">{zona.codigo} {zona.nombre}</b>
         </span>
-        <nav className="glass hidden h-12 items-center gap-1 rounded-full px-1.5 lg:flex">
+        <nav ref={stepper} aria-label="Estaciones" className="zone-stepper glass hidden h-12 items-center gap-1 rounded-full px-1.5 lg:flex">
           {STEPPER.map((s) => {
             const activo = s.ids.includes(zona.id);
             return (
-              <Link key={s.label} to="/planta/$zona" params={{ zona: s.ids[0]! }}
+              <Link key={s.label} to="/planta/$zona" params={{ zona: s.ids[0]! }} data-activo={activo}
                 className={cn("whitespace-nowrap rounded-full px-2.5 py-1.5 font-mono text-[10px]", activo ? "font-bold text-primary-foreground" : "text-muted-foreground hover:bg-muted")}
                 style={activo ? { background: zona.color } : undefined}>{s.label}</Link>
             );
           })}
         </nav>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex shrink-0 items-center gap-2">
           <PillConexion className="glass hidden py-3 xl:inline-flex" />
           <button aria-label="Notificaciones" className="glass tap relative grid place-items-center rounded-full"><Bell size={20} /><span className="absolute right-3 top-3 size-2 rounded-full bg-danger" /></button>
           <span className="glass grid size-12 place-items-center rounded-full font-mono text-xs font-bold">{op.iniciales}</span>
@@ -95,7 +101,7 @@ export function ZonaVista({ zona }: { zona: Zona }) {
       </header>
 
       {/* Rail izquierdo */}
-      <nav className="absolute left-4 top-1/2 flex -translate-y-1/2 flex-col gap-3">
+      <nav className="zone-rail absolute left-4 top-1/2 flex -translate-y-1/2 flex-col gap-3">
         {([[Layers, "Capas", false], [ScanLine, "Escanear", true], [ClipboardList, "Lotes", false], [Siren, "Alertas", false]] as const).map(([Icon, l, act]) => (
           <button key={l} className="flex flex-col items-center gap-1 text-[11px] font-medium">
             <span className={cn("relative grid size-14 place-items-center rounded-full", act ? "text-primary-foreground shadow-[var(--shadow-soft)]" : "glass")} style={act ? { background: zona.color } : undefined}><Icon size={20} /></span>{l}
@@ -115,7 +121,7 @@ export function ZonaVista({ zona }: { zona: Zona }) {
       </div>
 
       {/* Inferior centro */}
-      <div className="absolute bottom-4 left-1/2 flex -translate-x-[calc(50%+200px)] flex-col items-center gap-2 xl:left-[calc(50%+40px)]">
+      <div className="zone-prevnext absolute bottom-4 left-1/2 flex -translate-x-[calc(50%+200px)] flex-col items-center gap-2 xl:left-[calc(50%+40px)]">
         <div className="flex gap-2">
           <Link to="/planta/$zona" params={{ zona: prev.id }} className="glass flex h-12 items-center gap-1 whitespace-nowrap rounded-full pl-2 pr-4 text-sm"><ChevronLeft size={20} /> {prev.codigo} {prev.nombre}</Link>
           <Link to="/planta/$zona" params={{ zona: next.id }} className="glass flex h-12 items-center gap-1 whitespace-nowrap rounded-full pl-4 pr-2 text-sm">{next.codigo} {next.nombre} <ChevronRight size={20} /></Link>
@@ -123,11 +129,12 @@ export function ZonaVista({ zona }: { zona: Zona }) {
       </div>
 
       {/* Panel derecho */}
-      <aside className={cn("absolute z-40 bottom-4 right-4 top-20 flex w-[400px] flex-col overflow-hidden rounded-[var(--radius-panel)] bg-surface shadow-[var(--shadow-soft)] transition-all duration-500", listo ? "translate-x-0 opacity-100" : "translate-x-[110%] opacity-0")} style={{ transitionTimingFunction: EASE }}>
+      <aside data-minimizado={minimizado} className={cn("zone-panel absolute z-40 bottom-4 right-4 top-20 flex w-[400px] flex-col overflow-hidden rounded-[var(--radius-panel)] bg-surface shadow-[var(--shadow-soft)] transition-all duration-500", listo ? "translate-x-0 opacity-100" : "translate-x-[110%] opacity-0")} style={{ transitionTimingFunction: EASE }}>
         <div className="p-4 pb-0">
           <div className="flex items-start gap-3">
             <span className="grid size-12 shrink-0 place-items-center rounded-2xl" style={{ background: zona.color }}><Circulo codigo={zona.codigo} color={zona.color} size={36} /></span>
             <div className="min-w-0 flex-1"><p className="text-lg font-bold leading-tight">{zona.nombre}</p><p className="text-xs text-muted-foreground">{d.subtitulo}</p></div>
+            <button type="button" className="zone-map-toggle" aria-expanded={!minimizado} onClick={() => setMinimizado(!minimizado)}>{minimizado ? "Abrir panel" : "Ver mapa"}</button>
             <Chip tono={d.chip.tono === "pending" ? "warn" : d.chip.tono === "readonly" ? "readonly" : d.chip.tono}>{d.chip.texto}</Chip>
           </div>
           <div className="mt-3 grid grid-cols-3 border-b text-sm">
@@ -138,6 +145,17 @@ export function ZonaVista({ zona }: { zona: Zona }) {
         </div>
         <div className="flex min-h-0 flex-1 flex-col pt-3">
           {tab === "registrar" && <PanelZona key={zona.id} id={zona.id} color={zona.color} />}
+          {tab === "registrar" && (
+            <details className="zone-que-movil border-t px-4 py-2 text-xs">
+              <summary className="flex min-h-12 cursor-pointer items-center gap-2 font-mono text-[11px] font-semibold"><span className="size-2 rounded-full" style={{ background: zona.color }} />QUÉ SE REGISTRA EN {zona.nombre.toUpperCase()}</summary>
+              <p className="mt-1 leading-relaxed text-muted-foreground">{d.que[info]}</p>
+              <div className="mt-2 flex flex-wrap gap-1">
+                {([["pasa", "① Qué pasa"], ["registra", "② Qué se registra"], ["software", "③ Qué hace el software"]] as const).map(([k, l]) => (
+                  <button key={k} onClick={() => setInfo(k)} className={cn("min-h-11 rounded-full px-3 text-[11px]", info === k ? "font-semibold text-primary-foreground" : "bg-muted text-muted-foreground")} style={info === k ? { background: zona.color } : undefined}>{l}</button>
+                ))}
+              </div>
+            </details>
+          )}
           {tab === "flujo" && (
             <div className="space-y-3 px-4 text-sm">
               <p className="text-muted-foreground">Posición de esta zona en las rutas de proceso.</p>

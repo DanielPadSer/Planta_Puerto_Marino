@@ -20,6 +20,7 @@ export function Planta() {
   const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>("resumen");
   const [rutas, setRutas] = useState(true);
+  const [rutasAbiertas, setRutasAbiertas] = useState(false);
   const [busqueda, setBusqueda] = useState("");
   const buscador = useRef<HTMLInputElement>(null);
 
@@ -45,11 +46,12 @@ export function Planta() {
 
   return (
     <div className="pointer-events-none absolute inset-0 [&>*]:pointer-events-auto">
-      <header className={cn("absolute z-40 left-4 top-4 flex items-center gap-3", abierto ? "right-[372px]" : "right-20")}>
+      <header className={cn("plant-topbar absolute z-40 left-4 top-4 flex items-center gap-3", abierto ? "right-[372px]" : "right-20")}>
         <Link to="/" aria-label="Volver" className="glass tap grid place-items-center rounded-full"><ChevronLeft size={20} /></Link>
-        <div className="glass flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-4">
+        <div className="plant-title-pill glass flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-4">
           <Logo className="size-9 rounded-full object-contain" />
-          <div><p className="text-sm font-semibold leading-tight">Puerto Marino · Planta</p><p className="text-[11px] text-muted-foreground">Planta completa</p></div>
+          <div className="min-w-0"><p className="truncate text-sm font-semibold leading-tight">Puerto Marino · Planta</p><p className="plant-subtitle text-[11px] text-muted-foreground">Planta completa</p></div>
+          <span className="plant-status-dot size-2.5 shrink-0 rounded-full bg-ok" role="img" aria-label="En línea · Sincronizado" />
         </div>
         <div className="flex-1" />
         <PillConexion className="glass hidden py-3 lg:inline-flex" />
@@ -60,10 +62,10 @@ export function Planta() {
         </div>
       </header>
 
-      <nav className="absolute left-4 top-1/2 flex -translate-y-1/2 flex-col gap-3">
+      <nav className="plant-rail absolute left-4 top-1/2 flex -translate-y-1/2 flex-col gap-3">
         {rail.map(({ Icon, l, on, dot, fn }) => (
-          <button key={l} onClick={fn} aria-pressed={on} className="flex flex-col items-center gap-1 text-[11px] font-medium">
-            <span className={cn("glass relative grid size-14 place-items-center rounded-full", on && "bg-primary-soft text-primary")}><Icon size={20} />{dot && <span className="absolute right-2 top-2 size-2.5 rounded-full bg-danger" />}</span>{l}
+          <button key={l} onClick={fn} aria-pressed={on} aria-label={l} className="flex flex-col items-center gap-1 text-[11px] font-medium">
+            <span className={cn("glass relative grid size-14 place-items-center rounded-full", on && "bg-primary-soft text-primary")}><Icon size={20} />{dot && <span className="absolute right-2 top-2 size-2.5 rounded-full bg-danger" />}</span><span className="plant-rail-label">{l}</span>
           </button>
         ))}
       </nav>
@@ -74,8 +76,9 @@ export function Planta() {
         {ALERTAS.length > 0 && <span className={cn("plant-alert-count", ALERTAS.some((a) => a.tono === "danger") && "animate-pulse")}>{ALERTAS.length}</span>}
       </Button>
       <aside ref={panel} id="panel-planta" role="complementary" aria-label="Resumen de Planta Puerto Marino" aria-hidden={!abierto} inert={!abierto} data-open={abierto} className="glass plant-summary absolute z-40 bottom-4 right-4 top-4 flex w-[340px] flex-col rounded-[var(--radius-panel)] p-4"
-        onTouchStart={(e) => { const t = e.touches[0]; if (t) inicio.current = { x: t.clientX, y: t.clientY }; }} onTouchEnd={(e) => { const t = e.changedTouches[0]; if (t && inicio.current && t.clientX - inicio.current.x > 64 && Math.abs(t.clientY - inicio.current.y) < 80) { cambiar(false); manija.current?.focus(); } inicio.current = null; }}>
+        onTouchStart={(e) => { const t = e.touches[0]; if (t) inicio.current = { x: t.clientX, y: t.clientY }; }} onTouchEnd={(e) => { const t = e.changedTouches[0]; if (t && inicio.current && ((t.clientX - inicio.current.x > 64 && Math.abs(t.clientY - inicio.current.y) < 80) || (window.innerWidth < 768 && window.innerHeight >= 500 && t.clientY - inicio.current.y > 64 && Math.abs(t.clientX - inicio.current.x) < 80 && (e.target as HTMLElement).closest(".plant-sheet-grip")))) { cambiar(false); manija.current?.focus(); } inicio.current = null; }}>
 
+        <span className="plant-sheet-grip" aria-hidden="true" />
         <div className="flex items-center gap-3">
           <span className="grid size-10 place-items-center rounded-xl bg-primary text-primary-foreground"><MapIcon size={20} /></span>
           <div className="flex-1"><p className="font-semibold">Planta Puerto Marino</p><p className="text-[11px] text-muted-foreground">Toca una zona del mapa para entrar</p></div>
@@ -141,7 +144,7 @@ export function Planta() {
         <Button onClick={() => navigate({ to: "/panel/trazabilidad" })} className="tap mt-3 flex items-center justify-center gap-2 rounded-2xl bg-primary font-semibold text-primary-foreground shadow-[var(--shadow-primary)]"><TrendingUp size={20} /> Seguir un lote</Button>
       </aside>
 
-      {rutas && <div className="glass absolute bottom-4 left-24 z-30 w-[340px] rounded-[var(--radius-card)] p-4"><Rutas /></div>}
+      {rutas && <div data-expandido={rutasAbiertas} className="plant-routes glass absolute bottom-4 left-24 z-30 w-[340px] rounded-[var(--radius-card)] p-4"><button type="button" className="plant-routes-chip" aria-expanded={rutasAbiertas} onClick={() => setRutasAbiertas(!rutasAbiertas)}><Layers size={20} /> Rutas</button><div className="plant-routes-body"><Rutas /></div></div>}
     </div>
   );
 }
@@ -151,9 +154,9 @@ function Rutas() {
     <div>
       <p className="font-mono text-[10px] font-semibold text-muted-foreground">RUTAS DE PROCESO</p>
       {([["Ruta cocido", RUTA_COCIDO, "#F97316"], ["Ruta marinado", RUTA_MARINADO, "#6366F1"]] as const).map(([n, r, c]) => (
-        <p key={n} className="mt-2 flex items-center gap-2 text-xs">
+        <p key={n} className="mt-2 flex flex-wrap items-center gap-2 text-xs">
           <span className="size-2.5 rounded-full" style={{ background: c }} /><span className="font-semibold" style={{ color: c }}>{n}:</span>
-          <span className="font-mono">{r.join(" → ")}</span>
+          <span className="font-mono min-w-0">{r.join(" → ")}</span>
         </p>
       ))}
       <p className="mt-2 text-[10px] text-muted-foreground">* 3A/3B y 5A/5B son alternativas: cada producto pasa por una sola.</p>

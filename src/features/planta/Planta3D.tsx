@@ -143,15 +143,15 @@ function Escena({ zona, onSeleccionar, atenuadas = [], estados = {} }: Props) {
         const est = estados[zid];
         return (
           <Html data-tsd-source={undefined} key={e.id} position={e.ancla as V3} center zIndexRange={[20, 0]} style={{ pointerEvents: "auto" }}>
-            <button onClick={() => onSeleccionar?.(zid)} className="relative flex items-center gap-2 whitespace-nowrap border bg-surface/95 text-foreground shadow-[var(--shadow-soft)] transition"
+            <button onClick={() => onSeleccionar?.(zid)} title={`${e.num ? e.num + " " : ""}${e.nombre}${est?.texto ? " · " + est.texto : ""}`} aria-label={`${e.num ? e.num + " " : ""}${e.nombre}${est?.texto ? " · " + est.texto : ""}`} className="map-label relative flex items-center gap-2 whitespace-nowrap border bg-surface/95 text-foreground shadow-[var(--shadow-soft)] transition"
               style={{ padding: activa ? "10px 14px" : "5px 10px", borderRadius: activa ? 14 : 10, borderColor: activa ? e.color : undefined, opacity: tenue ? 0.6 : 1, transform: "translateY(-50%)" }}>
               <span className="shrink-0 rounded-[3px]" style={{ width: activa ? 12 : 9, height: activa ? 12 : 9, background: e.color }} />
               <span className="flex flex-col items-start">
-                <b style={{ fontSize: activa ? 15 : 12.5 }}>{e.num && <span className="mr-1.5" style={{ color: e.color }}>{e.num}</span>}{e.nombre}</b>
+                <b style={{ fontSize: activa ? 15 : 12.5 }}>{e.num && <span className="map-label-code mr-1.5" style={{ color: e.color }}>{e.num}</span>}<span className="map-label-name">{e.nombre}</span></b>
                 {activa && <small className="text-xs text-muted-foreground">{e.subtitulo}</small>}
                 {activa && e.area_m2 && <small className="font-mono text-[10px] text-muted-foreground">{String(e.area_m2).replace(".", ",")} m² · {e.espacio}</small>}
               </span>
-              {est && !activa && <span className={`absolute -top-3 right-0 rounded-full px-1.5 font-mono text-[10px] font-semibold ${est.tono === "danger" ? "bg-danger text-primary-foreground" : "bg-warn text-foreground"}`}>{est.texto}</span>}
+              {est && !activa && <span className={`map-label-badge absolute -top-3 right-0 rounded-full px-1.5 font-mono text-[10px] font-semibold ${est.tono === "danger" ? "bg-danger text-primary-foreground" : "bg-warn text-foreground"}`}>{est.texto}</span>}
               {est?.alerta && <span className="absolute -left-1 -top-1 size-2.5 animate-pulse rounded-full bg-danger ring-2 ring-surface" />}
             </button>
           </Html>
