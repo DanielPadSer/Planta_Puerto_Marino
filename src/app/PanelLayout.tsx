@@ -84,6 +84,12 @@ export function PanelLayout({
   const count =
     rol === "ingeniera" ? cuarentenas + 2 + 4 : rol === "supervisor" ? conflictos + pesajes : 6;
   useEffect(() => {
+    if (!menuMovil) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenuMovil(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuMovil]);
+  useEffect(() => {
     hidratar();
   }, [hidratar]);
   useEffect(() => {
